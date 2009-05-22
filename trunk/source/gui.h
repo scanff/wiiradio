@@ -532,7 +532,7 @@ class gui {
         }
 
         // always inform user if buffering
-        if (status == BUFFERING) draw_info((char*)"Buffering");
+        if (status == BUFFERING) draw_info((char*)"Buffering...");
 
         // volume display ... like an OSD
         draw_volume();
