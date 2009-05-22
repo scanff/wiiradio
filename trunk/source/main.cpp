@@ -640,6 +640,10 @@ void critical_thread(void *arg) {
     }
 
     delete [] net_buffer; net_buffer =0;
+	
+	#ifdef _WII_
+		return NULL;
+	#endif
 }
 
 #ifdef _WII_
