@@ -2,7 +2,7 @@
 #include "station_cache.h"
 
 struct station_list {
-    station_list() :  station_name(0), station_playing(0), station_id(0), nextnode(0), codec_type(0) {}
+    station_list() :  station_name(0), station_playing(0), station_id(0),  codec_type(0), nextnode(0) {}
     char* station_name; // name
     char* station_playing; // playing
     char* station_id; // url
@@ -141,7 +141,7 @@ class shoutcast_browser
         {
             char request[255] = {0};
 
-            if (net->client_connect("www.shoutcast.com",80,TCP)) {
+            if (net->client_connect((char*)"www.shoutcast.com",80,TCP)) {
 
                 sprintf(request,
                         "GET %s HTTP/1.1\r\n"

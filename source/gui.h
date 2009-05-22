@@ -541,7 +541,7 @@ class gui {
         }
 
         // always inform user if buffering
-        if (status == BUFFERING) draw_info("Buffering");
+        if (status == BUFFERING) draw_info((char*)"Buffering");
 
         // volume display ... like an OSD
         draw_volume();
@@ -658,39 +658,53 @@ class gui {
         // oscilloscope
         int sx,sy;
         int leftzerolevel = (SCREEN_HEIGHT/2-10)/2;
-        int rightzerolevel = SCREEN_HEIGHT/2+10+leftzerolevel;
+//        int rightzerolevel = SCREEN_HEIGHT/2+10+leftzerolevel;
         int len = (8192/4) - 1;
         int ii;
         double ts = static_cast<double>(SCREEN_WIDTH)/static_cast<double>(len/2);
-        int max = 20;
-        int min = 0;
+//        int max = 20;
+ //       int min = 0;
         double dRangePerStep = 20;
         double timescale = leftzerolevel/dRangePerStep;
         sx = 0;
         sy = leftzerolevel;
-		for(ii=0; ii<len-1; ii+=2)
+		for(ii=20; ii<len-1; ii+=1)
 		{
 			x = (int)((double)ii*ts);
             y = (int)((double)leftzerolevel - (short)(vis->real[ii])*timescale);
 
-            bresenham_line(x,y,sx,sy);
+            bresenham_line(x,y,sx,sy,0xffffffff);
 
             sy = y;
             sx = x;
 		}
 
-		sx = 0;
+		/*sx = 0;
 		sy = rightzerolevel;
 
-		for(ii=1; ii<len; ii+=2)
+		for(ii=0; ii<len; ii++)
 		{
 			x= (int)(ii*ts);
 			y = (int)((double)rightzerolevel - (short)(vis->real[ii])*timescale);
 
-			bresenham_line(sx,sy,x,y);
+			bresenham_line(sx,sy,x,y,0xffffffff);
             sy = y;
             sx = x;
-		}
+		}*/
+
+		//
+
+		/*for(ii=0; ii<len-1; ii+=2)
+		{
+			x = (int)((double)ii*ts);
+            y = (int)((double)100 - (short)(vis->real[ii])*timescale);
+
+            bresenham_line(x,y,x,y-10,0xff00ffff);
+
+            sy = y;
+            sx = x;
+		}*/
+
     }
 
     void fade(SDL_Surface *screen2, Uint32 rgb, Uint8 a)
@@ -713,7 +727,7 @@ class gui {
     };
 
 
-    void bresenham_line(int x1, int y1, int x2, int y2)
+    void bresenham_line(int x1, int y1, int x2, int y2,unsigned long color)
     {
         // clip
         x1 > SCREEN_WIDTH ? x1 = SCREEN_WIDTH : x1 < 0 ? x1 = 0 : 0;
@@ -729,7 +743,7 @@ class gui {
         signed char ix = x2 > x1?1:-1;
         signed char iy = y2 > y1?1:-1;
 
-        pixelColor(guibuffer,x1,y1,0xffffffff);
+        pixelColor(guibuffer,x1,y1,color);
 
         if (delta_x >= delta_y)
         {
@@ -752,7 +766,7 @@ class gui {
                 x1 += ix;
                 error += delta_y;
 
-                pixelColor(guibuffer,x1,y1,0xffffffff);
+                pixelColor(guibuffer,x1,y1,color);
             }
         }
         else
@@ -776,7 +790,7 @@ class gui {
                 y1 += iy;
                 error += delta_x;
 
-                pixelColor(guibuffer,x1,y1,0xffffffff);
+                pixelColor(guibuffer,x1,y1,color);
 
             }
         }
