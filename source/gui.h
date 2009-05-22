@@ -826,7 +826,7 @@ class gui {
         SDL_BlitSurface( cursor,0, guibuffer,&r);
     };
 
-
+    // TO DO --- put in own file/class
     void draw_visual()
     {
         int x = 0;
@@ -862,7 +862,7 @@ class gui {
         int sx,sy;
         int leftzerolevel = (SCREEN_HEIGHT/2-10)/2;
         int rightzerolevel = SCREEN_HEIGHT/2+10+leftzerolevel;
-        int len = 8192/4;
+        int len = (8192/4) - 1;
         int ii;
         double ts = static_cast<double>(SCREEN_WIDTH)/static_cast<double>(len/2);
         int max = 20;
@@ -874,12 +874,10 @@ class gui {
 		for(ii=0; ii<len-1; ii+=2)
 		{
 			x = (int)((double)ii*ts);
-			y = (int)leftzerolevel - (double)((double)(vis->real[ii])*timescale);
+            y = (int)((double)leftzerolevel - (short)(vis->real[ii])*timescale);
 
-		//	y *= percent;
-			//dc.LineTo( x ,y );
-            //aalineColor(guibuffer,sx,sy,sx+x,sy+y,0xffffffff);
-            bresenham(x,y,sx,sy);
+            bresenham_line(x,y,sx,sy);
+
             sy = y;
             sx = x;
 		}
@@ -889,10 +887,10 @@ class gui {
 
 		for(ii=1; ii<len; ii+=2)
 		{
-			x=(int)(ii*ts);
+			x= (int)(ii*ts);
 			y = (int)((double)rightzerolevel - (short)(vis->real[ii])*timescale);
-			//y *= percent;
-			bresenham(sx,sy,x,y);
+
+			bresenham_line(sx,sy,x,y);
             sy = y;
             sx = x;
 		}
@@ -917,8 +915,15 @@ class gui {
         draw_rect(guibuffer,0,0,SCREEN_WIDTH,SCREEN_HEIGHT,0);
     };
 
-    void bresenham(int x1, int y1, int x2, int y2)
+
+    void bresenham_line(int x1, int y1, int x2, int y2)
     {
+        // clip
+        x1 > SCREEN_WIDTH ? x1 = SCREEN_WIDTH : x1 < 0 ? x1 = 0 : 0;
+        x2 > SCREEN_WIDTH ? x2 = SCREEN_WIDTH : x2 < 0 ? x2 = 0 : 0;
+        y1 > SCREEN_HEIGHT ? y1 = SCREEN_HEIGHT : y1 < 0 ? y1 = 0 : 0;
+        y2 > SCREEN_HEIGHT ? y2 = SCREEN_HEIGHT : y2 < 0 ? y2 = 0 : 0;
+
 
         int delta_x = abs(x2 - x1) << 1;
         int delta_y = abs(y2 - y1) << 1;
@@ -927,7 +932,7 @@ class gui {
         signed char ix = x2 > x1?1:-1;
         signed char iy = y2 > y1?1:-1;
 
-        //plot(x1, y1);
+        pixelColor(guibuffer,x1,y1,0xffffffff);
 
         if (delta_x >= delta_y)
         {
@@ -949,8 +954,8 @@ class gui {
 
                 x1 += ix;
                 error += delta_y;
+
                 pixelColor(guibuffer,x1,y1,0xffffffff);
-                //plot(x1, y1);
             }
         }
         else
@@ -975,7 +980,7 @@ class gui {
                 error += delta_x;
 
                 pixelColor(guibuffer,x1,y1,0xffffffff);
-                //plot(x1, y1);
+
             }
         }
     }
