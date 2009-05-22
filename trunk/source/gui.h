@@ -154,9 +154,9 @@ class gui {
 
             //delete buttons
             x_offset = 530;
-            width = 63;
+            width = 56;
 
-            buttons[i+BTN_FAV_DEL_1] = new gui_button(guibuffer,f,x_offset,y_offset+i*height+2,width,height,NULL,0,false);
+            buttons[i+BTN_FAV_DEL_1] = new gui_button(guibuffer,f,x_offset,y_offset+i*height+6,width,height,NULL,0,false);
             buttons[i+BTN_FAV_DEL_1]->set_images("imgs/delete_over.png","imgs/delete_out.png","imgs/delete_over.png");
             buttons[i+BTN_FAV_DEL_1]->z_order = 1;
             buttons[i+BTN_FAV_DEL_1]->bind_screen = S_PLAYLISTS;
