@@ -126,7 +126,7 @@ extern void delete_playlist(int);
 #define loopi(m) loop(i,m)
 #define loopj(m) loop(j,m)
 #define bloopj(m) bloop(j,m)
-#define CLIP(x)  x>255 ? (255) : x < 0 ? (0) : (x);
+#define CLIP(mx,x)  x>mx ? (mx) : x < 0 ? (0) : (x);
 
 extern void connect_to_stream(int,bool);
 extern void search_genre(char*);
