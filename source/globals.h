@@ -71,6 +71,13 @@ enum _screens{
   S_MAX
 
 };
+
+enum _visuals
+{
+  V_BARS = 0,
+  V_OSC,
+  MAX_VISUALS
+};
 extern Uint8 *		g_nKetStatus;
 extern Uint8        g_real_keys[MAX_KEYS];
 extern Uint8        g_keys_last_state[MAX_KEYS];
@@ -117,7 +124,6 @@ extern void delete_playlist(int);
 #define BITDEPTH        (24)
 #define TIME_OUT_MS     (5000)
 #define SC_DOWN         ("503 Service Temporarily Unavailable")
-#define MAX_VISUALS     (2)
 #define MAX_BUTTONS     (4)
 #define MAX_FFT_RES     (16)
 #define loop(v,m) for(int v = 0; v<int(m); v++)

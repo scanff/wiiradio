@@ -8,6 +8,7 @@
 
 #include "fft.h"
 #include "icy.h"
+#include "visuals.h"
 #include "gui.h"
 
 
@@ -54,6 +55,7 @@ gui*                ui;
 fft*                fourier;
 favorites*          favs;
 fav_item*           playing; // make now playing as fav struct so we can access the ip/name quickly
+visualizer*         visuals;
 
 #ifdef _WII_
 //    ir_t  ir; //wii mote
@@ -535,7 +537,7 @@ void cb_fft(short* in, int max)
     if (visualize) // Only update if viewing
     {
         fourier->setAudioData(in);
-        fourier->getFFT(ui->fft_results);
+        fourier->getFFT(visuals->fft_results);
     }
 }
 
@@ -640,7 +642,7 @@ void critical_thread(void *arg) {
     }
 
     delete [] net_buffer; net_buffer =0;
-	
+
 	#ifdef _WII_
 		return NULL;
 	#endif
@@ -723,7 +725,8 @@ int main(int argc, char **argv)
 
     fnts->text(screen,"Loading UI...",30,110,0);SDL_Flip(screen);
 
-    ui              = new gui(fnts,fourier);
+    visuals         = new visualizer(fourier);
+    ui              = new gui(fnts,visuals);
     icy_info        = new icy;
     favs            = new favorites;
     playing         = new fav_item;
@@ -839,6 +842,7 @@ int main(int argc, char **argv)
 
     delete playing; playing = 0;
     delete favs; favs = 0;
+    delete visuals; visuals = 0;
     delete ui; ui = 0;
     delete fourier; fourier =0;
     delete playlst; playlst = 0;
