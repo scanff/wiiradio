@@ -195,7 +195,7 @@ void station_lister(const char* path,char* gen)
     g_pause_draw = true;
 
     //force a redraw before doing the costly connect
-    draw_ui("Requesting List");
+    draw_ui((char*)"Requesting List");
 
 
     // connect and get the web page
@@ -252,7 +252,7 @@ void connect_to_stream(int value,bool haveplaylist)
     g_pause_draw = true;
 
     //force a redraw before doing the costly connect
-    draw_ui("Connecting"); // need a state !!!
+    draw_ui((char*)"Connecting"); // need a state !!!
 
 
     if (connected)
@@ -740,7 +740,7 @@ int main(int argc, char **argv)
 #endif
 
 
-    search_genre("pop"); // get list ...
+    search_genre((char*)"pop"); // get list ...
     status = STOPPED;
     g_screen_status = S_BROWSER;
     DWORD last_time, current_time;

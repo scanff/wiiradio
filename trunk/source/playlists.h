@@ -47,7 +47,7 @@ class playlists
     {
         char request[255] = {0};
 
-        if (net->client_connect("yp.shoutcast.com",80,TCP))
+        if (net->client_connect((char*)"yp.shoutcast.com",80,TCP))
         {
 
             // request header to see how big the page is !
@@ -119,7 +119,7 @@ class playlists
 
        // get_head(trailing_path); // TODO handle http header ... using Content-Length to allocate the buffer!
 
-        if (net->client_connect("yp.shoutcast.com",80,TCP)) {
+        if (net->client_connect((char*)"yp.shoutcast.com",80,TCP)) {
 
             sprintf(request,
                     "GET %s HTTP/1.1\r\n"

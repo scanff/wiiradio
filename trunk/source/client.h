@@ -50,7 +50,7 @@ class network : public dns
 
         net_init();
         #ifdef _WII_
-        s32 ret = if_config ( localip, netmask, gateway, TRUE);
+        if_config ( localip, netmask, gateway, TRUE);
         #endif
 
     }
