@@ -651,6 +651,14 @@ int evctr = 0;
 void countevs(int chan, const WPADData *data) {
 	evctr++;
 }
+
+
+//exit function
+void ShutdownCB()
+{
+	g_running = false;
+}
+
 #endif
 
 int main(int argc, char **argv)
@@ -674,7 +682,12 @@ int main(int argc, char **argv)
 	WPAD_SetDataFormat(WPAD_CHAN_ALL, WPAD_FMT_BTNS_ACC_IR);
     WPAD_SetVRes(WPAD_CHAN_ALL, SCREEN_WIDTH, SCREEN_HEIGHT);
 	WPAD_SetIdleTimeout(300);
-
+	
+	// Wii Power/Reset buttons
+	WPAD_SetPowerButtonCallback((WPADShutdownCallback)ShutdownCB);
+	SYS_SetPowerCallback(ShutdownCB);
+	//SYS_SetResetCallback(ResetCB);
+	
 #endif
 
     if ( SDL_Init( SDL_INIT_VIDEO | SDL_INIT_TIMER  ) < 0 ) {
