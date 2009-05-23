@@ -410,6 +410,9 @@ void check_keys()
     }
 
     if (g_real_keys[SDLK_DOWN]) {
+
+        mute ? mute = false : 0;
+
         mp3_volume-=4;
         mp3_volume <= 0 ? mp3_volume = 0 : 0;
 #ifdef _WII_
@@ -418,11 +421,15 @@ void check_keys()
         g_vol_lasttime = get_tick_count();
     }
     if (g_real_keys[SDLK_UP]) {
+
+        mute ? mute = false : 0;
+
         mp3_volume+=4;
         mp3_volume >= 255 ? mp3_volume = 255 : 0;
 #ifdef _WII_
         MP3Player_Volume(mp3_volume);
 #endif
+
         g_vol_lasttime = get_tick_count();
     }
 
@@ -684,12 +691,12 @@ int main(int argc, char **argv)
 	WPAD_SetDataFormat(WPAD_CHAN_ALL, WPAD_FMT_BTNS_ACC_IR);
     WPAD_SetVRes(WPAD_CHAN_ALL, SCREEN_WIDTH, SCREEN_HEIGHT);
 	WPAD_SetIdleTimeout(300);
-	
+
 	// Wii Power/Reset buttons
 	WPAD_SetPowerButtonCallback((WPADShutdownCallback)ShutdownCB);
 	SYS_SetPowerCallback(ShutdownCB);
 	//SYS_SetResetCallback(ResetCB);
-	
+
 #endif
 
     if ( SDL_Init( SDL_INIT_VIDEO | SDL_INIT_TIMER  ) < 0 ) {

@@ -76,6 +76,7 @@ enum _visuals
 {
   V_BARS = 0,
   V_OSC,
+  V_TUNNEL,
   MAX_VISUALS
 };
 extern Uint8 *		g_nKetStatus;
