@@ -10,16 +10,41 @@ class visualizer
     int             peakResults[MAX_FFT_RES];
     int             fft_results[MAX_FFT_RES];
 
-    visualizer(fft* p_f) : f(p_f)
+    // tunnel effect
+    bool            tunnel_loaded;
+    SDL_Surface*    tun_text;
+    #define texWidth 256
+    #define texHeight 256
+    #define DRAW_WIDTH (SCREEN_WIDTH/2)
+    #define DRAW_HEIGHT (SCREEN_HEIGHT/2)
+
+    int* texture;
+    int* distanceTable;
+    int angleTable[DRAW_WIDTH*2][DRAW_HEIGHT*2];
+
+    visualizer(fft* p_f) : f(p_f), tunnel_loaded(false), texture(0), distanceTable(0)
     {
          loopi(MAX_FFT_RES) {
             fft_results[i] = 0;
             peakResults[i] = 0;
         }
 
+        texture = new int[texWidth*texHeight];
+        if (!texture) exit(0);
+
+        distanceTable = new int[(DRAW_WIDTH*2)*(DRAW_HEIGHT*2)];
+        if (!distanceTable) exit(0);
+
     };
 
-    ~visualizer() {};
+    ~visualizer()
+    {
+        delete [] distanceTable;
+        distanceTable = 0;
+
+        delete [] texture;
+        texture = 0;
+    };
 
     void draw_visuals(SDL_Surface* s,int number)
     {
@@ -28,38 +53,32 @@ class visualizer
         int bar_height = 300;
         int bar_width = SCREEN_WIDTH / MAX_FFT_RES;
         double percent = ((double)bar_height / (double)32767);
-        int local_fft[MAX_FFT_RES];
         int sx,sy;
-        int leftzerolevel = (SCREEN_HEIGHT/2-10)/2;
-//        int rightzerolevel = SCREEN_HEIGHT/2+10+leftzerolevel;
+        int zerolevel = (SCREEN_HEIGHT/2-10);
         int len = (8192/4) - 1;
         int ii;
         double ts = static_cast<double>(SCREEN_WIDTH)/static_cast<double>(len/2);
-//        int max = 20;
- //       int min = 0;
-        double dRangePerStep = 20;
-        double timescale = leftzerolevel/dRangePerStep;
+        double range = 20;
+        double timescale = zerolevel/range;
 
         switch(number)
         {
             case V_BARS:
 
-            loopi(MAX_FFT_RES) local_fft[i] = fft_results[i]; //could change as this is set via callback
+
             loopi(MAX_FFT_RES)
             {
                 // peak
                 peakResults[i] -= (32767 / bar_height) * 4;
 
                 if(peakResults[i] < 0) peakResults[i] = 0;
-                if(peakResults[i] < local_fft[i]) peakResults[i] = local_fft[i];
+                if(peakResults[i] < fft_results[i]) peakResults[i] = fft_results[i];
 
                 int peaks_newy = (y - (int)(percent * (double)peakResults[i]));
 
                 //fft
-                int newY = (y - (int)(percent * (double)local_fft[i]));
+                int newY = (y - (int)(percent * (double)fft_results[i]));
                 int h = abs(y - newY);
-
-
 
                 //draw
                 draw_rect(s,x+i*bar_width,newY,bar_width-4,h,0xcc0022 +  i*10 );
@@ -70,11 +89,11 @@ class visualizer
             case V_OSC:
 
                 sx = 0;
-                sy = leftzerolevel;
-                for(ii=20; ii<len-1; ii+=1)
+                sy = zerolevel;
+                for(ii=0; ii<len-1; ii+=1)
                 {
                     x = (int)((double)ii*ts);
-                    y = (int)((double)leftzerolevel - (short)(f->real[ii])*timescale);
+                    y = (int)((double)zerolevel - (short)(f->real[ii])*timescale);
 
                     bresenham_line(s,x,y,sx,sy,0xffffffff);
 
@@ -84,23 +103,12 @@ class visualizer
 
 
             break;
+            case V_TUNNEL:
+                tunnel_effect(s);
+
 
         };
 
-		/*sx = 0;
-		sy = rightzerolevel;
-
-		for(ii=0; ii<len; ii++)
-		{
-			x= (int)(ii*ts);
-			y = (int)((double)rightzerolevel - (short)(vis->real[ii])*timescale);
-
-			bresenham_line(sx,sy,x,y,0xffffffff);
-            sy = y;
-            sx = x;
-		}*/
-
-		//
 
 		/*for(ii=0; ii<len-1; ii+=2)
 		{
@@ -116,6 +124,65 @@ class visualizer
 
     };
 
+
+    // tunnel effects
+    void load_tunnel_text()
+    {
+        tun_text = tx->texture_lookup("imgs/tunnelstonetex.bmp");
+        BYTE * thepixels = (BYTE*)tun_text->pixels;
+
+        for(int x = 0; x < texWidth; x++)
+        {
+            for(int y = 0; y < texHeight; y++)
+            {
+                texture[x+(y*texWidth)] = ((*thepixels++) << 24) + ((*thepixels++) << 16) + ((*thepixels++) << 8) + 0xff;//t;
+            }
+        }
+        for(int x = 0; x < DRAW_WIDTH*2; x++)
+        for(int y = 0; y < DRAW_HEIGHT*2; y++)
+        {
+            int angle, distance;
+            float ratio = 32.0;
+
+            distance = int(ratio * texHeight / sqrt(float((x - DRAW_WIDTH) * (x - DRAW_WIDTH) + (y - DRAW_HEIGHT) * (y - DRAW_HEIGHT)))) % texHeight;
+            angle = (unsigned int)(0.5 * texWidth * atan2(float(y - DRAW_HEIGHT), float(x - DRAW_WIDTH)) / 3.1416);
+            distanceTable[x+(y*(DRAW_WIDTH*2))] = distance;
+            angleTable[x][y] = angle;
+
+        }
+
+        tunnel_loaded = true;
+    };
+
+    void tunnel_effect(SDL_Surface* s)
+    {
+        if (!tunnel_loaded) load_tunnel_text();
+
+        float animation =  ((float)fft_results[5] / 10.0) + (get_tick_count() / 1000.0);
+        int tex_width = texWidth;
+        int tex_height = texHeight;
+
+        int shiftX = int(tex_width * 1.0 * animation);
+        int shiftY = int(tex_height * 0.15 * animation);
+
+
+        int shiftLookX = DRAW_WIDTH / 2 + int(DRAW_WIDTH / 2 * sin(animation));
+        int shiftLookY = DRAW_HEIGHT / 2 + int(DRAW_HEIGHT / 2 * sin(animation * 2.0));
+
+        unsigned long color = 0;
+        for(int x = 0; x < DRAW_WIDTH; x++)
+        {
+            for(int y = 0; y < DRAW_HEIGHT; y++)
+            {
+                color = texture[((unsigned int)(distanceTable[(x + shiftLookX)+((y + shiftLookY)*(2*DRAW_WIDTH))] + shiftX)  % texWidth)+
+                               (((unsigned int)(angleTable[x + shiftLookX][y + shiftLookY]+ shiftY) % texHeight)*texWidth)];
+
+
+                pixelColor(s,x,y,color);
+            }
+        }
+
+    }
 
 
     void bresenham_line(SDL_Surface* s,int x1, int y1, int x2, int y2,unsigned long color)
