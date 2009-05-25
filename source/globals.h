@@ -77,6 +77,7 @@ enum _visuals
   V_BARS = 0,
   V_OSC,
   V_TUNNEL,
+  V_FIRE,
   MAX_VISUALS
 };
 extern Uint8 *		g_nKetStatus;
@@ -134,6 +135,7 @@ extern void delete_playlist(int);
 #define loopj(m) loop(j,m)
 #define bloopj(m) bloop(j,m)
 #define CLIP(mx,x)  x>mx ? (mx) : x < 0 ? (0) : (x);
+
 
 extern void connect_to_stream(int,bool);
 extern void search_genre(char*);
