@@ -411,7 +411,7 @@ void check_keys()
 
     if (g_real_keys[SDLK_DOWN]) {
 
-        mute ? mute = false : 0;
+        mute = false;
 
         mp3_volume-=4;
         mp3_volume <= 0 ? mp3_volume = 0 : 0;
@@ -422,7 +422,7 @@ void check_keys()
     }
     if (g_real_keys[SDLK_UP]) {
 
-        mute ? mute = false : 0;
+        mute = false;
 
         mp3_volume+=4;
         mp3_volume >= 255 ? mp3_volume = 255 : 0;
