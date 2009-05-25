@@ -13,12 +13,13 @@ class visualizer
     // tunnel effect
     bool            tunnel_loaded;
     SDL_Surface*    tun_text;
+    SDL_Surface*    vis_surface;
     #define texWidth 256
     #define texHeight 256
     #define DRAW_WIDTH (SCREEN_WIDTH/2)
     #define DRAW_HEIGHT (SCREEN_HEIGHT/2)
 
-    int* texture;
+    unsigned int* texture;
     int* distanceTable;
     int angleTable[DRAW_WIDTH*2][DRAW_HEIGHT*2];
 
@@ -29,11 +30,29 @@ class visualizer
             peakResults[i] = 0;
         }
 
-        texture = new int[texWidth*texHeight];
+        texture = new unsigned int[texWidth*texHeight];
         if (!texture) exit(0);
 
         distanceTable = new int[(DRAW_WIDTH*2)*(DRAW_HEIGHT*2)];
         if (!distanceTable) exit(0);
+
+        // surface for visuals
+        Uint32 rmask, gmask, bmask, amask;
+
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+        rmask = 0x00ff0000;
+        gmask = 0x0000ff00;
+        bmask = 0x000000ff;
+        amask = 0x00000000;
+#else
+        rmask = 0x00ff0000;
+        gmask = 0x0000ff00;
+        bmask = 0x000000ff;
+        amask = 0x00000000;
+#endif
+
+        vis_surface = SDL_CreateRGBSurface(SDL_SWSURFACE,SCREEN_WIDTH,SCREEN_HEIGHT,BITDEPTH,
+                                          rmask, gmask, bmask,amask);
 
     };
 
@@ -44,6 +63,8 @@ class visualizer
 
         delete [] texture;
         texture = 0;
+
+        SDL_FreeSurface(vis_surface);
     };
 
     void draw_visuals(SDL_Surface* s,int number)
@@ -61,29 +82,34 @@ class visualizer
         double range = 20;
         double timescale = zerolevel/range;
 
+        draw_rect(vis_surface,0,0,SCREEN_WIDTH,SCREEN_HEIGHT,0); // clear backbuffer
+
         switch(number)
         {
             case V_BARS:
 
 
-            loopi(MAX_FFT_RES)
-            {
-                // peak
-                peakResults[i] -= (32767 / bar_height) * 4;
+                loopi(MAX_FFT_RES)
+                {
+                    // peak
+                    peakResults[i] -= (32767 / bar_height) * 4;
 
-                if(peakResults[i] < 0) peakResults[i] = 0;
-                if(peakResults[i] < fft_results[i]) peakResults[i] = fft_results[i];
+                    if(peakResults[i] < 0) peakResults[i] = 0;
+                    if(peakResults[i] < fft_results[i]) peakResults[i] = fft_results[i];
 
-                int peaks_newy = (y - (int)(percent * (double)peakResults[i]));
+                    int peaks_newy = (y - (int)(percent * (double)peakResults[i]));
 
-                //fft
-                int newY = (y - (int)(percent * (double)fft_results[i]));
-                int h = abs(y - newY);
+                    //fft
+                    int newY = (y - (int)(percent * (double)fft_results[i]));
+                    int h = abs(y - newY);
 
-                //draw
-                draw_rect(s,x+i*bar_width,newY,bar_width-4,h,0xcc0022 +  i*10 );
-                draw_rect(s,x+i*bar_width,peaks_newy,bar_width-4,5,0xcc0022 + i*10 << 16 );
-            }
+                    //draw
+                    draw_rect(vis_surface,x+i*bar_width,newY,bar_width-4,h,0xcc0022 +  i*10 );
+                    draw_rect(vis_surface,x+i*bar_width,peaks_newy,bar_width-4,5,0xcc0022 + i*10 << 16 );
+                }
+
+                SDL_BlitSurface(vis_surface,0,s,0);
+
             break;
 
             case V_OSC:
@@ -95,16 +121,19 @@ class visualizer
                     x = (int)((double)ii*ts);
                     y = (int)((double)zerolevel - (short)(f->real[ii])*timescale);
 
-                    bresenham_line(s,x,y,sx,sy,0xffffffff);
+                    bresenham_line(x,y,sx,sy,0xffffffff);
 
                     sy = y;
                     sx = x;
                 }
 
-
+                SDL_BlitSurface(vis_surface,0,s,0);
             break;
             case V_TUNNEL:
-                tunnel_effect(s);
+                tunnel_effect();
+                SDL_Rect sr = {0,0,SCREEN_WIDTH/2,SCREEN_HEIGHT/2};
+                SDL_SoftStretch(vis_surface,&sr,s,0);
+            break;
 
 
         };
@@ -128,14 +157,27 @@ class visualizer
     // tunnel effects
     void load_tunnel_text()
     {
-        tun_text = tx->texture_lookup("imgs/tunnelstonetex.bmp");
+        tun_text = tx->texture_lookup("imgs/test1.png");
         BYTE * thepixels = (BYTE*)tun_text->pixels;
-
+        unsigned int r = 0;
+        unsigned int g = 0;
+        unsigned int b = 0;
+        unsigned int u = 0;
         for(int x = 0; x < texWidth; x++)
         {
             for(int y = 0; y < texHeight; y++)
             {
-                texture[x+(y*texWidth)] = ((*thepixels++) << 24) + ((*thepixels++) << 16) + ((*thepixels++) << 8) + 0xff;//t;
+                r = *thepixels++;
+                g = *thepixels++;
+                b = *thepixels++;
+
+                u = (r << 8);
+                u += (g << 16);
+                u += (b << 24);
+                u += 0xff; // no alpha
+
+                texture[x+(y*texWidth)] = u;
+
             }
         }
         for(int x = 0; x < DRAW_WIDTH*2; x++)
@@ -154,11 +196,11 @@ class visualizer
         tunnel_loaded = true;
     };
 
-    void tunnel_effect(SDL_Surface* s)
+    void tunnel_effect()
     {
         if (!tunnel_loaded) load_tunnel_text();
 
-        float animation =  ((float)fft_results[5] / 10.0) + (get_tick_count() / 1000.0);
+        float animation =  (get_tick_count() / 1000.0);
         int tex_width = texWidth;
         int tex_height = texHeight;
 
@@ -169,7 +211,7 @@ class visualizer
         int shiftLookX = DRAW_WIDTH / 2 + int(DRAW_WIDTH / 2 * sin(animation));
         int shiftLookY = DRAW_HEIGHT / 2 + int(DRAW_HEIGHT / 2 * sin(animation * 2.0));
 
-        unsigned long color = 0;
+        unsigned int color = 0;
         for(int x = 0; x < DRAW_WIDTH; x++)
         {
             for(int y = 0; y < DRAW_HEIGHT; y++)
@@ -178,14 +220,14 @@ class visualizer
                                (((unsigned int)(angleTable[x + shiftLookX][y + shiftLookY]+ shiftY) % texHeight)*texWidth)];
 
 
-                pixelColor(s,x,y,color);
+                pixelColor(vis_surface,x,y,color);
             }
         }
 
     }
 
 
-    void bresenham_line(SDL_Surface* s,int x1, int y1, int x2, int y2,unsigned long color)
+    void bresenham_line(int x1, int y1, int x2, int y2,unsigned long color)
     {
         // clip
         x1 > SCREEN_WIDTH ? x1 = SCREEN_WIDTH : x1 < 0 ? x1 = 0 : 0;
@@ -201,7 +243,7 @@ class visualizer
         signed char ix = x2 > x1?1:-1;
         signed char iy = y2 > y1?1:-1;
 
-        pixelColor(s,x1,y1,color);
+        pixelColor(vis_surface,x1,y1,color);
 
         if (delta_x >= delta_y)
         {
@@ -224,7 +266,7 @@ class visualizer
                 x1 += ix;
                 error += delta_y;
 
-                pixelColor(s,x1,y1,color);
+                pixelColor(vis_surface,x1,y1,color);
             }
         }
         else
@@ -248,7 +290,7 @@ class visualizer
                 y1 += iy;
                 error += delta_x;
 
-                pixelColor(s,x1,y1,color);
+                pixelColor(vis_surface,x1,y1,color);
 
             }
         }
