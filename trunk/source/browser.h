@@ -2,11 +2,14 @@
 #include "station_cache.h"
 
 struct station_list {
-    station_list() :  station_name(0), station_playing(0), station_id(0),  codec_type(0), nextnode(0) {}
+    station_list() :    station_name(0), station_playing(0), station_id(0),  codec_type(0),
+                        nextnode(0) {}
     char* station_name; // name
     char* station_playing; // playing
     char* station_id; // url
-    char* codec_type;
+    int   codec_type;
+
+
     struct station_list *nextnode; // pointer to next
 };
 
@@ -15,8 +18,6 @@ class shoutcast_browser
     public:
 
     #define MAX_PAGE_SIZE   (200000)
-    #define SMALL_MEM       (255)
-    #define TINY_MEM        (50)
 
     station_list*   sl_first;
     station_list*   sl;
@@ -71,8 +72,6 @@ class shoutcast_browser
             clean_small_mem(sl_current->station_playing,SMALL_MEM);
             sl_current->station_id = new char[TINY_MEM];
             clean_small_mem(sl_current->station_id,TINY_MEM);
-            sl_current->codec_type = new char[TINY_MEM];
-            clean_small_mem(sl_current->codec_type,TINY_MEM);
         }
 
         return sl_current;
@@ -89,9 +88,6 @@ class shoutcast_browser
 
             delete [] sl_current->station_id;
             sl_current->station_id = 0;
-
-            delete [] sl_current->codec_type;
-            sl_current->codec_type = 0;
 
         }
     };
@@ -225,29 +221,69 @@ class shoutcast_browser
 
     };
 
+    int get_attrib_int(char* data,const char* attrib)
+    {
+        char* attrib_start = 0;
+        char* attrib_end = 0;
+        int max = 8;
+        char tmp_int[10] = {0};
+
+        attrib_start = strstr(data,attrib);
+        if (!attrib_start) return 0;
+
+        attrib_start += strlen(attrib);
+
+        attrib_end = strstr(attrib_start,"\"");
+        if (!attrib_end) return 0;
+
+        int cpy_len = attrib_end-attrib_start;
+        if (cpy_len>max)
+            memcpy(tmp_int,attrib_start,max);
+        else if (cpy_len==0) strcpy(tmp_int,"0");
+        else memcpy(tmp_int,attrib_start,cpy_len);
+
+        return atoi(tmp_int);
+
+    };
+
     void parse_page(char* data)
     {
         char* stream_pos = data;
+        char codec_tmp[TINY_MEM] = {0};
+        char name_tmp[SMALL_MEM] = {0};
 
-        sc_error = false;
+        sc_error = false; // set to false as we have a list of stations
+
 
         while(1) { // loop through the xml .... may take time, some return 1K items
+
+            memset(codec_tmp,0,TINY_MEM);
+            memset(name_tmp,0,SMALL_MEM);
 
             stream_pos = strstr(stream_pos,"<station name=\""); //class name we are looking for
             if (stream_pos)
             {
-                station_list* sl_new = new_sl_list();
-                if (!sl_new) return;
-                total_items++; //running count for validity check
 
-                stream_pos = get_attrib(stream_pos,"<station name=\"",sl_new->station_name,SMALL_MEM-1); //-1 for null terminator
+                stream_pos = get_attrib(stream_pos,"<station name=\"",name_tmp,SMALL_MEM-1); //-1 for null terminator
                 if (stream_pos) {
 
+                    get_attrib(stream_pos,"mt=\"",codec_tmp,TINY_MEM-1);//-1 for null terminator
                     // check it's a playable stream
-                    get_attrib(stream_pos,"mt=\"",sl_new->codec_type,TINY_MEM-1);//-1 for null terminator
-                    get_attrib(stream_pos,"ct=\"",sl_new->station_playing,TINY_MEM-1);//-1 for null terminator
-                    get_attrib(stream_pos,"id=\"",sl_new->station_id,TINY_MEM-1);//-1 for null terminator
 
+                    if (strstr(codec_tmp,"audio/mpeg") != 0)
+                    { // Only add MP3 streams to the browser
+                        station_list* sl_new = new_sl_list();
+                        if (!sl_new) return;
+                        total_items++; //running count for validity check
+
+                        strcpy(sl_new->station_name,name_tmp);
+                        get_attrib(stream_pos,"id=\"",sl_new->station_id,TINY_MEM-1);//-1 for null terminator
+                        get_attrib(stream_pos,"ct=\"",sl_new->station_playing,TINY_MEM-1);//-1 for null terminator
+
+                        // just set to zero right now, when more codecs are supported we can do something with this
+                        sl_new->codec_type = 0;
+
+                    }
 
 
                     stream_pos = strstr(stream_pos,"</station>");

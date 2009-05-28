@@ -63,6 +63,7 @@ class gui {
     SDL_Surface*    vol_bg;
     SDL_Surface*    vol_ol;
     SDL_Surface*    dialog;
+    SDL_Surface*    mute_img;
 
     int             genre_selected;
 
@@ -102,6 +103,10 @@ class gui {
         // --- Diaglog bg
         dialog = tx->texture_lookup("imgs/dialog.png");
         // ----- bottom of screen
+
+        // --- Mute image
+        mute_img = tx->texture_lookup("imgs/mute.png");
+
 
         //more
         buttons[BTN_NEXT] = new gui_button(guibuffer,f,344,390,82,51,NULL,0,false);
@@ -294,7 +299,7 @@ class gui {
 
                         if (buttons[i+BTN_FAVS_1]->hit_test(events->motion.x,events->motion.y,j)==B_CLICK) {
                             int connect = i + pls_display;
-                            if (connect>= total_num_playlists)
+                            if (connect>= total_num_playlists || connect < 0)
                                 return 0;
 
                             connect_to_stream(connect,true);
@@ -522,7 +527,7 @@ class gui {
 
             if (g_screen_status == S_STREAM_INFO)
             {
-                draw_stream_details();
+                draw_stream_details(ic);
             }
 
 
@@ -563,22 +568,23 @@ class gui {
         fade(guibuffer,SDL_MapRGB(guibuffer->format,0,0,0),100);
         SDL_Rect t = {48,(400 / 2) - (info_dlg->h / 2),info_dlg->w,info_dlg->h};
         SDL_BlitSurface(dialog,0, guibuffer,&t);
-        fnts->text(guibuffer,"WiiRadio, Version 0.3.",t.x + 134,t.y + 45,0);
+        fnts->text(guibuffer,make_string((char*)"WiiRadio, Version %.1f",VERSION_NUMBER),t.x + 134,t.y + 45,0);
         fnts->text(guibuffer,"By Scanff And TiMeBoMb",t.x + 134,t.y + 72,0);
 
         buttons[BTN_QUIT]->draw();
         buttons[BTN_RETURN]->draw();
     };
 
-    void draw_stream_details()
+    void draw_stream_details(icy* ic)
     {
         fnts->change_color(60,60,60);
+        fnts->set_size(FS_SMALL);
         fade(guibuffer,SDL_MapRGB(guibuffer->format,0,0,0),100);
         SDL_Rect t = {48,(400 / 2) - (info_dlg->h / 2),info_dlg->w,info_dlg->h};
         SDL_BlitSurface(dialog,0, guibuffer,&t);
-        fnts->text(guibuffer,"Title:",t.x + 35,t.y + 38,0);
-        fnts->text(guibuffer,"URL:",t.x + 35,t.y + 68,0);
-        fnts->text(guibuffer,"Bit Rate:",t.x + 35,t.y + 98,0);
+        fnts->text(guibuffer,make_string((char*)"Title: %s...", trim_string(ic->icy_name,60)),t.x + 35,t.y + 38,0);
+        fnts->text(guibuffer,make_string((char*)"URL: %s",ic->icy_url),t.x + 35,t.y + 68,0);
+        fnts->text(guibuffer,make_string((char*)"Bit Rate: %dKbps",ic->icy_br),t.x + 35,t.y + 98,0);
 
     };
 
@@ -586,23 +592,24 @@ class gui {
     {
         if (mute) // alway show if muted
         {
-            draw_rect(guibuffer,10,45,95,55,0);
-            fnts->change_color(200,60,60);
-            fnts->set_size(FS_LARGE);
-            fnts->text(guibuffer,"MUTE",20,50,0);
+            SDL_Rect d = {20,50,mute_img->w,mute_img->h};
+            SDL_BlitSurface(mute_img,0, guibuffer,&d);
         }
 
         if((get_tick_count() - g_vol_lasttime) < 2000) // show for 2 secs after change
         {
-            SDL_Rect r = { 80,(440 / 2) - (vol_bg->h / 2),vol_bg->w,vol_bg->h };
+            SDL_Rect r = { (640 / 2) - (vol_bg->w / 2),(440 / 2) - (vol_bg->h / 2),vol_bg->w,vol_bg->h };
+
             // bg
             SDL_BlitSurface( vol_bg,0, guibuffer,&r);
+
             // actual volume bar
             int pc =  (int)(((float)mp3_volume / 255.0) * (float)vol_ol->w);
 
             pc > vol_ol->w ? pc = vol_ol->w : pc < 0 ? pc = 0 : 0; // clip
 
             // overlay
+            r.x += 18;
             SDL_Rect s = { 0,0, pc,vol_ol->h };
             SDL_BlitSurface( vol_ol,&s, guibuffer,&r);
         }

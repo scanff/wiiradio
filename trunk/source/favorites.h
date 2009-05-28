@@ -7,17 +7,17 @@
 struct fav_item {
     fav_item() {
         nextnode = 0;
-        memset(station_name,0,255);
-        memset(station_url,0,255);
-        memset(station_path,0,100);
-        memset(file_name,0,255);
+        memset(station_name,0,SMALL_MEM);
+        memset(station_url,0,SMALL_MEM);
+        memset(station_path,0,SMALL_MEM);
+        memset(file_name,0,SMALL_MEM);
         port=0;
     };
 
-    char station_name[255]; // name
-    char station_url[255]; // playing
-    char station_path[100]; // playing
-    char file_name[255]; // file
+    char station_name[SMALL_MEM]; // name
+    char station_url[SMALL_MEM]; // playing
+    char station_path[SMALL_MEM]; // playing
+    char file_name[SMALL_MEM]; // file
     int port;
 
     struct fav_item *nextnode; // pointer to next

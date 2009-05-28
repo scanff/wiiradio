@@ -101,6 +101,37 @@ char* make_path(const char* path_rel)
 #endif
 
 }
+char* trim_string(char*, int);
+char* trim_string(char* s, int n_len)
+{
+    int c_len = strlen(s);
+    static char new_string[256] = {0};
+
+    if (n_len > 256) return s;
+
+    if(c_len > n_len)
+    {
+        memcpy(new_string,s,n_len);
+        return new_string;
+    }
+
+    return s;
+}
+
+char* make_string(char*,...);
+char* make_string(char* s ,...)
+{
+    static char buffer[256] = {0};
+
+    va_list args;
+    va_start (args, s);
+    vsprintf (buffer,s, args);
+    va_end (args);
+
+    return buffer;
+
+}
+
 void draw_rect(SDL_Surface*,int,int,int,int,unsigned long);
 void draw_rect(SDL_Surface* s,int x,int y, int w, int h,unsigned long color)
 {
@@ -289,13 +320,6 @@ void connect_to_stream(int value,bool haveplaylist)
             return;
         }
 
-        // ensure we can playback this stream
-        if (strstr(csl->codec_type,"audio/mpeg") == 0) {
-            status = FAILED;
-            g_pause_draw = false;
-            return;
-        }
-
         // get playlists
         playlst->get_playlist(csl->station_id);
         playlst->parse_playlist();
@@ -305,11 +329,11 @@ void connect_to_stream(int value,bool haveplaylist)
         path = playlst->first_entry->path;
 
         //save to the now playing mem
-        //memcpy(playing,csl,sizeof(struct station_list));
         strcpy(playing->station_name,csl->station_name);
         strcpy(playing->station_url,url);
         strcpy(playing->station_path,path);
         playing->port = port;
+
 
     }else{
         // play from playlst file
@@ -336,7 +360,6 @@ void connect_to_stream(int value,bool haveplaylist)
         strcpy(playing->station_url,url);
         strcpy(playing->station_path,path);
         playing->port = port;
-
 
     }
 

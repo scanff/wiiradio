@@ -45,6 +45,7 @@ typedef int u32;
 
 #endif
 #include <math.h>
+#include <stdarg.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <SDL/SDL.h>
@@ -104,6 +105,8 @@ extern SDL_Surface *screen;
 extern void draw_rect(SDL_Surface*,int,int,int,int,unsigned long);
 extern void menu_button_click(int);
 extern void delete_playlist(int);
+extern char* make_string(char*,...);
+extern char* trim_string(char*, int);
 
 #define K_UP_1      SDLK_UP
 #define K_DOWN_1    SDLK_DOWN
@@ -121,16 +124,19 @@ extern void delete_playlist(int);
 #define SCREEN_WIDTH    (640)
 #define SCREEN_HEIGHT   (480)
 #define FONT_SIZE       (32)//(40)
-#define VERSION_NUMBER  (0.3)
+#define VERSION_NUMBER  (0.4)
 #define VERSION_NAME    ("Version")
 #define BITDEPTH        (24)
 #define TIME_OUT_MS     (5000)
 #define SC_DOWN         ("503 Service Temporarily Unavailable")
 #define MAX_BUTTONS     (4)
 #define MAX_FFT_RES     (16)
+#define SMALL_MEM       (255)
+#define TINY_MEM        (50)
+
+// macros
 #define loop(v,m) for(int v = 0; v<int(m); v++)
 #define bloop(v,m) for(int v = int(m)-1; v>=0; v--)
-
 #define loopi(m) loop(i,m)
 #define loopj(m) loop(j,m)
 #define bloopj(m) bloop(j,m)
