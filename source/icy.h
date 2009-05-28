@@ -17,18 +17,16 @@ class icy {
     public:
 
         // icy header/metadata
-        char            icy_notice1[255]; // notice 1
-        char            icy_notice2[255]; // notice 2
-        char            icy_name[255]; // station name
-        char            icy_genre[255]; // station genre
-        char            icy_url[255]; // url
-        char            content_type[255]; // type
+        char            icy_notice1[SMALL_MEM]; // notice 1
+        char            icy_notice2[SMALL_MEM]; // notice 2
+        char            icy_name[SMALL_MEM]; // station name
+        char            icy_genre[SMALL_MEM]; // station genre
+        char            icy_url[SMALL_MEM]; // url
+        char            content_type[SMALL_MEM]; // type
         int             icy_pub; // public
         unsigned int    icy_metaint; // metaint .. very important
         int             icy_br; // bitrate
-        //char            stream_title[50]; // stream title
-        //char            stream_url[255]; // stream url
-        char            track_title[128]; // track info
+        char            track_title[SMALL_MEM]; // track info
 
         // vars
         unsigned long   metaint_pos;
@@ -65,12 +63,14 @@ class icy {
             buffers_recvd(0),
             buffers_sent(0)
     {
-        memset(track_title,0,128);
+        memset(track_title,0,SMALL_MEM);
         buffer = new char[buffer_size];
         if(!buffer) exit(0);
 
         memset(buffer,0,buffer_size);
         memset(metaint_buffer,0,MAX_METADATA_SIZE);
+
+        clean_icy_data();
     };
 
     ~icy()
@@ -79,10 +79,25 @@ class icy {
         buffer = 0;
     };
 
+    // clean all the variables on new connect
+    void clean_icy_data()
+    {
+        memset(icy_notice1,0,SMALL_MEM);
+        memset(icy_notice2,0,SMALL_MEM);
+        memset(icy_name,0,SMALL_MEM);
+        memset(icy_genre,0,SMALL_MEM);
+        memset(icy_url,0,SMALL_MEM);
+        memset(track_title,0,SMALL_MEM);
+
+        icy_pub = 0;
+        icy_br = 0;
+
+    }
+
     void icy_reset()
     {
         memset(buffer,0,buffer_size);
-        memset(track_title,0,128);
+        memset(track_title,0,SMALL_MEM);
         metaint_pos = 0;
         looking_for_header = true;
 
@@ -104,6 +119,8 @@ class icy {
         char* start = 0;
         char* end = 0;
         char tmp[10] = {0};
+
+        clean_icy_data();
 
         loopi(ICY_META_MAX)
         {
@@ -173,8 +190,8 @@ class icy {
             title_start += strlen("StreamTitle='");
             title_end = strstr(title_start,"';");
             if(title_end) {
-                memset(track_title,0,128);
-                memcpy(track_title,title_start,(title_end-title_start)>127 ? 127 : (title_end-title_start)); //127 for NULL term
+                memset(track_title,0,SMALL_MEM);
+                memcpy(track_title,title_start,(title_end-title_start)>SMALL_MEM-1 ? SMALL_MEM-1 : (title_end-title_start)); //127 for NULL term
                 memset(metaint_buffer,0,MAX_METADATA_SIZE); // clear the holding metadata buffer
 
             }
