@@ -134,7 +134,7 @@ extern char* trim_string(char*, int);
 #define MAX_FFT_RES     (16)
 #define SMALL_MEM       (255)
 #define TINY_MEM        (50)
-
+#define SCREEN_SAVE     (1000*300) //5 mins
 // macros
 #define loop(v,m) for(int v = 0; v<int(m); v++)
 #define bloop(v,m) for(int v = int(m)-1; v>=0; v--)

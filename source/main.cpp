@@ -43,6 +43,7 @@ int         mp3_volume;
 bool        visualize;
 int         visualize_number;
 bool        mute;
+Uint64      last_button_time;
 
 texture_cache*      tx;
 SDL_Surface*        screen;
@@ -56,6 +57,8 @@ fft*                fourier;
 favorites*          favs;
 fav_item*           playing; // make now playing as fav struct so we can access the ip/name quickly
 visualizer*         visuals;
+
+
 
 #ifdef _WII_
 //    ir_t  ir; //wii mote
@@ -395,6 +398,30 @@ void connect_to_stream(int value,bool haveplaylist)
     g_pause_draw = false;
 }
 
+bool screen_sleeping = false;
+void screen_timeout()
+{
+    // auto burnin reducer if there not viewing a visual
+    loopi(MAX_KEYS) {
+        if (g_real_keys[i]) last_button_time = get_tick_count();
+    }
+
+    if (get_tick_count() - last_button_time > SCREEN_SAVE)
+        screen_sleeping = true;
+    else if (screen_sleeping) {
+        screen_sleeping = false;
+        visualize = false;
+        visualize_number = 0; //reset
+    }
+
+
+    if (!visualize && screen_sleeping)
+    {
+        visualize_number = MAX_VISUALS;
+        visualize = true;
+    }
+}
+
 void check_keys()
 {
     if (g_real_keys[SDLK_1] && !g_keys_last_state[SDLK_1])
@@ -402,6 +429,8 @@ void check_keys()
         if (g_screen_status != S_STREAM_INFO)
             g_screen_status = S_STREAM_INFO;
         else g_screen_status = S_BROWSER;
+
+
     }
 
     if (g_real_keys[SDLK_ESCAPE] && !g_keys_last_state[SDLK_ESCAPE])
@@ -528,6 +557,8 @@ void check_keys()
             ui->reset_scrollings();
         }
     }
+
+    screen_timeout();
 }
 
 
@@ -705,6 +736,7 @@ int main(int argc, char **argv)
     g_vol_lasttime = 0;
     visualize_number = 0;
     mute = false;
+    last_button_time = get_tick_count();
 
 #ifdef _WII_
 	fullscreen = 1;
@@ -713,7 +745,7 @@ int main(int argc, char **argv)
 	WPAD_Init();
 	WPAD_SetDataFormat(WPAD_CHAN_ALL, WPAD_FMT_BTNS_ACC_IR);
     WPAD_SetVRes(WPAD_CHAN_ALL, SCREEN_WIDTH, SCREEN_HEIGHT);
-	WPAD_SetIdleTimeout(300);
+	WPAD_SetIdleTimeout(200);
 
 	// Wii Power/Reset buttons
 	WPAD_SetPowerButtonCallback((WPADShutdownCallback)ShutdownCB);
