@@ -287,8 +287,12 @@ class icy {
                 buffered -= remove;
                 metaint_pos-=remove;
 
+                pre_buffer = ((icy_br * 5) * 1000) / 8; // should be 5 seconds of buffering
+
+                looking_for_header = false;
+
             }
-            looking_for_header = false;
+
         }
 
         if (buffered >= pre_buffer) bufferring = false; // got enough data, change the state to allow playback
