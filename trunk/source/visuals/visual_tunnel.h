@@ -6,7 +6,6 @@ class vis_tunnel {
 
     fft*            f;
     bool            tunnel_loaded;
-    SDL_Surface*    tun_text;
 
     #define texWidth 256
     #define texHeight 256
@@ -17,7 +16,7 @@ class vis_tunnel {
     int* distanceTable;
     int angleTable[(SCREEN_WIDTH/2)*2][(SCREEN_HEIGHT/2)*2];
 
-    vis_tunnel(fft* _f) : f(_f), tunnel_loaded(false), tun_text(0),texture(0), distanceTable(0)
+    vis_tunnel(fft* _f) : f(_f), tunnel_loaded(false), texture(0), distanceTable(0)
     {
         DRAW_WIDTH = SCREEN_WIDTH / 2;
         DRAW_HEIGHT = SCREEN_HEIGHT / 2;
@@ -41,37 +40,13 @@ class vis_tunnel {
         delete [] texture;
         texture = 0;
 
-        if(tun_text)
-            SDL_FreeSurface(tun_text);
     };
 
       // tunnel effects
     void load_tunnel_text()
     {
         int x,y;
-        /*tun_text = IMG_Load(make_path("imgs/test1.png")); //don't add to cache!!!
-        BYTE * thepixels = (BYTE*)tun_text->pixels;
-        unsigned int r = 0;
-        unsigned int g = 0;
-        unsigned int b = 0;
-        unsigned int u = 0;
-        for(int x = 0; x < texWidth; x++)
-        {
-            for(int y = 0; y < texHeight; y++)
-            {
-                r = *thepixels++;
-                g = *thepixels++;
-                b = *thepixels++;
-                // shift values are correct for Wii
-                u = (r << 8);
-                u += (g << 16);
-                u += (b << 24);
-                u += 0xff; // no alpha
 
-                texture[x+(y*texWidth)] = u;
-
-            }
-        }*/
         //get peek
         int peak = 0;
         loopi((8192/4) - 1) f->real[i] > peak ? peak = (int)f->real[i] : 0;
@@ -87,7 +62,7 @@ class vis_tunnel {
         {
             for(y = 0; y < texHeight; y++)
             {
-                 color = hsl_rgba((x / 3), (int)(peak * 2.5), lmin(100, x * 2));
+                 color = hsl_rgba((x / 3), lmin(255,(int)(peak * 2.5)), lmin(100, x * 2));
                  if (   y < 10 || x < 10 ||  x > texWidth - 10 ||
                         y > texHeight - 10 || ((y > (texHeight/2)- 10)&& (y <(texHeight/2)+ 10))) texture[x+(y*texWidth)] = color;
                  else  if (rand()% 255 > 240) texture[x+(y*texWidth)] = color;

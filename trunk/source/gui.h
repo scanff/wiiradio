@@ -582,10 +582,10 @@ class gui {
         fade(guibuffer,SDL_MapRGB(guibuffer->format,0,0,0),100);
         SDL_Rect t = {48,(400 / 2) - (info_dlg->h / 2),info_dlg->w,info_dlg->h};
         SDL_BlitSurface(dialog,0, guibuffer,&t);
-        fnts->text(guibuffer,make_string((char*)"Title: %s...", trim_string(ic->icy_name,60)),t.x + 35,t.y + 38,0);
-        fnts->text(guibuffer,make_string((char*)"URL: %s",ic->icy_url),t.x + 35,t.y + 68,0);
-        fnts->text(guibuffer,make_string((char*)"Bit Rate: %dKbps",ic->icy_br),t.x + 35,t.y + 98,0);
-
+        fnts->text(guibuffer,make_string((char*)"Staion: %s", trim_string(ic->icy_name,50)),t.x + 35,t.y + 38,0);
+        fnts->text(guibuffer,make_string((char*)"Url: %s",ic->icy_url),t.x + 35,t.y + 58,0);
+        fnts->text(guibuffer,make_string((char*)"Bit Rate: %dKbps",ic->icy_br),t.x + 35,t.y + 78,0);
+        fnts->text(guibuffer,make_string((char*)"Playing: %s", trim_string(ic->track_title,50)),t.x + 35,t.y + 98,0);
     };
 
     void draw_volume()
