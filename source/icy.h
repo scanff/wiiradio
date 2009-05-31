@@ -124,7 +124,6 @@ class icy {
 
         loopi(ICY_META_MAX)
         {
-          //  char* a = icy_meta[i];
             start =  strstr(obj,icy_meta[i]);
             if (start) {
                 // find the end of this meta data

@@ -59,7 +59,8 @@ enum _status{
   STOPPED = 0,
   PLAYING,
   BUFFERING,
-  FAILED
+  FAILED,
+  CONNECTING
 };
 enum _screens{
   S_ALL = 0,
@@ -135,6 +136,8 @@ extern char* trim_string(char*, int);
 #define SMALL_MEM       (255)
 #define TINY_MEM        (50)
 #define SCREEN_SAVE     (1000*300) //5 mins
+
+#define MAX_STATION_CACHE (1000)
 // macros
 #define loop(v,m) for(int v = 0; v<int(m); v++)
 #define bloop(v,m) for(int v = int(m)-1; v>=0; v--)

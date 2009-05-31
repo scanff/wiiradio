@@ -59,12 +59,6 @@ fav_item*           playing; // make now playing as fav struct so we can access 
 visualizer*         visuals;
 
 
-
-#ifdef _WII_
-//    ir_t  ir; //wii mote
-#endif
-
-
 SDL_Event           event;
 
 unsigned long last_action;
@@ -75,15 +69,9 @@ FMOD_SOUND              *sound1 = 0 ;
 FMOD_CHANNEL            *channel1 = 0;
 FMOD_CREATESOUNDEXINFO  exinfo;
 
-#else
-#ifdef _WII_
-
-static	lwp_t critical_handle = (lwp_t)NULL;
-void *critical_thread (void *arg);
-
-
 #endif
-#endif
+
+int critical_thread (void *arg);
 
 // -- Functions
 
@@ -283,18 +271,18 @@ void connect_to_stream(int value,bool haveplaylist)
     char* url = 0;
     char* path = 0;
     int port;
-
+    char* host =  0;
+    char request[1024] = {0};
 
     g_pause_draw = true;
-
     //force a redraw before doing the costly connect
     draw_ui((char*)"Connecting..."); // need a state !!!
 
 
     if (connected)
     {
-        net->client_close();
         connected = 0;
+        net->client_close();
     }
 
     // stop mp3 if currently playing.
@@ -320,6 +308,7 @@ void connect_to_stream(int value,bool haveplaylist)
         }
         if (!csl) {
             g_pause_draw = false;
+            status = FAILED;
             return;
         }
 
@@ -351,6 +340,7 @@ void connect_to_stream(int value,bool haveplaylist)
         }
         if (!csl) {
             g_pause_draw = false;
+            status = FAILED;
             return;
         }
 
@@ -367,17 +357,16 @@ void connect_to_stream(int value,bool haveplaylist)
     }
 
 
-    char* host =  0;
-    char request[512] = {0};
-
     // reset icy state
     icy_info->icy_reset();
 
     // connect to new stream
-    connected = net->client_connect(url,port,TCP);
+    int connect_try = net->client_connect(url,port,TCP);
 
-    if (connected) // send stream request to the server
+    if (connect_try) // send stream request to the server
     {
+
+
         host = net->get_local_ip();
 
         //create the server request (to get the stream)
@@ -392,6 +381,7 @@ void connect_to_stream(int value,bool haveplaylist)
         int len_req = strlen(request);
         len_req = net->client_send(request,len_req);
 
+        connected = connect_try;
     }else status = FAILED;
 
 
@@ -426,9 +416,10 @@ void check_keys()
 {
     if (g_real_keys[SDLK_1] && !g_keys_last_state[SDLK_1])
     {
-        if (g_screen_status != S_STREAM_INFO)
-            g_screen_status = S_STREAM_INFO;
-        else g_screen_status = S_BROWSER;
+
+        if (g_screen_status != S_STREAM_INFO) {
+            if (!visualize) g_screen_status = S_STREAM_INFO;
+        }else if (g_screen_status == S_STREAM_INFO)  { g_screen_status = S_BROWSER; }
 
 
     }
@@ -499,7 +490,7 @@ void check_keys()
 
         if (g_screen_status == S_BROWSER)
         {
-            if (display_idx > 1000) return;
+            if (display_idx > MAX_STATION_CACHE) return;
             else display_idx += max_stations;
 
             ui->reset_scrollings();
@@ -625,11 +616,8 @@ s32 reader_callback(void *usr_data,void *cb,s32 len)
 }
 
 
-#ifdef _WII_
-void *critical_thread(void *arg) {
-#else
-void critical_thread(void *arg) {
-#endif
+int critical_thread(void *arg)
+{
     int len = 0;
     char* net_buffer = new char[2560];
     int errors = 0;
@@ -665,9 +653,11 @@ void critical_thread(void *arg) {
 				if(!MP3Player_IsPlaying())
 				{
                     //modified function
-					MP3Player_PlayFile(icy_info->buffer, reader_callback, 0, cb_fft);
-
-					status = PLAYING;
+					if(connected)
+                    {
+                        MP3Player_PlayFile(icy_info->buffer, reader_callback, 0, cb_fft);
+                        status = PLAYING;
+                    }
 				}
 #else
 
@@ -704,9 +694,7 @@ void critical_thread(void *arg) {
 
     delete [] net_buffer; net_buffer =0;
 
-	#ifdef _WII_
-		return NULL;
-	#endif
+    return 0;
 }
 
 #ifdef _WII_
@@ -796,11 +784,9 @@ int main(int argc, char **argv)
     get_favorites();
 	g_running = true;
 
-#ifdef _WII_
-	LWP_CreateThread(&critical_handle,	critical_thread,NULL, NULL, 2*2560, 100);
-#else
-    _beginthread(critical_thread,0,0);
-#endif
+    SDL_Thread *mainthread = 0;
+    mainthread = SDL_CreateThread(critical_thread,0);
+    if (!mainthread) exit(0);
 
 #ifdef _WII_
     ASND_Init();
@@ -892,7 +878,9 @@ int main(int argc, char **argv)
 
     }
 
-    Sleep(2000); // YUK ! wait for thread to end
+
+    SDL_WaitThread(mainthread, NULL);
+
     // clean up
     stop_playback();
 
