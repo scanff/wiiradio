@@ -27,6 +27,7 @@ class icy {
         unsigned int    icy_metaint; // metaint .. very important
         int             icy_br; // bitrate
         char            track_title[SMALL_MEM]; // track info
+        char            last_track_title[SMALL_MEM]; // track info - last
 
         // vars
         unsigned long   metaint_pos;
@@ -64,6 +65,8 @@ class icy {
             buffers_sent(0)
     {
         memset(track_title,0,SMALL_MEM);
+        strcpy(last_track_title,"last");
+
         buffer = new char[buffer_size];
         if(!buffer) exit(0);
 
@@ -88,6 +91,7 @@ class icy {
         memset(icy_genre,0,SMALL_MEM);
         memset(icy_url,0,SMALL_MEM);
         memset(track_title,0,SMALL_MEM);
+        strcpy(last_track_title,"last");
 
         icy_pub = 0;
         icy_br = 0;
@@ -98,6 +102,7 @@ class icy {
     {
         memset(buffer,0,buffer_size);
         memset(track_title,0,SMALL_MEM);
+        strcpy(last_track_title,"last");
         metaint_pos = 0;
         looking_for_header = true;
 

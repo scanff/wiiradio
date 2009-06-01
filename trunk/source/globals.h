@@ -134,6 +134,7 @@ extern char* trim_string(char*, int);
 #define MAX_BUTTONS     (4)
 #define MAX_FFT_RES     (16)
 #define SMALL_MEM       (255)
+#define MED_MEM         (1024)
 #define TINY_MEM        (50)
 #define SCREEN_SAVE     (1000*300) //5 mins
 

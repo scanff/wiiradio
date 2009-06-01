@@ -110,7 +110,7 @@ class playlists
     {
         memset(current_page,0,MAX_PLAYLIST_SIZE);
 
-        char request[255] = {0};
+
         char trailing_path[100] = {0};
 
         sprintf(trailing_path,"/sbin/tunein-station.pls?id=%s",path);
@@ -121,16 +121,8 @@ class playlists
 
         if (net->client_connect((char*)"yp.shoutcast.com",80,TCP)) {
 
-            sprintf(request,
-                    "GET %s HTTP/1.1\r\n"
-                    "Host: %s\r\n"
-                    "User-Agent: Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)\r\n"
-                    "Accept: */*\r\n"
-                    "Connection: Keep-Alive\r\n\r\n",
-                    trailing_path,"yp.shoutcast.com");
-
             // get the page !
-            if (net->client_send(request,strlen(request)))
+            if(net->send_http_request((char*)"GET",(char*)trailing_path,(char*)"yp.shoutcast.com"))
             {
                 int len = 1;
                 while(len > 0) {
