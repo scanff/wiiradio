@@ -214,6 +214,28 @@ class network : public dns
         net_close(connection_socket);
     }
 
+    // helper functions
+
+    int send_http_request(char* type, char* path, char* host)
+    {
+
+        char request[256] = {0};
+
+        //create the server request (to get the stream)
+         sprintf(request,
+                "%s %s HTTP/1.1\r\n"
+                "Host: %s\r\n"
+                "User-Agent: Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)\r\n"
+                "Accept: */*\r\n"
+                "Connection: Keep-Alive\r\n\r\n",
+                type,path,host/*"www.shoutcast.com"*/);
+
+
+        int len_req = strlen(request);
+        return client_send(request,len_req);
+
+    };
+
     // are we dealing with an ip or address
     char* address_to_ip(char* address_in)
     {

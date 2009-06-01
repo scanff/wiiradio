@@ -135,19 +135,10 @@ class shoutcast_browser
 
         if (refresh_genre_cache)
         {
-            char request[255] = {0};
 
             if (net->client_connect((char*)"www.shoutcast.com",80,TCP)) {
 
-                sprintf(request,
-                        "GET %s HTTP/1.1\r\n"
-                        "Host: %s\r\n"
-                        "User-Agent: Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)\r\n"
-                        "Accept: */*\r\n"
-                        "Connection: Keep-Alive\r\n\r\n",
-                        path,"www.shoutcast.com");
-
-                if (net->client_send(request,strlen(request)))
+                if(net->send_http_request((char*)"GET",(char*)path,(char*)"www.shoutcast.com"))
                 {
                     int len = 1;
                     unsigned long start_time = get_tick_count();

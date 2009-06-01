@@ -2,6 +2,7 @@
 #define _GUI_H_
 
 #include "gui_button.h"
+#include "covers.h"
 
 class gui {
     public:
@@ -67,7 +68,10 @@ class gui {
 
     int             genre_selected;
 
-    gui(fonts* f,visualizer* v) : fnts(f), vis(v), select_pos(0), row_height(30), start_y(70), genre_selected(0)
+    // download Album Art
+    covers*         cvrs;
+
+    gui(fonts* f,visualizer* v) : fnts(f), vis(v), select_pos(0), row_height(30), start_y(70), genre_selected(0), cvrs(0)
     {
         Uint32 rmask, gmask, bmask, amask;
 //for 24bit
@@ -87,6 +91,8 @@ class gui {
         guibuffer = SDL_CreateRGBSurface(SDL_SWSURFACE,SCREEN_WIDTH,SCREEN_HEIGHT,BITDEPTH,
                                           rmask, gmask, bmask,amask);
 
+        cvrs = new covers();
+        if (!cvrs) exit(0);
 
         loopi(BTN_MAX) buttons[i] = 0; // NULL
 
@@ -198,6 +204,9 @@ class gui {
             delete buttons[i];
             buttons[i] = 0;
         }
+
+        delete cvrs;
+        cvrs = 0;
     };
 
     void reset_scrollings()
@@ -580,12 +589,32 @@ class gui {
         fnts->change_color(60,60,60);
         fnts->set_size(FS_SMALL);
         fade(guibuffer,SDL_MapRGB(guibuffer->format,0,0,0),100);
-        SDL_Rect t = {48,(400 / 2) - (info_dlg->h / 2),info_dlg->w,info_dlg->h};
+
+        SDL_Rect t = {48,(400 / 2) - (dialog->h / 2),dialog->w,dialog->h};
+//        SDL_Rect rs = {0,0,dialog->w,dialog->h};
+       // SDL_SoftStretch(dialog,0,guibuffer,&t);
+
         SDL_BlitSurface(dialog,0, guibuffer,&t);
-        fnts->text(guibuffer,make_string((char*)"Staion: %s", trim_string(ic->icy_name,50)),t.x + 35,t.y + 38,0);
-        fnts->text(guibuffer,make_string((char*)"Url: %s",ic->icy_url),t.x + 35,t.y + 58,0);
+        fnts->text(guibuffer,make_string((char*)"Station: %s", trim_string(ic->icy_name,30)),t.x + 35,t.y + 38,0);
+        fnts->text(guibuffer,make_string((char*)"Url: %s",trim_string(ic->icy_url,30)),t.x + 35,t.y + 58,0);
         fnts->text(guibuffer,make_string((char*)"Bit Rate: %dKbps",ic->icy_br),t.x + 35,t.y + 78,0);
-        fnts->text(guibuffer,make_string((char*)"Playing: %s", trim_string(ic->track_title,50)),t.x + 35,t.y + 98,0);
+        fnts->text(guibuffer,make_string((char*)"Playing: %s", trim_string(ic->track_title,30)),t.x + 35,t.y + 98,0);
+
+        if (status == PLAYING)
+        {
+            if (strcmp(ic->last_track_title,ic->track_title) != 0)
+            {
+                cvrs->start_cover_search(ic->track_title);
+                strcpy(ic->last_track_title,ic->track_title);
+            }
+
+            if (cvrs->cover_surf)
+            {
+                SDL_Rect aa = {t.x+400,t.y + 19,120,120};
+                SDL_SoftStretch(cvrs->cover_surf,0, guibuffer,&aa);
+            }
+        }
+
     };
 
     void draw_volume()
