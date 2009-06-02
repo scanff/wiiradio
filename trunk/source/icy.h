@@ -55,7 +55,7 @@ class icy {
             looking_for_header(true),
             buffered(0),
             pre_buffer(200000),
-            buffer_size(4000000),
+            buffer_size(3000000),//(4000000),
             buffer(0),
             bufferring(true),
             metaint_size(0),
@@ -136,24 +136,24 @@ class icy {
                 if (end) {
                     start += strlen(icy_meta[i]);
                     switch(i){
-                        case 0: memcpy(icy_notice1,start,end-start); break;
-                        case 1: memcpy(icy_notice2,start,end-start); break;
-                        case 2: memcpy(icy_name,start,end-start); break;
-                        case 3: memcpy(icy_genre,start,end-start); break;
-                        case 4: memcpy(icy_url,start,end-start); break;
-                        case 5: memcpy(content_type,start,end-start); break;
+                        case 0: memcpy(icy_notice1,start,(end-start < SMALL_MEM-1 ? end-start : SMALL_MEM-1)); break;
+                        case 1: memcpy(icy_notice2,start,(end-start < SMALL_MEM-1 ? end-start : SMALL_MEM-1)); break;
+                        case 2: memcpy(icy_name,start,(end-start < SMALL_MEM-1 ? end-start : SMALL_MEM-1)); break;
+                        case 3: memcpy(icy_genre,start,(end-start < SMALL_MEM-1 ? end-start : SMALL_MEM-1)); break;
+                        case 4: memcpy(icy_url,start,(end-start < SMALL_MEM-1 ? end-start : SMALL_MEM-1)); break;
+                        case 5: memcpy(content_type,start,(end-start < SMALL_MEM-1 ? end-start : SMALL_MEM-1)); break;
                         case 6:
-                            memcpy(tmp,start,end-start);
+                            memcpy(tmp,start,(end-start < 10 ? end-start : 9));
                             icy_pub = atoi(tmp);
                             memset(tmp,0,10);
                          break;
                         case 7:
-                            memcpy(tmp,start,end-start);
+                            memcpy(tmp,start,(end-start < 10 ? end-start : 9));
                             icy_metaint = atoi(tmp);
                             memset(tmp,0,10);
                         break;
                         case 8:
-                            memcpy(tmp,start,end-start);
+                            memcpy(tmp,start,(end-start < 10 ? end-start : 9));
                             icy_br = atoi(tmp);
                             memset(tmp,0,10);
                         break;
@@ -291,7 +291,7 @@ class icy {
                 buffered -= remove;
                 metaint_pos-=remove;
 
-                pre_buffer = ((icy_br * 5) * 1000) / 8; // should be 5 seconds of buffering
+                pre_buffer = ((icy_br * 8) * 1000) / 8;
 
                 looking_for_header = false;
 
