@@ -129,7 +129,7 @@ extern char* trim_string(char*, int);
 #define VERSION_NUMBER  (0.4)
 #define VERSION_NAME    ("Version")
 #define BITDEPTH        (24)
-#define TIME_OUT_MS     (5000)
+#define TIME_OUT_MS     (10000)
 #define SC_DOWN         ("503 Service Temporarily Unavailable")
 #define MAX_BUTTONS     (4)
 #define MAX_FFT_RES     (16)
