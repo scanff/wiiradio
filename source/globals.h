@@ -135,7 +135,7 @@ extern char* trim_string(char*, int);
 #define SMALL_MEM       (255)
 #define MED_MEM         (1024)
 #define TINY_MEM        (50)
-#define SCREEN_SAVE     (1000*300) //5 mins
+
 
 #define MAX_STATION_CACHE (1000)
 // macros

@@ -125,7 +125,7 @@ class gui_toggle {
     int hit_test(int x, int y, int current_z)
     {
         if (!test_zorder(current_z))
-            return 0;
+            return B_OFF;
 
         x+=X_OFFSET;
         y+=Y_OFFSET;

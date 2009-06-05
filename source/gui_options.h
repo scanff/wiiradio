@@ -3,6 +3,7 @@
 
 #include "gui_button.h"
 #include "gui_toggle.h"
+#include "gui_group.h"
 
 class gui_options
 {
@@ -28,6 +29,8 @@ class gui_options
 
     SDL_Surface*    dest;
     gui_toggle*     b_option_item[O_MAX];
+
+    gui_group*      saver_group;
 
     gui_options(fonts* _f, SDL_Surface* _d) : x_pos(0), o_state(0), options_bg(0), fnts(_f), dest(_d)
     {
@@ -56,13 +59,23 @@ class gui_options
             offset_y += 30;
         }
 
+        saver_group = new gui_group(4,220,240,41,26,20,_d,_f);
+        saver_group->set_on(g_screensavetime);
+
+
+        // set options
         g_oscrolltext ? b_option_item[O_SCROLL_TEXT]->btn_state = B_ON : b_option_item[O_SCROLL_TEXT]->btn_state = B_OFF;
         g_owidescreen ? b_option_item[O_WIDESCREEN]->btn_state = B_ON : b_option_item[O_WIDESCREEN]->btn_state = B_OFF;
+
+
 
     };
 
     ~gui_options()
     {
+        delete saver_group;
+        saver_group = 0;
+
         loopi(O_MAX)
         {
             delete b_option_item[i];
@@ -106,6 +119,8 @@ class gui_options
                     b_option_item[i]->hit_test(events->motion.x,events->motion.y,j);
                 }
 
+                g_screensavetime = saver_group->hit_test(events->motion.x,events->motion.y,j);
+
                 b_option_item[O_SCROLL_TEXT]->btn_state == B_OFF ? g_oscrolltext = 0 : g_oscrolltext = 1;
                 b_option_item[O_WIDESCREEN]->btn_state == B_OFF ? g_owidescreen = 0 : g_owidescreen = 1;
 
@@ -124,9 +139,11 @@ class gui_options
         fnts->set_size(FS_SMALL);
         fnts->text(dest,"Widescreen:",200,150,0,1);
         fnts->text(dest,"Scroll Station Text:",200,180,0,1);
-        fnts->text(dest,"Restart Network:",200,210,0,1);
+
+        fnts->text(dest,"1min       5min     10min     Off",220,210,0,0);
         fnts->text(dest,"Screen Save After:",200,240,0,1);
-        fnts->text(dest,"About:",200,270,0,1);
+        fnts->text(dest,"Restart Network:",200,270,0,1);
+        fnts->text(dest,"About:",200,300,0,1);
 
         loopi(O_MAX)
         {
@@ -134,6 +151,7 @@ class gui_options
         }
         b_quit->draw();
         b_return->draw();
+        saver_group->draw();
 
     };
 

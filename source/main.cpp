@@ -397,7 +397,29 @@ void screen_timeout()
         if (g_real_keys[i]) last_button_time = get_tick_count();
     }
 
-    if (get_tick_count() - last_button_time > SCREEN_SAVE)
+
+    unsigned int calc_timeout = 0;
+
+    switch (g_screensavetime)
+    {
+        case 0:
+        calc_timeout = (1000*60); //1 mins
+        break;
+
+        case 1:
+        calc_timeout = (1000*300); //5 mins
+        break;
+
+        case 2:
+        calc_timeout = (1000*600); //10 mins
+        break;
+
+        case 3:
+        return;
+
+    };
+
+    if (get_tick_count() - last_button_time > calc_timeout)
         screen_sleeping = true;
     else if (screen_sleeping) {
         screen_sleeping = false;

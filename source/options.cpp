@@ -3,10 +3,11 @@
 
 int g_owidescreen;
 int g_oscrolltext;
+int g_screensavetime;
 
 void parse_options(char* buf)
 {
-    sscanf(buf,"ws %d\nst %d",&g_owidescreen,&g_oscrolltext);
+    sscanf(buf,"ws %d\nst %d\nss %d",&g_owidescreen,&g_oscrolltext,&g_screensavetime);
 }
 
 void set_defaults()
@@ -59,7 +60,7 @@ void save_options()
     f = fopen(make_path("options.txt"),"wt");
     if (!f) return;
 
-    fprintf(f,"ws %d\nst %d",g_owidescreen,g_oscrolltext);
+    fprintf(f,"ws %d\nst %d\nss %d\n",g_owidescreen,g_oscrolltext,g_screensavetime);
 
     fclose(f);
 }
