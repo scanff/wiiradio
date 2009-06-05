@@ -2,7 +2,7 @@
 #define _GUI_BUTTON_H_
 
 
-#define MAX_Z_ORDERS (3)
+
 #define MAX_GENRE (19)
 const char* genres[] = {
   "all","ambient","country","classical",
@@ -18,8 +18,6 @@ enum _button_states {
     B_CLICK
 };
 
-#define X_OFFSET 17 // The pointer's hotspot is 17px from the left
-#define Y_OFFSET 10
 
 //simple button class
 class gui_button {
@@ -56,6 +54,7 @@ class gui_button {
     int             bind_screen; // what screen is this button bound to
 
     int             scroll_speed;
+    bool            can_scroll;
 
     gui_button(SDL_Surface* g,fonts* f,int x,int y,int w,int h,char* t,long tc,bool scroll) :
     s_x(x), s_y(y), s_h(h),s_w(w),
@@ -63,7 +62,7 @@ class gui_button {
     bnt_down(0), bnt_out(0), bnt_over(0), guibuffer(g), scroll_area(0),
     use_images(false), center_text(true), fnts(f), limit_text(0), scroll_x(0),
     auto_scroll_text(false), font_sz(FS_LARGE), z_order(0), bind_screen(0),
-    scroll_speed(3)
+    scroll_speed(3), can_scroll(true)
 
     {
 
@@ -155,7 +154,7 @@ class gui_button {
         if (text_l1) {
             fnts->set_size(font_sz);
 
-            if (scroll_area ) {
+            if (scroll_area && can_scroll) {
                 scroll_text();
 
             }else{
@@ -206,4 +205,4 @@ class gui_button {
     };
 };
 
-#endif 
+#endif

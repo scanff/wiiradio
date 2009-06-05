@@ -88,8 +88,9 @@ class fonts {
         return w;
     };
 
-    int text(SDL_Surface* s, const char* textin,int x, int y,int limit_width)
+    int text(SDL_Surface* s, const char* textin,int x, int y,int limit_width,int align = 0)
     {
+
         if (strlen(textin) <=0) return 0;
 
         SDL_Color tmpfontcolor = {color_r,color_g,color_b,0};
@@ -110,9 +111,16 @@ class fonts {
             return 0;
 
 
+        if (align == 1) x = x - get_length_px((char*)textin,size);
+
         SDL_Rect ds = { x, y , limit_width ,FONT_SIZE};
 
-        SDL_BlitSurface( resulting_text,0, s, &ds );
+        if (limit_width) {
+
+            SDL_Rect sr = { 0, 0 , limit_width ,FONT_SIZE};
+            SDL_BlitSurface( resulting_text,&sr, s, &ds );
+
+        } else SDL_BlitSurface( resulting_text,0, s, &ds );
 
         SDL_FreeSurface(resulting_text);
 

@@ -68,7 +68,6 @@ enum _screens{
   S_PLAYLISTS,
   S_GENRES,
   S_OPTIONS,
-  S_ABOUT,
   S_STREAM_INFO,
   S_MAX
 
@@ -146,7 +145,9 @@ extern char* trim_string(char*, int);
 #define loopj(m) loop(j,m)
 #define bloopj(m) bloop(j,m)
 #define CLIP(mx,x)  x>mx ? (mx) : x < 0 ? (0) : (x);
-
+#define MAX_Z_ORDERS (3)
+#define X_OFFSET 17 // The pointer's hotspot is 17px from the left
+#define Y_OFFSET 10
 
 extern void connect_to_stream(int,bool);
 extern void search_genre(char*);

@@ -1,4 +1,5 @@
 #include "globals.h"
+#include "options.h"
 #include "fonts.h"
 #include "client.h"
 
@@ -426,8 +427,8 @@ void check_keys()
 
     if (g_real_keys[SDLK_ESCAPE] && !g_keys_last_state[SDLK_ESCAPE])
     {
-        if (g_screen_status != S_ABOUT)
-            g_screen_status = S_ABOUT;
+        if (g_screen_status != S_OPTIONS)
+            g_screen_status = S_OPTIONS;
         else g_screen_status = S_BROWSER;
     }
 
@@ -714,6 +715,9 @@ void ShutdownCB()
 
 int main(int argc, char **argv)
 {
+    // load options
+    load_options();
+
     display_idx = 0;
     favs_idx = 0;
 	fullscreen = 0;
@@ -843,8 +847,11 @@ int main(int argc, char **argv)
 
         if (wd_one->ir.valid)
         {
+            wd_one->ir.y > SCREEN_HEIGHT -1 ? wd_one->ir.y = SCREEN_HEIGHT -1 : wd_one->ir.y <0 ? wd_one->ir.y = 0 : 0;
+            wd_one->ir.x > SCREEN_WIDTH - 1 ? wd_one->ir.x = SCREEN_WIDTH - 1 : wd_one->ir.x <0 ? wd_one->ir.x = 0 : 0;
             event.motion.x = wd_one->ir.x;
             event.motion.y = wd_one->ir.y;
+
 
             if(g_real_keys[SDLK_RETURN] && !g_keys_last_state[SDLK_RETURN])  // (A) Mapped to SDLK_RETURN
                 event.type = SDL_MOUSEBUTTONDOWN;
@@ -901,6 +908,8 @@ int main(int argc, char **argv)
     delete fnts; fnts = 0;
     delete icy_info; icy_info = 0;
     delete tx; tx = 0;
+
+    save_options(); // save options
 
     SDL_Quit();
 
