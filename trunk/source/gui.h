@@ -62,7 +62,8 @@ class gui {
 
     int             genre_selected;
 
-    gui_options*     g_options;
+    gui_options*    g_options;
+
 
     gui(fonts* f,visualizer* v) : fnts(f), vis(v), select_pos(0), row_height(30), start_y(70), genre_selected(0)
     {
@@ -87,6 +88,7 @@ class gui {
 
 
         g_options = new gui_options(f,guibuffer);
+
 
         loopi(BTN_MAX) buttons[i] = 0; // NULL
 
@@ -216,6 +218,8 @@ class gui {
             loopi(BTN_MAX) buttons[i]->can_scroll = true;
             buttons[BTN_PLAYING]->can_scroll = true;
         }
+
+
 
     };
 
