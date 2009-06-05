@@ -2,7 +2,7 @@
 #define _GUI_H_
 
 #include "gui_button.h"
-
+#include "gui_options.h"
 
 class gui {
     public:
@@ -13,25 +13,21 @@ class gui {
         BTN_STATION_2,
         BTN_STATION_3,
         BTN_STATION_4,
-       // BTN_STATION_5,
 
         BTN_FAVS_1,
         BTN_FAVS_2,
         BTN_FAVS_3,
         BTN_FAVS_4,
-        //BTN_FAVS_5,
 
         BTN_FAV_DEL_1,
         BTN_FAV_DEL_2,
         BTN_FAV_DEL_3,
         BTN_FAV_DEL_4,
-        //BTN_FAV_DEL_5,
 
         BTN_GENRES_1,
         BTN_GENRES_2,
         BTN_GENRES_3,
         BTN_GENRES_4,
-        //BTN_GENRES_5,
 
         BTN_NEXT,
         BTN_PRIOR,
@@ -39,8 +35,6 @@ class gui {
         BTN_PLAYLISTS,
         BTN_GENRES_SELECT,
         BTN_PLAYING,
-        BTN_QUIT,
-        BTN_RETURN,
         BTN_LOGO,
 
         BTN_MAX
@@ -68,6 +62,7 @@ class gui {
 
     int             genre_selected;
 
+    gui_options*     g_options;
 
     gui(fonts* f,visualizer* v) : fnts(f), vis(v), select_pos(0), row_height(30), start_y(70), genre_selected(0)
     {
@@ -86,9 +81,12 @@ class gui {
         amask = 0x00000000;
 #endif
 
+
         guibuffer = SDL_CreateRGBSurface(SDL_SWSURFACE,SCREEN_WIDTH,SCREEN_HEIGHT,BITDEPTH,
                                           rmask, gmask, bmask,amask);
 
+
+        g_options = new gui_options(f,guibuffer);
 
         loopi(BTN_MAX) buttons[i] = 0; // NULL
 
@@ -173,20 +171,13 @@ class gui {
         //playing area
         buttons[BTN_PLAYING] = new gui_button(guibuffer,f,259,45,340,48,NULL,0,true);
         buttons[BTN_PLAYING]->set_images("imgs/playing.png","imgs/playing.png","imgs/playing.png");
-        buttons[BTN_PLAYING]->limit_text = 290;
+        buttons[BTN_PLAYING]->limit_text = 285;
         buttons[BTN_PLAYING]->auto_scroll_text = true;
+        buttons[BTN_PLAYING]->center_text = false;
         buttons[BTN_PLAYING]->pad_y = 5;
         buttons[BTN_PLAYING]->font_sz = FS_MED;
 
-        //quit
-        buttons[BTN_QUIT] = new gui_button(guibuffer,f,385,335,212,68,0,0,false);
-        buttons[BTN_QUIT]->set_images("imgs/exit_over.png","imgs/exit_out.png","imgs/exit_over.png");
-        buttons[BTN_QUIT]->bind_screen = S_ABOUT;
 
-        //return
-        buttons[BTN_RETURN] = new gui_button(guibuffer,f,48,335,212,68,0,0,false);
-        buttons[BTN_RETURN]->set_images("imgs/return_over.png","imgs/return_out.png","imgs/return_over.png");
-        buttons[BTN_RETURN]->bind_screen = S_ABOUT;
 
         // logo
         buttons[BTN_LOGO] = new gui_button(guibuffer,f,0,25,196,88,NULL,0,false);
@@ -201,8 +192,10 @@ class gui {
             buttons[i] = 0;
         }
 
-      //  delete cvrs;
-      //  cvrs = 0;
+        SDL_FreeSurface(guibuffer);
+
+        delete g_options;
+        g_options = 0;
     };
 
     void reset_scrollings()
@@ -213,13 +206,33 @@ class gui {
         }
     };
 
+    void handle_options()
+    {
+        if (!g_oscrolltext)
+        {
+            loopi(BTN_MAX) buttons[i]->can_scroll = false;
+            buttons[BTN_PLAYING]->can_scroll = false;
+        }else{
+            loopi(BTN_MAX) buttons[i]->can_scroll = true;
+            buttons[BTN_PLAYING]->can_scroll = true;
+        }
 
+    };
 
     int handle_events(SDL_Event* events)
     {
-        if (visualize || (status == BUFFERING && (g_screen_status != S_ABOUT))) return 0;
+        handle_options();
+
+        if (visualize || (status == BUFFERING && (g_screen_status != S_OPTIONS))) return 0;
 
         loopi(BTN_MAX) buttons[i]->btn_state = B_OUT; //reset
+
+
+        if(g_screen_status == S_OPTIONS)
+        {
+             g_options->handle_events(events);
+             return 0;
+        }
 
         //over
         if (events->type != SDL_MOUSEBUTTONDOWN)
@@ -245,22 +258,11 @@ class gui {
             bloopj(MAX_Z_ORDERS)
             {
 
-                 if(g_screen_status == S_ABOUT)
-                 {
-                     if(buttons[BTN_QUIT]->hit_test(events->motion.x,events->motion.y,j)==B_CLICK) {
-                        g_running = false;
-                        return 0;
-                     }
 
-                      if(buttons[BTN_RETURN]->hit_test(events->motion.x,events->motion.y,j)==B_CLICK) {
-                        g_screen_status = S_BROWSER;
-                        return 0;
-                     }
-                 }
 
                 //logo
 
-                if (buttons[BTN_LOGO]->hit_test(events->motion.x,events->motion.y,j)==B_CLICK) g_screen_status = S_ABOUT;
+                if (buttons[BTN_LOGO]->hit_test(events->motion.x,events->motion.y,j)==B_CLICK) g_screen_status = S_OPTIONS;
 
                 //playing area
                  if(buttons[BTN_PLAYING]->hit_test(events->motion.x,events->motion.y,j)==B_CLICK) {
@@ -438,7 +440,7 @@ class gui {
             if (visualize_number < MAX_VISUALS)
                 vis->draw_visuals(guibuffer,visualize_number);
 
-        }else{
+        }else if (g_screen_status != S_OPTIONS){
 
             fnts->change_color(60,60,60); // change for main font color
 
@@ -505,20 +507,9 @@ class gui {
                     }
 
                 }
-
-            }else if (g_screen_status == S_ABOUT) {
-
-                draw_about();
-
-
-            }else if (g_screen_status == S_OPTIONS) {
-                // TO DO
             }
-            if (    g_screen_status != S_ABOUT
-                &&  g_screen_status != S_OPTIONS
-                &&  g_screen_status != S_STREAM_INFO
 
-                ) {
+            if (g_screen_status != S_STREAM_INFO) {
                 //more / prior ... used for browser, playlist and genre selection
                 buttons[BTN_NEXT]->draw();
                 buttons[BTN_PRIOR]->draw();
@@ -537,13 +528,15 @@ class gui {
 
 
 
-            //cursor
-            draw_cursor(event.motion.x,event.motion.y);
-        }
+
+        }else draw_about();
 
         // always inform user if buffering
         if (status == BUFFERING) draw_info((char*)"Buffering...");
 
+
+        //cursor
+        draw_cursor(event.motion.x,event.motion.y);
         // volume display ... like an OSD
         draw_volume();
 
@@ -564,21 +557,13 @@ class gui {
         fnts->change_color(60,60,60);
         SDL_Rect t = {48,(400 / 2) - (info_dlg->h / 2),info_dlg->w,info_dlg->h};
         SDL_BlitSurface(dialog,0, guibuffer,&t);
-        fnts->text(guibuffer,"Sorry, Shoutcast is not responding!",t.x + 94,t.y + 45,0);
+        fnts->text(guibuffer,"Sorry, SHOUTcast is not responding!",t.x + 94,t.y + 45,0);
         fnts->text(guibuffer,"Please try again by selecting a genre.",t.x + 94,t.y + 72,0);
     }
 
     void draw_about()
     {
-        fnts->change_color(60,60,60);
-        fade(guibuffer,SDL_MapRGB(guibuffer->format,0,0,0),100);
-        SDL_Rect t = {48,(400 / 2) - (info_dlg->h / 2),info_dlg->w,info_dlg->h};
-        SDL_BlitSurface(dialog,0, guibuffer,&t);
-        fnts->text(guibuffer,make_string((char*)"WiiRadio, Version %.1f",VERSION_NUMBER),t.x + 134,t.y + 45,0);
-        fnts->text(guibuffer,"By Scanff And TiMeBoMb",t.x + 134,t.y + 72,0);
-
-        buttons[BTN_QUIT]->draw();
-        buttons[BTN_RETURN]->draw();
+        g_options->draw();
     };
 
     void draw_stream_details(icy* ic)
@@ -628,6 +613,8 @@ class gui {
 
     void draw_cursor(int x,int y)
     {
+     //   if (y < 0 || y > SCREEN_HEIGHT -1) return;
+    //    if (x < 0 || x > SCREEN_WIDTH -1) return;
         SDL_Rect r = { x,y,cursor->w,cursor->h };
         SDL_BlitSurface( cursor,0, guibuffer,&r);
     };
