@@ -15,12 +15,8 @@ class gui_options
         O_MAX
     };
 
-    int x_pos;
-    int o_state;
 
     SDL_Surface* options_bg;
-
-
 
     gui_button*     b_quit;
     gui_button*     b_return;
@@ -32,12 +28,11 @@ class gui_options
 
     gui_group*      saver_group;
 
-    gui_options(fonts* _f, SDL_Surface* _d) : x_pos(0), o_state(0), options_bg(0), fnts(_f), dest(_d)
+    gui_options(fonts* _f, SDL_Surface* _d) : options_bg(0), fnts(_f), dest(_d)
     {
         options_bg = tx->texture_lookup("imgs/options-bg.png");
         if (!options_bg) exit(0);
 
-        x_pos = 0 ;//- options_bg->w;
         loopi(O_MAX) b_option_item[i] = 0;
         //quit
         b_quit = new gui_button(_d,_f,300,355,212,68,0,0,false);
@@ -52,14 +47,14 @@ class gui_options
         int offset_y = 0;
         loopi(O_MAX)
         {
-            b_option_item[i] = new gui_toggle(_d,_f,220,150 + offset_y,41,26,0,0,false);
+            b_option_item[i] = new gui_toggle(_d,_f,220,120 + offset_y,41,26,0,0,false);
             b_option_item[i]->set_images("imgs/toggle_out.png","imgs/toggle_on.png");
             b_option_item[i]->bind_screen = S_OPTIONS;
 
             offset_y += 30;
         }
 
-        saver_group = new gui_group(4,220,240,41,26,20,_d,_f);
+        saver_group = new gui_group(4,220,210,41,26,20,_d,_f);
         saver_group->set_on(g_screensavetime);
 
 
@@ -137,18 +132,16 @@ class gui_options
         fnts->change_color(60,60,60);
 
         fnts->set_size(FS_SMALL);
-        fnts->text(dest,"Widescreen:",200,150,0,1);
-        fnts->text(dest,"Scroll Station Text:",200,180,0,1);
+        fnts->text(dest,"Widescreen:",200,120,0,1);
+        fnts->text(dest,"Scroll Station Text:",200,150,0,1);
 
-        fnts->text(dest,"1min       5min     10min     Off",220,210,0,0);
-        fnts->text(dest,"Screen Save After:",200,240,0,1);
-        fnts->text(dest,"Restart Network:",200,270,0,1);
-        fnts->text(dest,"About:",200,300,0,1);
+        fnts->text(dest,"1min       5min     10min     Off",220,180,0,0);
+        fnts->text(dest,"Screen Save After:",200,210,0,1);
+        fnts->text(dest,"Restart Network:",200,240,0,1);
+        fnts->text(dest,"About:",200,270,0,1);
 
-        loopi(O_MAX)
-        {
-            b_option_item[i]->draw();
-        }
+        loopi(O_MAX) b_option_item[i]->draw();
+
         b_quit->draw();
         b_return->draw();
         saver_group->draw();
@@ -157,33 +150,8 @@ class gui_options
 
     void draw()
     {
-
-        SDL_Rect t = {x_pos,0,options_bg->w,options_bg->h};
-        SDL_BlitSurface(options_bg,0, dest,&t);
-
-    /*    switch(o_state)
-        {
-            case O_SLIDE: // slid in
-
-                if (x_pos < -20)
-                {
-                    x_pos += 20;
-                }else{
-                    o_state ++;
-                    x_pos = 0;
-                }
-
-            break;
-
-            case O_STATIC:
-                output_options();
-            break;
-
-*/
-            output_options();
- //       }
-
-
+        SDL_BlitSurface(options_bg,0, dest,0);
+        output_options();
     };
 
 
