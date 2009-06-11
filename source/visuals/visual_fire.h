@@ -48,6 +48,13 @@ class vis_fire {
     {
         if (!loaded) load();
 
+        int sx,sy,x,y;
+        int zerolevel = ((DRAW_HEIGHT/2)-10);
+        int len = (8192/4) - 1;
+        double ts = static_cast<double>(DRAW_WIDTH)/static_cast<double>(len/2);
+        double range = 20;
+        double timescale = zerolevel/range;
+
       //randomize the bottom row of the fire buffer
         for(int x = 0; x < DRAW_WIDTH; x++) fire[x][DRAW_HEIGHT - 1] = abs(32768 + rand()) % 256;
         //do the fire calculations for every pixel, from top to bottom
@@ -64,11 +71,13 @@ class vis_fire {
 
         //set the drawing buffer to the fire buffer, using the palette colors
         for(int x = 0; x < DRAW_WIDTH; x++)
-        for(int y = 0; y < DRAW_HEIGHT; y++)
         {
-          pixelColor(s,x,y,palette[fire[x][y]]);
+            int yy = (int)((double)DRAW_HEIGHT/2 - (short)(f->real[x+50])*timescale) / 1.2;
+            for(int y = 0; y < DRAW_HEIGHT; y++)
+            {
+               if (y>yy) pixelColor(s,x,y,palette[fire[x][y]]);
+            }
         }
-
 
     }
 };

@@ -55,6 +55,11 @@ class network : public dns
 
     }
 
+    ~network()
+    {
+       if (client_connected) client_close();
+
+    }
     //vars
     bool            client_connected;
     s32             connection_socket; //client

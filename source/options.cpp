@@ -57,7 +57,7 @@ void save_options()
 {
     FILE* f = 0;
 
-    f = fopen(make_path("options.txt"),"wt");
+    f = fopen(make_path("options.txt"),"w");
     if (!f) return;
 
     fprintf(f,"ws %d\nst %d\nss %d\n",g_owidescreen,g_oscrolltext,g_screensavetime);

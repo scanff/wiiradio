@@ -540,7 +540,7 @@ class gui {
 
 
         //cursor
-        draw_cursor(event.motion.x,event.motion.y);
+        if (!visualize) draw_cursor(event.motion.x,event.motion.y);
         // volume display ... like an OSD
         draw_volume();
 
