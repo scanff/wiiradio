@@ -10,8 +10,9 @@ class gui_options
     public:
 
     enum _option_buttons {
-        O_WIDESCREEN = 0,
-        O_SCROLL_TEXT,
+       // O_WIDESCREEN = 0,
+        //O_SCROLL_TEXT,
+        O_SCROLL_TEXT = 0,
         O_MAX
     };
 
@@ -20,6 +21,7 @@ class gui_options
 
     gui_button*     b_quit;
     gui_button*     b_return;
+    gui_button*     b_restart_net;
 
     fonts*          fnts;
 
@@ -44,10 +46,16 @@ class gui_options
         b_return->set_images("imgs/return_over.png","imgs/return_out.png","imgs/return_over.png");
         b_return->bind_screen = S_OPTIONS;
 
+        //restart network
+        b_restart_net = new gui_button(_d,_f,220,240,41,26,0,0,false);
+        b_restart_net->set_images("imgs/toggle_out.png","imgs/toggle_out.png","imgs/toggle_out.png");
+        b_restart_net->bind_screen = S_OPTIONS;
+
         int offset_y = 0;
         loopi(O_MAX)
         {
-            b_option_item[i] = new gui_toggle(_d,_f,220,120 + offset_y,41,26,0,0,false);
+           // b_option_item[i] = new gui_toggle(_d,_f,220,120 + offset_y,41,26,0,0,false);
+            b_option_item[i] = new gui_toggle(_d,_f,220,150 + offset_y,41,26,0,0,false);
             b_option_item[i]->set_images("imgs/toggle_out.png","imgs/toggle_on.png");
             b_option_item[i]->bind_screen = S_OPTIONS;
 
@@ -60,7 +68,7 @@ class gui_options
 
         // set options
         g_oscrolltext ? b_option_item[O_SCROLL_TEXT]->btn_state = B_ON : b_option_item[O_SCROLL_TEXT]->btn_state = B_OFF;
-        g_owidescreen ? b_option_item[O_WIDESCREEN]->btn_state = B_ON : b_option_item[O_WIDESCREEN]->btn_state = B_OFF;
+//        g_owidescreen ? b_option_item[O_WIDESCREEN]->btn_state = B_ON : b_option_item[O_WIDESCREEN]->btn_state = B_OFF;
 
 
 
@@ -76,6 +84,10 @@ class gui_options
             delete b_option_item[i];
             b_option_item[i] = 0;
         }
+
+        delete b_restart_net;
+        delete b_quit;
+        delete b_return;
     };
 
     int handle_events(SDL_Event* events)
@@ -117,7 +129,7 @@ class gui_options
                 g_screensavetime = saver_group->hit_test(events->motion.x,events->motion.y,j);
 
                 b_option_item[O_SCROLL_TEXT]->btn_state == B_OFF ? g_oscrolltext = 0 : g_oscrolltext = 1;
-                b_option_item[O_WIDESCREEN]->btn_state == B_OFF ? g_owidescreen = 0 : g_owidescreen = 1;
+//                b_option_item[O_WIDESCREEN]->btn_state == B_OFF ? g_owidescreen = 0 : g_owidescreen = 1;
 
 
             }
@@ -132,19 +144,25 @@ class gui_options
         fnts->change_color(60,60,60);
 
         fnts->set_size(FS_SMALL);
-        fnts->text(dest,"Widescreen:",200,120,0,1);
+      //  fnts->text(dest,"Widescreen(SOON!):",200,120,0,1);
         fnts->text(dest,"Scroll Station Text:",200,150,0,1);
 
         fnts->text(dest,"1min       5min     10min     Off",220,180,0,0);
         fnts->text(dest,"Screen Save After:",200,210,0,1);
-        fnts->text(dest,"Restart Network:",200,240,0,1);
-        fnts->text(dest,"About:",200,270,0,1);
+       // fnts->text(dest,"Restart Network:",200,240,0,1);
+
 
         loopi(O_MAX) b_option_item[i]->draw();
 
         b_quit->draw();
         b_return->draw();
+       // b_restart_net->draw();
         saver_group->draw();
+
+        // -- about
+        fnts->text(dest,"About:",200,250,0,1);
+        fnts->text(dest,"Version 0.4.",220,250,0);
+        fnts->text(dest,"By Scanff & TiMeBoMb",220,270,0);
 
     };
 

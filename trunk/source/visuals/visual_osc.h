@@ -11,7 +11,7 @@ class vis_osc {
     int             DRAW_WIDTH;
     int             DRAW_HEIGHT;
 
-
+    int             colors[256];
 
 
     vis_osc(fft* _f) : f(_f), loaded(false)
@@ -28,8 +28,15 @@ class vis_osc {
 
     void load()
     {
+        for(int x = 0; x < 256; x++)
+        {
+            colors[x] = hsl_rgba(x / 2, 255, lmin(255, x * 2));
+           //palette[x] = hsl_rgba((int)(x / 1.5), 255, lmin(255,(int)(peak * 1.1)));
+        }
 
         loaded = true;
+
+
     };
 
     void render(SDL_Surface* s)
@@ -45,15 +52,22 @@ class vis_osc {
 
         sx = 0;
         sy = zerolevel;
-        loopi(len-1)
+        int index = 0;
+
+        for(int i = 8; i < (len-1); i+=8)
         {
             x = (int)((double)i*ts);
             y = (int)((double)zerolevel - (short)(f->real[i])*timescale);
 
+            index = (int)y/8;
+            index < 0 ? index = 0 : index > 255 ? index = 255 : 0;
+
+         //   unsigned long c = colors[index];
             bresenham_line(s,x,y,sx,sy,0xffffffff);
 
             sy = y;
             sx = x;
+
         }
 
 

@@ -75,7 +75,19 @@ FMOD_CREATESOUNDEXINFO  exinfo;
 int critical_thread (void *arg);
 
 // -- Functions
+void fade(SDL_Surface *screen2, Uint32 rgb, Uint8 a)
+{
+    SDL_Surface *tmp=0;
 
+    tmp=SDL_DisplayFormat(screen2);
+
+    if (!tmp) return;
+
+    SDL_FillRect(tmp,0,rgb);
+    SDL_SetAlpha(tmp,SDL_SRCALPHA,a);
+    SDL_BlitSurface(tmp,0,screen2,0);
+    SDL_FreeSurface(tmp);
+};
 Uint64 get_tick_count()
 {
 	return SDL_GetTicks();
@@ -392,6 +404,8 @@ void connect_to_stream(int value,bool haveplaylist)
 bool screen_sleeping = false;
 void screen_timeout()
 {
+    if (!visualize)
+
     // auto burnin reducer if there not viewing a visual
     loopi(MAX_KEYS) {
         if (g_real_keys[i]) last_button_time = get_tick_count();
@@ -447,7 +461,7 @@ void check_keys()
 
     }
 
-    if (g_real_keys[SDLK_ESCAPE] && !g_keys_last_state[SDLK_ESCAPE])
+    if (g_real_keys[SDLK_ESCAPE] && !g_keys_last_state[SDLK_ESCAPE] && !visualize)
     {
         if (g_screen_status != S_OPTIONS)
             g_screen_status = S_OPTIONS;
@@ -700,7 +714,7 @@ int critical_thread(void *arg)
                 /* would block, not really an error in this case */
                 if (len != -11) errors++;
 
-                if (errors > 200) { // too many errors let's reset
+                if (errors > 120) { // too many errors let's reset
                     status = FAILED;
                     if (connected) net->client_close();
                     connected = 0;
@@ -907,6 +921,7 @@ int main(int argc, char **argv)
 
     }
 
+    save_options(); // save options
 
     SDL_WaitThread(mainthread, NULL);
 
@@ -931,7 +946,7 @@ int main(int argc, char **argv)
     delete icy_info; icy_info = 0;
     delete tx; tx = 0;
 
-    save_options(); // save options
+
 
     SDL_Quit();
 

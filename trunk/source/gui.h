@@ -213,10 +213,10 @@ class gui {
         if (!g_oscrolltext)
         {
             loopi(BTN_MAX) buttons[i]->can_scroll = false;
-            buttons[BTN_PLAYING]->can_scroll = false;
+           // buttons[BTN_PLAYING]->can_scroll = false;
         }else{
             loopi(BTN_MAX) buttons[i]->can_scroll = true;
-            buttons[BTN_PLAYING]->can_scroll = true;
+            //buttons[BTN_PLAYING]->can_scroll = true;
         }
 
 
@@ -435,14 +435,30 @@ class gui {
         }
     }
 
+    unsigned long visual_show_title;
+    char visual_last_track_title[SMALL_MEM];
     void draw(station_list* current_list,icy* ic,favorites* favs)
     {
         if (visualize)
         {
             // TO DO ... add more
             black_screen_saver();
-            if (visualize_number < MAX_VISUALS)
+            if (visualize_number < MAX_VISUALS) {
                 vis->draw_visuals(guibuffer,visualize_number);
+                if(get_tick_count() - visual_show_title < 60000) // -- hide after 1 min
+                {
+                    fnts->change_color(200,200,200);
+                    fnts->set_size(FS_SMALL);
+                    fnts->text(guibuffer,trim_string(ic->track_title,100),10,32,0);
+                }else{
+                    if (strcmp(visual_last_track_title,ic->track_title)!=0)
+                    {
+                        strcpy(visual_last_track_title,ic->track_title);
+                        visual_show_title = get_tick_count();
+                    }
+                }
+
+            }
 
         }else if (g_screen_status != S_OPTIONS){
 
@@ -540,9 +556,15 @@ class gui {
 
 
         //cursor
-        if (!visualize) draw_cursor(event.motion.x,event.motion.y);
+        if (!visualize) {
+            draw_cursor(event.motion.x,event.motion.y);
+            visual_show_title = get_tick_count();
+            strcpy(visual_last_track_title,ic->track_title);
+        }
         // volume display ... like an OSD
         draw_volume();
+
+
 
     };
 
@@ -623,19 +645,6 @@ class gui {
         SDL_BlitSurface( cursor,0, guibuffer,&r);
     };
 
-    void fade(SDL_Surface *screen2, Uint32 rgb, Uint8 a)
-    {
-        SDL_Surface *tmp=0;
-
-        tmp=SDL_DisplayFormat(screen2);
-
-        if (!tmp) return;
-
-        SDL_FillRect(tmp,0,rgb);
-        SDL_SetAlpha(tmp,SDL_SRCALPHA,a);
-        SDL_BlitSurface(tmp,0,screen2,0);
-        SDL_FreeSurface(tmp);
-    };
 
     void black_screen_saver()
     {

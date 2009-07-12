@@ -51,6 +51,8 @@ class vis_tunnel {
         int peak = 0;
         loopi((8192/4) - 1) f->real[i] > peak ? peak = (int)f->real[i] : 0;
 
+
+
         //clean
          for(x = 0; x < texWidth; x++)
             for(y = 0; y < texHeight; y++)
@@ -62,10 +64,14 @@ class vis_tunnel {
         {
             for(y = 0; y < texHeight; y++)
             {
-                 color = hsl_rgba((x / 3), lmin(255,(int)(peak * 2.5)), lmin(100, x * 2));
-                 if (   y < 10 || x < 10 ||  x > texWidth - 10 ||
+                // if ((y < (texHeight/2) -10 || y > (texHeight/2) +10) &&
+                //    (x< (texWidth/2)-10) || x > (texWidth/2)+10)
+                    color = hsl_rgba((x / 3), lmin(255,(int)(peak * 1.8)), lmin(100, x * 2));
+                // else color = 0;
+                 /*if (   y < 10 || x < 10 ||  x > texWidth - 10 ||
                         y > texHeight - 10 || ((y > (texHeight/2)- 10)&& (y <(texHeight/2)+ 10))) texture[x+(y*texWidth)] = color;
-                 else  if (rand()% 255 > 240) texture[x+(y*texWidth)] = color;
+                 else  */
+                 if (rand()% 255 > 245) texture[x+(y*texWidth)] = color;
             }
 
         }
@@ -75,7 +81,7 @@ class vis_tunnel {
             for(y = 0; y < DRAW_HEIGHT*2; y++)
             {
                 int angle, distance;
-                float ratio = 32.0;
+                float ratio = 2.0;
 
                 distance = int(ratio * texHeight / sqrt(float((x - DRAW_WIDTH) * (x - DRAW_WIDTH) + (y - DRAW_HEIGHT) * (y - DRAW_HEIGHT)))) % texHeight;
                 angle = (unsigned int)(0.5 * texWidth * atan2(float(y - DRAW_HEIGHT), float(x - DRAW_WIDTH)) / 3.1416);
@@ -93,6 +99,7 @@ class vis_tunnel {
 
         load_tunnel_text();
 
+        fade(s,SDL_MapRGB(s->format,0,0,0),50);
 
         float animation =  (get_tick_count() / 1000.0);
         int tex_width = texWidth;
@@ -110,6 +117,7 @@ class vis_tunnel {
         {
             for(int y = 0; y < DRAW_HEIGHT; y++)
             {
+
                 color = texture[((unsigned int)(distanceTable[(x + shiftLookX)+((y + shiftLookY)*(2*DRAW_WIDTH))] + shiftX)  % texWidth)+
                                (((unsigned int)(angleTable[x + shiftLookX][y + shiftLookY]+ shiftY) % texHeight)*texWidth)];
 
