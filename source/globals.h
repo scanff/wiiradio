@@ -79,7 +79,7 @@ enum _visuals
   V_OSC,
   V_TUNNEL,
   V_FIRE,
-  V_EXPLODE,
+//  V_EXPLODE,
   MAX_VISUALS
 };
 extern Uint8 *		g_nKetStatus;
@@ -124,7 +124,7 @@ extern char* trim_string(char*, int);
 
 #define SCREEN_WIDTH    (640)//(852)//(
 #define SCREEN_HEIGHT   (480)
-#define FONT_SIZE       (32)//(40)
+#define FONT_SIZE       (40)
 #define VERSION_NUMBER  (0.4)
 #define VERSION_NAME    ("Version")
 #define BITDEPTH        (24)
@@ -154,7 +154,7 @@ extern void search_genre(char*);
 extern void genre_nex_prev(bool,char*);
 extern void request_save_fav();
 extern void screen_saver();
-
+extern void fade(SDL_Surface*, Uint32, Uint8);
 extern int display_idx; //holds the current displaying browser index
 extern int genre_display; //holds the genre list start display value
 

@@ -23,7 +23,7 @@ bool load_options()
 
     FILE* f = 0;
 
-    f = fopen(make_path("options.txt"),"r");
+    f = fopen(make_path("cache/options.dat"),"r");
     if (!f) return false;
 
     fseek(f,0,SEEK_END);
@@ -57,7 +57,7 @@ void save_options()
 {
     FILE* f = 0;
 
-    f = fopen(make_path("options.txt"),"w");
+    f = fopen(make_path("cache/options.dat"),"w");
     if (!f) return;
 
     fprintf(f,"ws %d\nst %d\nss %d\n",g_owidescreen,g_oscrolltext,g_screensavetime);

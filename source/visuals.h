@@ -227,27 +227,27 @@ class visualizer
             }
         }
 
-        if (number != V_EXPLODE)
+    /*    if (number != V_EXPLODE)
         {
             if (visuals_ptr[V_EXPLODE]) {
                 delete (vis_explode*)visuals_ptr[V_EXPLODE];
                 visuals_ptr[V_EXPLODE] = 0;
             }
 
-        }
+        }*/
 
     }
 
     void draw_visuals(SDL_Surface* s,int number)
     {
 
-        draw_rect(vis_surface,0,0,SCREEN_WIDTH,SCREEN_HEIGHT,0); // clear backbuffer
+
         SDL_Rect sr = {0,0,SCREEN_WIDTH/2,SCREEN_HEIGHT/2};
 
         switch(number)
         {
             case V_BARS:
-
+                draw_rect(vis_surface,0,0,SCREEN_WIDTH,SCREEN_HEIGHT,0); // clear backbuffer
                 if (!visuals_ptr[V_BARS]) visuals_ptr[V_BARS] = new vis_bars(f,this);
                 else {
                     vis_bars* a = (vis_bars*)visuals_ptr[V_BARS];
@@ -260,9 +260,11 @@ class visualizer
             break;
 
             case V_OSC:
+                draw_rect(vis_surface,0,0,SCREEN_WIDTH,SCREEN_HEIGHT,0); // clear backbuffer
+                if (!visuals_ptr[V_OSC]) {
+                     visuals_ptr[V_OSC] = new vis_osc(f);
 
-                if (!visuals_ptr[V_OSC]) visuals_ptr[V_OSC] = new vis_osc(f);
-                else {
+                }else {
                     vis_osc*  a = (vis_osc*)visuals_ptr[V_OSC];
                     a->render(vis_surface);
                 }
@@ -271,8 +273,11 @@ class visualizer
 
             case V_TUNNEL:
 
-                if (!visuals_ptr[V_TUNNEL]) visuals_ptr[V_TUNNEL] = new vis_tunnel(f);
-                else {
+                if (!visuals_ptr[V_TUNNEL]) {
+
+                     visuals_ptr[V_TUNNEL] = new vis_tunnel(f);
+                     draw_rect(vis_surface,0,0,SCREEN_WIDTH,SCREEN_HEIGHT,0); // clear backbuffer
+                }else {
                     vis_tunnel* a = (vis_tunnel*)visuals_ptr[V_TUNNEL];
                     a->render(vis_surface);
                 }
@@ -281,9 +286,11 @@ class visualizer
             break;
 
             case V_FIRE:
-
-                if (!visuals_ptr[V_FIRE]) visuals_ptr[V_FIRE] = new vis_fire(f);
-                else{
+                draw_rect(vis_surface,0,0,SCREEN_WIDTH,SCREEN_HEIGHT,0); // clear backbuffer
+                if (!visuals_ptr[V_FIRE])
+                {
+                     visuals_ptr[V_FIRE] = new vis_fire(f);
+                }else{
                     vis_fire* a =(vis_fire*)visuals_ptr[V_FIRE];
                     a->render(vis_surface);
                 }
@@ -291,7 +298,7 @@ class visualizer
                 SDL_SoftStretch(vis_surface,&sr,s,0);
             break;
 
-            case V_EXPLODE:
+/*            case V_EXPLODE:
 
                 if (!visuals_ptr[V_EXPLODE]) visuals_ptr[V_EXPLODE] = new vis_explode(f);
                 else{
@@ -301,7 +308,7 @@ class visualizer
                 SDL_BlitSurface(vis_surface,0,s,0);
                 //SDL_SoftStretch(vis_surface,&sr,s,0);
             break;
-
+*/
 
         };
 
