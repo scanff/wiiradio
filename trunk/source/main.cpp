@@ -751,8 +751,6 @@ void ShutdownCB()
 
 int main(int argc, char **argv)
 {
-    // load options
-    load_options();
 
     display_idx = 0;
     favs_idx = 0;
@@ -781,6 +779,9 @@ int main(int argc, char **argv)
 	//SYS_SetResetCallback(ResetCB);
 
 #endif
+
+    // load options
+    load_options();
 
     if ( SDL_Init( SDL_INIT_VIDEO | SDL_INIT_TIMER  ) < 0 ) {
         exit(1);
