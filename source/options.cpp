@@ -14,7 +14,7 @@ void set_defaults()
 {
     g_owidescreen = 0;
     g_oscrolltext = 0;
-
+    g_screensavetime = 0;
 }
 
 bool load_options()
@@ -23,14 +23,15 @@ bool load_options()
 
     FILE* f = 0;
 
-    f = fopen(make_path("cache/options.dat"),"r");
+    f = fopen(make_path("options.dat"),"r");
     if (!f) return false;
 
     fseek(f,0,SEEK_END);
     unsigned int size = ftell(f);
     fseek(f,0,SEEK_SET);
 
-    char* options_data = new char[size];
+    char* options_data = 0;
+    options_data = new char[size];
     if (!options_data)
     {
         fclose(f);
@@ -57,7 +58,7 @@ void save_options()
 {
     FILE* f = 0;
 
-    f = fopen(make_path("cache/options.dat"),"w");
+    f = fopen(make_path("options.dat"),"w");
     if (!f) return;
 
     fprintf(f,"ws %d\nst %d\nss %d\n",g_owidescreen,g_oscrolltext,g_screensavetime);
