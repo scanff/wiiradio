@@ -561,11 +561,20 @@ class gui {
             visual_show_title = get_tick_count();
             strcpy(visual_last_track_title,ic->track_title);
         }
+
         // volume display ... like an OSD
         draw_volume();
 
 
 
+    };
+
+    // -- different mapping ?
+    bool override_keys()
+    {
+        if (visualize) return vis->remap_keys;
+
+        return false;
     };
 
     void draw_info(char* txt)
