@@ -147,6 +147,7 @@ int lmin(int a, int b)
 #include "visuals/visual_osc.h"
 #include "visuals/visual_bars.h"
 #include "visuals/visual_explode.h"
+#include "visuals/visual_game1.h"
 
 
 class visualizer
@@ -157,8 +158,9 @@ class visualizer
     int             fft_results[MAX_FFT_RES];
     SDL_Surface*    vis_surface;
     void*           visuals_ptr[MAX_VISUALS];
+    bool            remap_keys;
 
-    visualizer(fft* p_f) : f(p_f)
+    visualizer(fft* p_f) : f(p_f), remap_keys(false)
     {
          loopi(MAX_FFT_RES) {
             fft_results[i] = 0;
@@ -224,6 +226,16 @@ class visualizer
             if (visuals_ptr[V_FIRE]) {
                 delete (vis_fire*)visuals_ptr[V_FIRE];
                 visuals_ptr[V_FIRE] = 0;
+            }
+        }
+
+        if (number != V_GAME1)
+        {
+            remap_keys = false;
+            if (visuals_ptr[V_GAME1])
+            {
+                delete (vis_game1*)visuals_ptr[V_GAME1];
+                visuals_ptr[V_GAME1] = 0;
             }
         }
 
@@ -297,7 +309,20 @@ class visualizer
 
                 SDL_SoftStretch(vis_surface,&sr,s,0);
             break;
+            case V_GAME1:
 
+                draw_rect(vis_surface,0,0,SCREEN_WIDTH,SCREEN_HEIGHT,0); // clear backbuffer
+                if (!visuals_ptr[V_GAME1])
+                {
+                    visuals_ptr[V_GAME1] = new vis_game1(f);
+                    remap_keys = true;
+                }else{
+                    vis_game1* a =(vis_game1*)visuals_ptr[V_GAME1];
+                    remap_keys = a->render(vis_surface);
+                }
+
+                 SDL_BlitSurface(vis_surface,0,s,0);
+            break;
 /*            case V_EXPLODE:
 
                 if (!visuals_ptr[V_EXPLODE]) visuals_ptr[V_EXPLODE] = new vis_explode(f);

@@ -1,6 +1,6 @@
 #include "globals.h"
 #include "options.h"
-#include "fonts.h"
+//#include "fonts.h"
 #include "client.h"
 
 #include "browser.h"
@@ -48,7 +48,7 @@ Uint64      last_button_time;
 
 texture_cache*      tx;
 SDL_Surface*        screen;
-fonts*              fnts;
+fonts*              fnts; //extern this to use everywhere
 icy*                icy_info;
 shoutcast_browser*  scb;
 playlists*          playlst;
@@ -155,55 +155,50 @@ void translate_keys()
 
     if(WPAD_ButtonsHeld(0) & WPAD_BUTTON_HOME){
         g_real_keys[SDLK_ESCAPE] = 1;
-        return;
     }
 
     if(WPAD_ButtonsHeld(0) & WPAD_BUTTON_LEFT){
         g_real_keys[SDLK_LEFT] = 1;
-        return;
     }
     if(WPAD_ButtonsHeld(0) & WPAD_BUTTON_RIGHT){
         g_real_keys[SDLK_RIGHT] = 1;
-        return;
     }
     if(WPAD_ButtonsHeld(0) & WPAD_BUTTON_DOWN) {
          g_real_keys[SDLK_DOWN] = 1;
-         return;
     }
     if(WPAD_ButtonsHeld(0) & WPAD_BUTTON_UP) {
          g_real_keys[SDLK_UP] = 1;
-         return;
     }
 
     if(WPAD_ButtonsHeld(0) & WPAD_BUTTON_A) {
          g_real_keys[SDLK_RETURN] = 1;
-         return;
+
     }
 
 
     if(WPAD_ButtonsHeld(0) & WPAD_BUTTON_B) {
          g_real_keys[SDLK_b] = 1;
-         return;
+
     }
 
     if(WPAD_ButtonsHeld(0) & WPAD_BUTTON_PLUS) {
          g_real_keys[SDLK_PLUS] = 1;
-         return;
+
     }
 
     if(WPAD_ButtonsHeld(0) & WPAD_BUTTON_MINUS) {
          g_real_keys[SDLK_MINUS] = 1;
-         return;
+
     }
 
     if(WPAD_ButtonsHeld(0) & WPAD_BUTTON_1) {
          g_real_keys[SDLK_1] = 1;
-         return;
+
     }
 
     if(WPAD_ButtonsHeld(0) & WPAD_BUTTON_2) {
          g_real_keys[SDLK_2] = 1;
-         return;
+
     }
 #endif
 
@@ -451,140 +446,149 @@ void screen_timeout()
 
 void check_keys()
 {
-    if (g_real_keys[SDLK_1] && !g_keys_last_state[SDLK_1])
+
+
+    // -- send the keys to the ui (mainly the visuals) and see if they peform a fifferent action!
+    if (!ui->override_keys())
     {
-
-        if (g_screen_status != S_STREAM_INFO) {
-            if (!visualize) g_screen_status = S_STREAM_INFO;
-        }else if (g_screen_status == S_STREAM_INFO)  { g_screen_status = S_BROWSER; }
-
-
-    }
-
-    if (g_real_keys[SDLK_ESCAPE] && !g_keys_last_state[SDLK_ESCAPE] && !visualize)
-    {
-        if (g_screen_status != S_OPTIONS)
-            g_screen_status = S_OPTIONS;
-        else g_screen_status = S_BROWSER;
-    }
-
-    if (g_real_keys[SDLK_b] && g_screen_status != S_BROWSER) g_screen_status = S_BROWSER;
-    if (g_real_keys[SDLK_PLUS] && status == PLAYING) request_save_fav(); // save playlist
+        // -- keys that always perform the same action go first!!!
+        if (g_real_keys[SDLK_2] && ! g_keys_last_state[SDLK_2])
+            visualize ? visualize = false : visualize = true;
 
 
-    if (g_real_keys[SDLK_MINUS] && !g_keys_last_state[SDLK_MINUS])
-    {
-        mute ? mute = false : mute = true;
-
-        if (mute)
+        if (g_real_keys[SDLK_MINUS] && !g_keys_last_state[SDLK_MINUS])
         {
+            mute ? mute = false : mute = true;
+
+            if (mute)
+            {
 #ifdef _WII_
-        MP3Player_Volume(0);
+                MP3Player_Volume(0);
 #endif
-        }else{
+            }else{
 #ifdef _WII_
-        MP3Player_Volume(mp3_volume);
+                MP3Player_Volume(mp3_volume);
 #endif
+            }
+
         }
 
-    }
+        if (g_real_keys[SDLK_DOWN]) {
 
-    if (g_real_keys[SDLK_DOWN]) {
+            mute = false;
 
-        mute = false;
-
-        mp3_volume-=4;
-        mp3_volume <= 0 ? mp3_volume = 0 : 0;
+            mp3_volume-=4;
+            mp3_volume <= 0 ? mp3_volume = 0 : 0;
 #ifdef _WII_
-        MP3Player_Volume(mp3_volume);
+            MP3Player_Volume(mp3_volume);
 #endif
-        g_vol_lasttime = get_tick_count();
-    }
-    if (g_real_keys[SDLK_UP]) {
+            g_vol_lasttime = get_tick_count();
+        }
 
-        mute = false;
+        if (g_real_keys[SDLK_UP]) {
 
-        mp3_volume+=4;
-        mp3_volume >= 255 ? mp3_volume = 255 : 0;
+            mute = false;
+
+            mp3_volume+=4;
+            mp3_volume >= 255 ? mp3_volume = 255 : 0;
 #ifdef _WII_
-        MP3Player_Volume(mp3_volume);
+            MP3Player_Volume(mp3_volume);
 #endif
 
-        g_vol_lasttime = get_tick_count();
-    }
-
-
-    if (g_real_keys[SDLK_2] && ! g_keys_last_state[SDLK_2])
-        visualize ? visualize = false : visualize = true;
-
-    if (g_real_keys[SDLK_RIGHT] && !g_keys_last_state[SDLK_RIGHT])
-    {
-        if (visualize)
-        {
-            if (visualize_number < MAX_VISUALS)
-                visualize_number++;
-        }
-
-        if (g_screen_status == S_BROWSER)
-        {
-            if (display_idx > MAX_STATION_CACHE) return;
-            else display_idx += max_stations;
-
-            ui->reset_scrollings();
-
-        }
-
-        if (g_screen_status == S_PLAYLISTS)
-        {
-             if (pls_display + MAX_BUTTONS  >= total_num_playlists) return;
-             else pls_display += MAX_BUTTONS;
-
-             ui->reset_scrollings();
-        }
-
-        if (g_screen_status == S_GENRES)
-        {
-            if (genre_display + MAX_BUTTONS  >= MAX_GENRE) return;
-            else genre_display += MAX_BUTTONS;
-
-            ui->reset_scrollings();
+            g_vol_lasttime = get_tick_count();
         }
 
 
-    }
-
-    if (g_real_keys[SDLK_LEFT] && !g_keys_last_state[SDLK_LEFT])
-    {
-        if (visualize)
+        if (g_real_keys[SDLK_1] && !g_keys_last_state[SDLK_1])
         {
-            if (visualize_number > 0)
-                visualize_number--;
+
+            if (g_screen_status != S_STREAM_INFO) {
+                if (!visualize) g_screen_status = S_STREAM_INFO;
+            }else if (g_screen_status == S_STREAM_INFO)  { g_screen_status = S_BROWSER; }
+
+
         }
 
-        if (g_screen_status == S_BROWSER)
+        if (g_real_keys[SDLK_ESCAPE] && !g_keys_last_state[SDLK_ESCAPE] && !visualize)
         {
-            if (display_idx < 0) display_idx = 0;
-            else display_idx -= max_stations;
-
-            ui->reset_scrollings();
+            if (g_screen_status != S_OPTIONS)
+                g_screen_status = S_OPTIONS;
+            else g_screen_status = S_BROWSER;
         }
 
-        if (g_screen_status == S_PLAYLISTS)
-        {
-            pls_display -= MAX_BUTTONS;
-            if (pls_display < 0) pls_display = 0;
+        if (g_real_keys[SDLK_b] && g_screen_status != S_BROWSER) g_screen_status = S_BROWSER;
+        if (g_real_keys[SDLK_PLUS] && status == PLAYING) request_save_fav(); // save playlist
 
-            ui->reset_scrollings();
+
+        if (g_real_keys[SDLK_RIGHT] && !g_keys_last_state[SDLK_RIGHT])
+        {
+            if (visualize)
+            {
+                if (visualize_number < MAX_VISUALS)
+                    visualize_number++;
+            }
+
+            if (g_screen_status == S_BROWSER)
+            {
+                if (display_idx > MAX_STATION_CACHE) return;
+                else display_idx += max_stations;
+
+                ui->reset_scrollings();
+
+            }
+
+            if (g_screen_status == S_PLAYLISTS)
+            {
+                 if (pls_display + MAX_BUTTONS  >= total_num_playlists) return;
+                 else pls_display += MAX_BUTTONS;
+
+                 ui->reset_scrollings();
+            }
+
+            if (g_screen_status == S_GENRES)
+            {
+                if (genre_display + MAX_BUTTONS  >= MAX_GENRE) return;
+                else genre_display += MAX_BUTTONS;
+
+                ui->reset_scrollings();
+            }
+
+
         }
 
-        if (g_screen_status == S_GENRES)
+        if (g_real_keys[SDLK_LEFT] && !g_keys_last_state[SDLK_LEFT])
         {
-            genre_display -= MAX_BUTTONS;
-            if (genre_display < 0) genre_display = 0;
+            if (visualize)
+            {
+                if (visualize_number > 0)
+                    visualize_number--;
+            }
 
-            ui->reset_scrollings();
+            if (g_screen_status == S_BROWSER)
+            {
+                if (display_idx < 0) display_idx = 0;
+                else display_idx -= max_stations;
+
+                ui->reset_scrollings();
+            }
+
+            if (g_screen_status == S_PLAYLISTS)
+            {
+                pls_display -= MAX_BUTTONS;
+                if (pls_display < 0) pls_display = 0;
+
+                ui->reset_scrollings();
+            }
+
+            if (g_screen_status == S_GENRES)
+            {
+                genre_display -= MAX_BUTTONS;
+                if (genre_display < 0) genre_display = 0;
+
+                ui->reset_scrollings();
+            }
         }
-    }
+    } // ui over ride keys ?
 
     screen_timeout();
 }
@@ -917,8 +921,6 @@ int main(int argc, char **argv)
             SDL_Delay(delay);
             current_time += delay;
         }
-
-
 
     }
 

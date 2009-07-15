@@ -79,6 +79,8 @@ enum _visuals
   V_OSC,
   V_TUNNEL,
   V_FIRE,
+ // V_MIST,
+  V_GAME1,
 //  V_EXPLODE,
   MAX_VISUALS
 };
@@ -143,6 +145,7 @@ extern char* trim_string(char*, int);
 #define bloop(v,m) for(int v = int(m)-1; v>=0; v--)
 #define loopi(m) loop(i,m)
 #define loopj(m) loop(j,m)
+#define loopk(m) loop(k,m)
 #define bloopj(m) bloop(j,m)
 #define CLIP(mx,x)  x>mx ? (mx) : x < 0 ? (0) : (x);
 #define MAX_Z_ORDERS (3)
@@ -163,6 +166,8 @@ extern int total_num_playlists;
 extern SDL_Event event;
 extern bool refresh_genre_cache;
 extern bool sc_error;
+#include "fonts.h"
+extern fonts* fnts;
 #include "textures.h"
 extern texture_cache* tx;
 #endif
