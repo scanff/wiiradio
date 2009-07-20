@@ -49,7 +49,7 @@ class vis_tunnel {
 
         //get peek
         int peak = 0;
-        loopi((8192/4) - 1) f->real[i] > peak ? peak = (int)f->real[i] : 0;
+        loopi((MAX_FFT_SAMPLE) - 1) f->real[i] > peak ? peak = (int)f->real[i] : 0;
 
 
 

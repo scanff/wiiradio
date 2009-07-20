@@ -18,7 +18,7 @@ class fft {
         #define FINAL_SCALE 0.333
 
 
-        fft() : dataSize(8192/4)
+        fft() : dataSize(MAX_FFT_SAMPLE)
         {
         #ifdef _WII_
             // Init buffers

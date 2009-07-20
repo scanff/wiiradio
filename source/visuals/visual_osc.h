@@ -45,7 +45,7 @@ class vis_osc {
 
         int sx,sy,x,y;
         int zerolevel = ((DRAW_HEIGHT/2)-10);
-        int len = (8192/4) - 1;
+        int len = (MAX_FFT_SAMPLE) - 1;
         double ts = static_cast<double>(DRAW_WIDTH)/static_cast<double>(len/2);
         double range = 20;
         double timescale = zerolevel/range;
@@ -53,6 +53,8 @@ class vis_osc {
         sx = 0;
         sy = zerolevel;
         int index = 0;
+
+         fade(s,SDL_MapRGB(s->format,0,0,0),40);
 
         for(int i = 8; i < (len-1); i+=8)
         {

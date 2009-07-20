@@ -7,7 +7,8 @@
 #ifndef VISUAL_GAME1_H_INCLUDED
 #define VISUAL_GAME1_H_INCLUDED
 SDL_Surface*    spritemap;
-
+int             DRAW_WIDTH;
+int             DRAW_HEIGHT;
 class vis_game1 {
     public:
 
@@ -18,8 +19,8 @@ class vis_game1 {
 
     unsigned long   h_score;
 
-    #define DRAW_HEIGHT     480
-    #define DRAW_WIDTH      640
+
+
     #define MAX_STARS       100
     #define MAX_BADGUY      5
     #define MAX_BG_AMMO     5
@@ -28,6 +29,8 @@ class vis_game1 {
 
     vis_game1(fft* _f) : f(_f), loaded(false),game_over(true),game_pause(false), h_score(0)
     {
+        DRAW_HEIGHT = 480;
+        DRAW_WIDTH = 640;
         game_pause = false;
         srand(get_tick_count());
         spritemap = 0;

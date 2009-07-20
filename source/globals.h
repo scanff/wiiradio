@@ -52,6 +52,7 @@ typedef int u32;
 #include <SDL/SDL_image.h>
 #include <SDL/SDL_ttf.h>
 #include <SDL/SDL_gfxPrimitives.h>
+//#include <SDL/SDL_rotozoom.h>
 
 #define MAX_KEYS 300
 
@@ -79,7 +80,7 @@ enum _visuals
   V_OSC,
   V_TUNNEL,
   V_FIRE,
- // V_MIST,
+  V_MIST,
   V_GAME1,
 //  V_EXPLODE,
   MAX_VISUALS
@@ -137,7 +138,7 @@ extern char* trim_string(char*, int);
 #define SMALL_MEM       (255)
 #define MED_MEM         (1024)
 #define TINY_MEM        (50)
-
+#define MAX_FFT_SAMPLE  (8192/4)
 
 #define MAX_STATION_CACHE (1000)
 // macros

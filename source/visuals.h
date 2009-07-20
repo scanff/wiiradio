@@ -148,6 +148,7 @@ int lmin(int a, int b)
 #include "visuals/visual_bars.h"
 #include "visuals/visual_explode.h"
 #include "visuals/visual_game1.h"
+#include "visuals/visual_mist.h"
 
 
 class visualizer
@@ -226,6 +227,14 @@ class visualizer
             if (visuals_ptr[V_FIRE]) {
                 delete (vis_fire*)visuals_ptr[V_FIRE];
                 visuals_ptr[V_FIRE] = 0;
+            }
+        }
+
+        if (number != V_MIST)
+        {
+            if (visuals_ptr[V_MIST]) {
+                delete (vis_mist*)visuals_ptr[V_MIST];
+                visuals_ptr[V_MIST] = 0;
             }
         }
 
@@ -309,6 +318,21 @@ class visualizer
 
                 SDL_SoftStretch(vis_surface,&sr,s,0);
             break;
+
+            case V_MIST:
+               //
+                if (!visuals_ptr[V_MIST])
+                {
+                     draw_rect(vis_surface,0,0,SCREEN_WIDTH,SCREEN_HEIGHT,0); // clear backbuffer
+                     visuals_ptr[V_MIST] = new vis_mist(f);
+                }else{
+                    vis_mist* a =(vis_mist*)visuals_ptr[V_MIST];
+                    a->render(vis_surface);
+                }
+
+                SDL_BlitSurface(vis_surface,0,s,0);
+            break;
+
             case V_GAME1:
 
                 draw_rect(vis_surface,0,0,SCREEN_WIDTH,SCREEN_HEIGHT,0); // clear backbuffer
