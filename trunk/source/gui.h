@@ -36,6 +36,7 @@ class gui {
         BTN_GENRES_SELECT,
         BTN_PLAYING,
         BTN_LOGO,
+        BTN_CANCEL, // cancel buffering or connecting !
 
         BTN_MAX
 
@@ -185,6 +186,13 @@ class gui {
         buttons[BTN_LOGO] = new gui_button(guibuffer,f,0,25,196,88,NULL,0,false);
         buttons[BTN_LOGO]->set_images("imgs/logo_over.png","imgs/logo_out.png","imgs/logo_over.png");
 
+        // cancel
+        buttons[BTN_CANCEL] = new gui_button(guibuffer,f,0,25,196,88,NULL,0,false);
+        buttons[BTN_CANCEL]->set_images("imgs/gen_button_over.png","imgs/gen_button_out.png","imgs/gen_button_over.png");
+        buttons[BTN_CANCEL]->center_text = true;
+        buttons[BTN_CANCEL]->pad_y = 10;
+        buttons[BTN_CANCEL]->font_sz = FS_MED;
+        buttons[BTN_CANCEL]->z_order = 1;
     };
 
     ~gui()
@@ -227,7 +235,7 @@ class gui {
     {
         handle_options();
 
-        if (visualize || (status == BUFFERING && (g_screen_status != S_OPTIONS))) return 0;
+        if (visualize /*|| ((g_screen_status != S_OPTIONS))*/) return 0;
 
         loopi(BTN_MAX) buttons[i]->btn_state = B_OUT; //reset
 
@@ -241,6 +249,8 @@ class gui {
         //over
         if (events->type != SDL_MOUSEBUTTONDOWN)
         {
+
+
             bloopj(MAX_Z_ORDERS) // top ordered first
             {
                 loopi(BTN_MAX)
@@ -257,12 +267,20 @@ class gui {
         //click
         if(events->type == SDL_MOUSEBUTTONDOWN)
         {
+            // -- cancel buffering
+            if (status == BUFFERING)
+            {
+                if(buttons[BTN_CANCEL]->hit_test(events->motion.x,events->motion.y,1)==B_CLICK)
+                {
+                    status = STOPPED;
+                }
+
+                return 0;
+            }
 
             //loop through z-order
             bloopj(MAX_Z_ORDERS)
             {
-
-
 
                 //logo
 
@@ -552,7 +570,13 @@ class gui {
         }else draw_about();
 
         // always inform user if buffering
-        if (status == BUFFERING) draw_info((char*)"Buffering...");
+        if (status == BUFFERING)
+        {
+            draw_info((char*)"Buffering...");
+
+
+
+        }
 
 
         //cursor
@@ -585,6 +609,15 @@ class gui {
         SDL_Rect t = {48,(440 / 2) - (info_dlg->h / 2),info_dlg->w,info_dlg->h};
         SDL_BlitSurface(info_dlg,0, guibuffer,&t);
         fnts->text(guibuffer,txt,t.x + 130,t.y + 32,0);
+
+        if (status == BUFFERING)
+        {
+            fnts->set_size(FS_MED);
+            buttons[BTN_CANCEL]->s_x = t.x + 345;
+            buttons[BTN_CANCEL]->s_y = t.y + 25;
+            buttons[BTN_CANCEL]->text_l1 = "CANCEL";
+            buttons[BTN_CANCEL]->draw();
+        }
 
     };
     void draw_sc_error()

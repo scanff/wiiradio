@@ -28,6 +28,7 @@ Uint8 *		g_nKetStatus;
 Uint8       g_real_keys[MAX_KEYS];
 Uint8       g_keys_last_state[MAX_KEYS];
 bool        g_running;
+bool        g_critical_running;
 int 		g_screen_status;
 Uint64      g_vol_lasttime;
 int         fullscreen;
@@ -390,6 +391,9 @@ void connect_to_stream(int value,bool haveplaylist)
         len_req = net->client_send(request,len_req);
 
         connected = connect_try;
+
+        status = BUFFERING;
+
     }else status = FAILED;
 
 
@@ -526,6 +530,8 @@ void check_keys()
             {
                 if (visualize_number < MAX_VISUALS)
                     visualize_number++;
+
+                return;
             }
 
             if (g_screen_status == S_BROWSER)
@@ -562,6 +568,8 @@ void check_keys()
             {
                 if (visualize_number > 0)
                     visualize_number--;
+
+                return;
             }
 
             if (g_screen_status == S_BROWSER)
@@ -660,10 +668,15 @@ s32 reader_callback(void *usr_data,void *cb,s32 len)
 int critical_thread(void *arg)
 {
     int len = 0;
-    char* net_buffer = new char[2560];
     int errors = 0;
+    char* net_buffer = 0;
 
-    while(g_running)
+    net_buffer = new char[2560];
+    if (!net_buffer) return 0;
+
+    g_critical_running = true;
+
+    while(g_critical_running)
     {
 
         // network handler
@@ -687,6 +700,7 @@ int critical_thread(void *arg)
 #endif
 
             }
+
 
 			if (!icy_info->bufferring) // only play if we've buffered enough data
 			{
@@ -712,8 +726,9 @@ int critical_thread(void *arg)
                     status = PLAYING;
                 }
 #endif
-			}else{
-			    status = BUFFERING;
+			}else if (icy_info->bufferring){
+
+			    //status = BUFFERING;
 
                 /* would block, not really an error in this case */
                 if (len != -11) errors++;
@@ -725,10 +740,20 @@ int critical_thread(void *arg)
                     errors = 0;
                 }
 			}
+
+            // -- stream connection was cancelled
+            if (status == STOPPED)
+            {
+                if (connected) net->client_close();
+                connected = 0;
+                errors = 0;
+            }
+
 	    }else{
 	        errors = 0; // no rec errors
             Sleep(500); // don't hog if not connected
 	    }
+
 
         Sleep(25); // minimum delay
     }
@@ -925,7 +950,7 @@ int main(int argc, char **argv)
     }
 
     save_options(); // save options
-
+    g_critical_running = false;
     SDL_WaitThread(mainthread, NULL);
 
     // clean up
