@@ -115,7 +115,7 @@ class icy {
         buffered = 0;
         bufferring = true;
         last_chunk = 0;
-
+        status = BUFFERING;
     };
 
 

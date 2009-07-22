@@ -149,6 +149,7 @@ int lmin(int a, int b)
 #include "visuals/visual_explode.h"
 #include "visuals/visual_game1.h"
 #include "visuals/visual_mist.h"
+#include "visuals/visual_bobs.h"
 
 
 class visualizer
