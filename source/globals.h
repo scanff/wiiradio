@@ -52,7 +52,7 @@ typedef int u32;
 #include <SDL/SDL_image.h>
 #include <SDL/SDL_ttf.h>
 #include <SDL/SDL_gfxPrimitives.h>
-//#include <SDL/SDL_rotozoom.h>
+
 
 #define MAX_KEYS 300
 
@@ -70,6 +70,7 @@ enum _screens{
   S_GENRES,
   S_OPTIONS,
   S_STREAM_INFO,
+  S_CANCEL_CON_BUF,
   S_MAX
 
 };

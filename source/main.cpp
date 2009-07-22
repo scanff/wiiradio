@@ -47,6 +47,7 @@ int         visualize_number;
 bool        mute;
 Uint64      last_button_time;
 
+
 texture_cache*      tx;
 SDL_Surface*        screen;
 fonts*              fnts; //extern this to use everywhere
@@ -73,7 +74,11 @@ FMOD_CREATESOUNDEXINFO  exinfo;
 
 #endif
 
-int critical_thread (void *arg);
+int critical_thread (void *arg); // -- main playback and net thread
+SDL_Thread* mainthread = 0;
+
+int connect_thread (void *arg); // -- thread for connection request
+SDL_Thread* connectthread = 0;
 
 // -- Functions
 void fade(SDL_Surface *screen2, Uint32 rgb, Uint8 a)
@@ -273,21 +278,26 @@ void delete_playlist(int value)
 
 }
 
-void connect_to_stream(int,bool); //extern'd
-void connect_to_stream(int value,bool haveplaylist)
+int g_value;
+bool g_haveplaylist;
+int connect_thread(void* arg)
 {
-
-    char* url = 0;
-    char* path = 0;
-    int port;
-    char* host =  0;
+    char* url = playing->station_url;
+    int port = playing->port;
+    char* path = playing->station_path;
+    char* host = 0;
     char request[1024] = {0};
 
-    g_pause_draw = true;
-    //force a redraw before doing the costly connect
-    draw_ui((char*)"Connecting..."); // need a state !!!
 
+    // close the main thread
+    /*if (mainthread) // already running !
+    {
+        g_critical_running = false; // flag it to stop
+        SDL_WaitThread(mainthread, NULL); // wait for it to stop
+        mainthread = 0; // null
+    }*/
 
+    // -- close current connection
     if (connected)
     {
         connected = 0;
@@ -297,28 +307,27 @@ void connect_to_stream(int value,bool haveplaylist)
     // stop mp3 if currently playing.
     stop_playback();
 
-    if (!haveplaylist) {
+    if (!g_haveplaylist) {
 
-        value += display_idx;
-        if (value > scb->total_items)
+        g_value += display_idx;
+        if (g_value > scb->total_items)
         {
-            g_pause_draw = false;
-            return;
+            status = FAILED;
+            return 0;
         }
 
         station_list* csl = scb->sl_first;
         // loop through stations
         int x = 0;
         while(csl){
-            if (x==value) break;
+            if (x==g_value) break;
 
             csl = csl->nextnode;
             x++;
         }
         if (!csl) {
-            g_pause_draw = false;
             status = FAILED;
-            return;
+            return 0;
         }
 
         // get playlists
@@ -342,15 +351,14 @@ void connect_to_stream(int value,bool haveplaylist)
         // loop through stations
         int x = 0;
         while(csl){
-            if (x==value) break;
+            if (x==g_value) break;
 
             csl = csl->nextnode;
             x++;
         }
         if (!csl) {
-            g_pause_draw = false;
             status = FAILED;
-            return;
+            return 0;
         }
 
         url = csl->station_url;
@@ -366,11 +374,10 @@ void connect_to_stream(int value,bool haveplaylist)
     }
 
 
-    // reset icy state
-    icy_info->icy_reset();
-
-    // connect to new stream
+       // connect to new stream
     int connect_try = net->client_connect(url,port,TCP);
+
+    if (status != CONNECTING) return 0; // cancelled !
 
     if (connect_try) // send stream request to the server
     {
@@ -390,14 +397,37 @@ void connect_to_stream(int value,bool haveplaylist)
         int len_req = strlen(request);
         len_req = net->client_send(request,len_req);
 
+        // reset icy state
+        icy_info->icy_reset();
+
         connected = connect_try;
 
         status = BUFFERING;
 
     }else status = FAILED;
 
+    return 0;
+}
 
-    g_pause_draw = false;
+
+void connect_to_stream(int,bool); //extern'd
+void connect_to_stream(int value,bool haveplaylist)
+{
+    g_value = value;
+    g_haveplaylist = haveplaylist;
+
+    if (connectthread)
+    {
+        SDL_WaitThread(connectthread, NULL); // wait for it to stop
+        connectthread = 0;
+    }
+
+    status = CONNECTING; // attempting a new connection
+
+    // start a new connection thread
+    connectthread = SDL_CreateThread(connect_thread,0);
+    if (!connectthread) return;
+
 }
 
 bool screen_sleeping = false;
@@ -854,9 +884,6 @@ int main(int argc, char **argv)
     get_favorites();
 	g_running = true;
 
-    SDL_Thread *mainthread = 0;
-    mainthread = SDL_CreateThread(critical_thread,0);
-    if (!mainthread) exit(0);
 
 #ifdef _WII_
     ASND_Init();
@@ -873,14 +900,17 @@ int main(int argc, char **argv)
 
 #endif
 
+ // create a new reader thread
+    mainthread = SDL_CreateThread(critical_thread,0);
+    if (!mainthread) exit(0);
 
     search_genre((char*)"pop"); // get list ...
+
     status = STOPPED;
     g_screen_status = S_BROWSER;
     DWORD last_time, current_time;
     last_time = current_time = get_tick_count();
     int fps = 40; //attempt 40fps
-
 
     while(g_running)
     {
@@ -913,8 +943,10 @@ int main(int argc, char **argv)
 
         if (wd_one->ir.valid)
         {
-            wd_one->ir.y > SCREEN_HEIGHT -1 ? wd_one->ir.y = SCREEN_HEIGHT -1 : wd_one->ir.y <0 ? wd_one->ir.y = 0 : 0;
-            wd_one->ir.x > SCREEN_WIDTH - 1 ? wd_one->ir.x = SCREEN_WIDTH - 1 : wd_one->ir.x <0 ? wd_one->ir.x = 0 : 0;
+//            cursor_rot = wd_one->orient.roll; // rotation
+
+          //  wd_one->ir.y > SCREEN_HEIGHT -1 ? wd_one->ir.y = SCREEN_HEIGHT -1 : wd_one->ir.y <0 ? wd_one->ir.y = 0 : 0;
+          //  wd_one->ir.x > SCREEN_WIDTH - 1 ? wd_one->ir.x = SCREEN_WIDTH - 1 : wd_one->ir.x <0 ? wd_one->ir.x = 0 : 0;
             event.motion.x = wd_one->ir.x;
             event.motion.y = wd_one->ir.y;
 
@@ -948,9 +980,10 @@ int main(int argc, char **argv)
         }
 
     }
+    g_critical_running = false;
 
     save_options(); // save options
-    g_critical_running = false;
+
     SDL_WaitThread(mainthread, NULL);
 
     // clean up
@@ -973,8 +1006,6 @@ int main(int argc, char **argv)
     delete fnts; fnts = 0;
     delete icy_info; icy_info = 0;
     delete tx; tx = 0;
-
-
 
     SDL_Quit();
 

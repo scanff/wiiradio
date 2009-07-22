@@ -192,7 +192,8 @@ class gui {
         buttons[BTN_CANCEL]->center_text = true;
         buttons[BTN_CANCEL]->pad_y = 10;
         buttons[BTN_CANCEL]->font_sz = FS_MED;
-        buttons[BTN_CANCEL]->z_order = 1;
+        buttons[BTN_CANCEL]->z_order =  1;
+
     };
 
     ~gui()
@@ -255,6 +256,8 @@ class gui {
             {
                 loopi(BTN_MAX)
                 {
+                    if (i == BTN_CANCEL && (status != CONNECTING && status != BUFFERING)) continue;
+
                     if (buttons[i]->mouse_over(events->motion.x,events->motion.y,j) == B_OVER
                         && ((buttons[i]->bind_screen == g_screen_status) || (buttons[i]->bind_screen == S_ALL))
                         )
@@ -268,7 +271,7 @@ class gui {
         if(events->type == SDL_MOUSEBUTTONDOWN)
         {
             // -- cancel buffering
-            if (status == BUFFERING)
+            if (status == BUFFERING || status == CONNECTING)
             {
                 if(buttons[BTN_CANCEL]->hit_test(events->motion.x,events->motion.y,1)==B_CLICK)
                 {
@@ -570,14 +573,8 @@ class gui {
         }else draw_about();
 
         // always inform user if buffering
-        if (status == BUFFERING)
-        {
-            draw_info((char*)"Buffering...");
-
-
-
-        }
-
+        if (status == BUFFERING) draw_info((char*)"Buffering...");
+        if (status == CONNECTING) draw_info((char*)"Connecting...");
 
         //cursor
         if (!visualize) {
@@ -610,12 +607,12 @@ class gui {
         SDL_BlitSurface(info_dlg,0, guibuffer,&t);
         fnts->text(guibuffer,txt,t.x + 130,t.y + 32,0);
 
-        if (status == BUFFERING)
+        if (status == BUFFERING || status == CONNECTING)
         {
             fnts->set_size(FS_MED);
             buttons[BTN_CANCEL]->s_x = t.x + 345;
             buttons[BTN_CANCEL]->s_y = t.y + 25;
-            buttons[BTN_CANCEL]->text_l1 = "CANCEL";
+            buttons[BTN_CANCEL]->text_l1 = (char*)"CANCEL";
             buttons[BTN_CANCEL]->draw();
         }
 
