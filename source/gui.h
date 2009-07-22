@@ -251,7 +251,6 @@ class gui {
         if (events->type != SDL_MOUSEBUTTONDOWN)
         {
 
-
             bloopj(MAX_Z_ORDERS) // top ordered first
             {
                 loopi(BTN_MAX)
@@ -270,6 +269,8 @@ class gui {
         //click
         if(events->type == SDL_MOUSEBUTTONDOWN)
         {
+            if (g_screen_status == S_SEARCHING) return 0; // no hit test
+
             // -- cancel buffering
             if (status == BUFFERING || status == CONNECTING)
             {
@@ -280,6 +281,7 @@ class gui {
 
                 return 0;
             }
+
 
             //loop through z-order
             bloopj(MAX_Z_ORDERS)
@@ -349,8 +351,6 @@ class gui {
 
 
                             search_genre((char*)genres[genre_selected]); // do the search .. switch to browser
-
-                            g_screen_status = S_BROWSER;
                             reset_scrollings();
                             return 0;
                         }
@@ -575,6 +575,8 @@ class gui {
         // always inform user if buffering
         if (status == BUFFERING) draw_info((char*)"Buffering...");
         if (status == CONNECTING) draw_info((char*)"Connecting...");
+        if (g_screen_status == S_SEARCHING)
+            draw_info((char*)"Searching...");
 
         //cursor
         if (!visualize) {
@@ -651,7 +653,7 @@ class gui {
 
     void draw_volume()
     {
-        if (mute) // alway show if muted
+        if (mute && !screen_sleeping) // alway show if muted
         {
             SDL_Rect d = {20,50,mute_img->w,mute_img->h};
             SDL_BlitSurface(mute_img,0, guibuffer,&d);

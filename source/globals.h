@@ -71,6 +71,7 @@ enum _screens{
   S_OPTIONS,
   S_STREAM_INFO,
   S_CANCEL_CON_BUF,
+  S_SEARCHING,
   S_MAX
 
 };
@@ -100,6 +101,7 @@ extern bool         g_pause_draw;
 extern int          mp3_volume;
 extern Uint64       g_vol_lasttime;
 extern bool         mute;
+extern bool         screen_sleeping;
 
 typedef unsigned long DWORD;
 typedef unsigned char BYTE;

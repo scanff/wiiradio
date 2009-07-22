@@ -80,6 +80,10 @@ SDL_Thread* mainthread = 0;
 int connect_thread (void *arg); // -- thread for connection request
 SDL_Thread* connectthread = 0;
 
+
+int search_thread (void *arg); // -- thread for genre searches
+SDL_Thread* searchthread = 0;
+
 // -- Functions
 void fade(SDL_Surface *screen2, Uint32 rgb, Uint8 a)
 {
@@ -230,17 +234,10 @@ void station_lister(const char* path,char* gen)
     // rest gui pointer
     ui->select_pos = 0;
 
-    g_pause_draw = true;
-
-    //force a redraw before doing the costly connect
-    draw_ui((char*)"Requesting List...");
-
-
     // connect and get the web page
     if(!scb->connect(path,gen))    // parse the html and grab what we need
         scb->connect(path,gen); // try again
 
-    g_pause_draw = false;
 }
 
 
@@ -278,6 +275,28 @@ void delete_playlist(int value)
 
 }
 
+
+// -- genere search thread
+int search_thread(void* arg)
+{
+    char* selected = (char*)arg;
+    char path[512] = {0};
+
+    // flag as searching so we don't try and draw the current station text ... the pointers will be deleted !!!
+    g_screen_status = S_SEARCHING;
+
+    Sleep(100); // give the ui time to finish what it's doing before requesting a new list!
+
+    // bring down upto 1k of stations per genre.  We will then cache them incase of shoutcast DB problems
+    sprintf(path,"/sbin/newxml.phtml?service=winamp2&no_compress=1&genre=%s&limit=1000",selected);
+    station_lister(path,selected);
+
+    g_screen_status = S_BROWSER;
+	
+	return 0;
+}
+
+// -- Connect thread
 int g_value;
 bool g_haveplaylist;
 int connect_thread(void* arg)
@@ -637,13 +656,21 @@ void search_genre(char* selected)
 {
     refresh_genre_cache = true; // everytime we search for a new genre let's refresh the cache
     display_idx = 0;
-    char path[200] = {0};
 
-    // bring down upto 1k of stations per genre.  We will then cache them incase of shoutcast DB problems
-    sprintf(path,"/sbin/newxml.phtml?service=winamp2&no_compress=1&genre=%s&limit=1000",selected);
-    station_lister(path,selected);
+
+    if (searchthread)
+    {
+        SDL_WaitThread(searchthread, NULL); // wait for it to stop
+        searchthread = 0;
+    }
+
+
+    // start a new connection thread
+    searchthread = SDL_CreateThread(search_thread,(void*)selected);
+    if (!searchthread) return;
 
 }
+
 void genre_nex_prev(bool,char*);//extern'd
 void genre_nex_prev(bool n,char* genre)
 {
@@ -904,10 +931,11 @@ int main(int argc, char **argv)
     mainthread = SDL_CreateThread(critical_thread,0);
     if (!mainthread) exit(0);
 
+    g_screen_status = S_BROWSER;
+    status = STOPPED;
+
     search_genre((char*)"pop"); // get list ...
 
-    status = STOPPED;
-    g_screen_status = S_BROWSER;
     DWORD last_time, current_time;
     last_time = current_time = get_tick_count();
     int fps = 40; //attempt 40fps
