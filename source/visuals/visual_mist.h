@@ -55,7 +55,7 @@ class vis_mist {
         for(int l=padding;l<(len-1-padding);l++)
         {
             x = (int)((double)(l-padding)*ts);
-            y = (8 * (sqrt(abs(f->real[l] / divisor))));
+            y = (int)(8 * (sqrt(abs((int)(f->real[l] / divisor)))));
             y = DRAW_HEIGHT - y;
 
             if (y >= 0) // filter bad reading

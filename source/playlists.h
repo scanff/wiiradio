@@ -6,11 +6,11 @@ struct station_playlist {
     {
         nextnode = 0;
         memset(url,0,1024);
-        memset(path,0,255);
+        memset(path,0,SMALL_MEM);
     };
     char url[1024]; // url
     int port;
-    char path[255];
+    char path[SMALL_MEM];
     struct station_playlist *nextnode; // pointer to next
 };  // TODO - build list of urls from the playlist .... only grabbing the first right now -----
 
@@ -20,50 +20,37 @@ class playlists
 
     #define MAX_PLAYLIST_SIZE (5000)
 
-    network*            net;
-    char*               current_page;
+
     station_playlist*   first_entry;
-    unsigned long       content_size;
+
     playlists()
     {
-        net             = new network;
         first_entry     = new station_playlist;
-        current_page    = new char[MAX_PLAYLIST_SIZE];
     };
 
     ~playlists()
     {
         delete first_entry;
         first_entry = 0;
-
-        delete [] current_page;
-        current_page = 0;
-
-        delete net;
-        net = 0;
     };
 
-    int get_head(char* trailing_path)
+   /* int get_head(char* trailing_path)
     {
-        char request[255] = {0};
+        network* net = 0;
+        char* current_page = 0;
+        unsigned long content_size = 0;
+
+        net = new network;
+        if (!net) return 0;
 
         if (net->client_connect((char*)"yp.shoutcast.com",80,TCP))
         {
 
             // request header to see how big the page is !
 
-            sprintf(request,
-                    "HEAD %s HTTP/1.1\r\n"
-                    "Host: %s\r\n"
-                    "User-Agent: Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)\r\n"
-                    "Accept: */*\r\n"
-                    "Connection: Keep-Alive\r\n\r\n",
-                    trailing_path,"yp.shoutcast.com");
+            char head[MAX_NET_BUFFER] = {0};
 
-
-            char head[1024] = {0};
-
-            if (net->client_send(request,strlen(request)))
+            if(net->send_http_request((char*)"HEAD",(char*)trailing_path,(char*)"yp.shoutcast.com"))
             {
                 unsigned long page_size = 0;
                 int len = 1;
@@ -75,7 +62,7 @@ class playlists
 
                     if ((get_tick_count() - start_time) > TIME_OUT_MS) break; //timeout
 
-                    len = net->client_recv(head+page_size,1024);
+                    len = net->client_recv(head+page_size,MAX_NET_BUFFER);
                     if (len > 0) page_size += len;
 #ifdef _WII_
                     if(len==-11) len =1;//WOULDBLOCK
@@ -103,11 +90,28 @@ class playlists
             net->client_close();
         }
 
+        delete net;
+        net = 0;
 
     };
-
+*/
     void get_playlist(const char* path)
     {
+        network* net = 0;
+        char* current_page = 0;
+       // unsigned long content_size = 0;
+
+        net = new network;
+        if (!net) return;
+
+        current_page = new char[MAX_PLAYLIST_SIZE];
+        if (!current_page)
+        {
+            delete net;
+            net = 0;
+            return;
+        }
+
         memset(current_page,0,MAX_PLAYLIST_SIZE);
 
 
@@ -117,7 +121,7 @@ class playlists
 
         unsigned long page_size = 0;
 
-       // get_head(trailing_path); // TODO handle http header ... using Content-Length to allocate the buffer!
+     //   get_head(trailing_path); // TODO handle http header ... using Content-Length to allocate the buffer!
 
         if (net->client_connect((char*)"yp.shoutcast.com",80,TCP)) {
 
@@ -126,7 +130,7 @@ class playlists
             {
                 int len = 1;
                 while(len > 0) {
-                    len = net->client_recv(current_page+page_size,1000);
+                    len = net->client_recv(current_page+page_size,MAX_NET_BUFFER);
                     if (len > 0) page_size += len;
 #ifdef _WII_
                     if(len==-11) len = 1;//WOULDBLOCK
@@ -139,6 +143,11 @@ class playlists
 
             net->client_close();
         }
+
+        parse_playlist(current_page);
+
+        delete [] current_page;
+        current_page = 0;
     };
 
     void split_url(char* url)
@@ -171,13 +180,13 @@ class playlists
     }
 
     // TODO - build list of urls from the playlist .... only grabbing the first right now
-    char* parse_playlist()
+    char* parse_playlist(char* cp)
     {
         char url[1024] = {0};
         char* start = 0;
         char* end = 0;
 
-        start = strstr(current_page,"File1=");
+        start = strstr(cp,"File1=");
         if (start) {
             start += strlen("File1=");
             end = strstr(start,"\n");

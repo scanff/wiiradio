@@ -60,7 +60,7 @@ class favorites {
     {
         if (!c) return;
 
-        char full_name[255]={0};
+        char full_name[SMALL_MEM]={0};
         sprintf(full_name,"pls/%s.pls",friendly_name(c->station_name));
 
         FILE* f = fopen(make_path(full_name),"w");
@@ -150,7 +150,6 @@ class favorites {
         char* data = new char[size];
         fread(data,size,1,f);
 
-
         char* start = data;
         char* end = 0;
 
@@ -239,8 +238,8 @@ class favorites {
 
         while(start)
         {
-            char station_name[255] = {0};
-            char station_url[255] = {0};
+            char station_name[SMALL_MEM] = {0};
+            char station_url[SMALL_MEM] = {0};
 
            //url
             start = strstr(start,"File1=");
@@ -348,7 +347,7 @@ class favorites {
     void load_file(const char* fn)
     {
 
-        char full_name[255]={0};
+        char full_name[SMALL_MEM]={0};
         sprintf(full_name,"pls/%s",fn);
 
         FILE * file = fopen(make_path(full_name),"r");
@@ -387,7 +386,7 @@ class favorites {
         struct dirent *pent;
         struct stat statbuf;
 
-        pdir=opendir(make_path("pls/"));
+        pdir=opendir(make_path((char*)"pls/"));
 
         if (!pdir){
             return;
@@ -397,8 +396,10 @@ class favorites {
 
             stat(pent->d_name,&statbuf);
             if(strcmp(".", pent->d_name) == 0 || strcmp("..", pent->d_name) == 0)
+            {
+                memset(pent->d_name,0,NAME_MAX+1);
                 continue;
-
+			}
           //  if(S_ISDIR(statbuf.st_mode)) // no dirs sorry
           //      continue; //printf("%s <dir>\n", pent->d_name);
 
@@ -406,6 +407,7 @@ class favorites {
 
                 load_file(pent->d_name);
 
+                memset(pent->d_name,0,NAME_MAX+1);
             //}
         }
 

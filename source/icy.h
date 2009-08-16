@@ -51,11 +51,12 @@ class icy {
 
     public:
 
-    icy() : metaint_pos(0),
+    icy() : icy_metaint(10000), // must not be zero on start, otherwise will never buffer
+			metaint_pos(0),
             looking_for_header(true),
             buffered(0),
             pre_buffer(200000),
-            buffer_size(3000000),//(4000000),
+            buffer_size(2000000),
             buffer(0),
             bufferring(true),
             metaint_size(0),
@@ -63,6 +64,7 @@ class icy {
             last_chunk(0),
             buffers_recvd(0),
             buffers_sent(0)
+            
     {
         memset(track_title,0,SMALL_MEM);
         strcpy(last_track_title,"last");
@@ -91,7 +93,10 @@ class icy {
         memset(icy_genre,0,SMALL_MEM);
         memset(icy_url,0,SMALL_MEM);
         memset(track_title,0,SMALL_MEM);
+        memset(content_type,0,SMALL_MEM);
+
         strcpy(last_track_title,"last");
+
 
         icy_pub = 0;
         icy_br = 0;
@@ -143,19 +148,21 @@ class icy {
                         case 4: memcpy(icy_url,start,(end-start < SMALL_MEM-1 ? end-start : SMALL_MEM-1)); break;
                         case 5: memcpy(content_type,start,(end-start < SMALL_MEM-1 ? end-start : SMALL_MEM-1)); break;
                         case 6:
+                            memset(tmp,0,10);
                             memcpy(tmp,start,(end-start < 10 ? end-start : 9));
                             icy_pub = atoi(tmp);
-                            memset(tmp,0,10);
+
                          break;
                         case 7:
+                            memset(tmp,0,10);
                             memcpy(tmp,start,(end-start < 10 ? end-start : 9));
                             icy_metaint = atoi(tmp);
-                            memset(tmp,0,10);
+
                         break;
                         case 8:
+                            memset(tmp,0,10);
                             memcpy(tmp,start,(end-start < 10 ? end-start : 9));
                             icy_br = atoi(tmp);
-                            memset(tmp,0,10);
                         break;
 
 
@@ -204,6 +211,7 @@ class icy {
 
     int parse_metaint(char* net_buffer,int len)
     {
+
         int netbuf_counter = 0;
         int new_len = len;
 

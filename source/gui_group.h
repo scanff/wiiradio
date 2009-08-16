@@ -1,31 +1,32 @@
 #ifndef GUI_GROUP_H_INCLUDED
 #define GUI_GROUP_H_INCLUDED
 
+#include "gui_object.h"
 #include "gui_toggle.h"
 
-class gui_group
+class gui_group : public gui_object
 {
     public:
 
     int number;
-    int s_x;
-    int s_y;
-
-
-    SDL_Surface*    guibuffer;
-    fonts*          fnts;
 
     gui_toggle**  items;
 
     gui_group(int _num,int _x, int _y, int _w, int _h, int _spacing, SDL_Surface* _g,fonts* _f) :
-    number(_num), s_x(_x), s_y(_y), guibuffer(_g), fnts(_f)
+    number(_num)
     {
+        s_x = _x;
+        s_y = _y;
+        guibuffer = _g;
+        fnts = _f;
+        obj_type = GUI_GROUP;
+
         items = new gui_toggle*[_num];
 
         loopi(_num)
         {
-            items[i] = new gui_toggle(_g,_f, s_x + (_w * i) + (i*_spacing) ,s_y ,_w,_h,0,0,0) ;
-            items[i]->set_images("imgs/toggle_out.png","imgs/toggle_on.png");
+            items[i] = new gui_toggle(_g,_f, s_x + (_w * i) + (i*_spacing) ,s_y ,_w,_h,0,0) ;
+            items[i]->set_images(0,0,(char*)"imgs/toggle_out.png",(char*)"imgs/toggle_on.png");
             items[i]->bind_screen = S_OPTIONS;
         }
     };
@@ -53,10 +54,10 @@ class gui_group
         int on = 0;
 
         // save current on
-        loopj(number) if (items[j]->btn_state == B_ON) on = j;
+        loopj(number) if (items[j]->obj_state == B_ON) on = j;
 
         // turn all off
-        loopj(number) items[j]->btn_state = B_OFF;
+        loopj(number) items[j]->obj_state = B_OFF;
 
         // test for a change
         for(h=0;h<number;h++)
@@ -68,7 +69,7 @@ class gui_group
         }
 
         // failed hit test, don't deactivate the one that's on!
-        items[on]->btn_state = B_ON;
+        items[on]->obj_state = B_ON;
 
         return on;
     };
@@ -76,7 +77,7 @@ class gui_group
 
     void set_on(int i)
     {
-        if (i >= 0 && i < number) items[i]->btn_state = B_ON;
+        if (i >= 0 && i < number) items[i]->obj_state = B_ON;
     };
 
 

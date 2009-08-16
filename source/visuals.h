@@ -141,7 +141,7 @@ int lmin(int a, int b)
 
   return a;
 };
-
+//#include "visuals/visual_helli.h"
 #include "visuals/visual_tunnel.h"
 #include "visuals/visual_fire.h"
 #include "visuals/visual_osc.h"
@@ -149,7 +149,7 @@ int lmin(int a, int b)
 #include "visuals/visual_explode.h"
 #include "visuals/visual_game1.h"
 #include "visuals/visual_mist.h"
-#include "visuals/visual_bobs.h"
+
 
 
 class visualizer
@@ -249,6 +249,16 @@ class visualizer
             }
         }
 
+     /*   if (number != V_GAME2)
+        {
+            remap_keys = false;
+            if (visuals_ptr[V_GAME2])
+            {
+                delete (vis_heli*)visuals_ptr[V_GAME2];
+                visuals_ptr[V_GAME2] = 0;
+            }
+        }
+*/
     /*    if (number != V_EXPLODE)
         {
             if (visuals_ptr[V_EXPLODE]) {
@@ -260,16 +270,21 @@ class visualizer
 
     }
 
-    void draw_visuals(SDL_Surface* s,int number)
+    void draw_visuals(SDL_Surface* s,int number,SDL_Rect* shrink = 0,unsigned long bgcolor =0)
     {
 
-
+        SDL_Rect dr = {0,0,SCREEN_WIDTH/2,SCREEN_HEIGHT/2};
         SDL_Rect sr = {0,0,SCREEN_WIDTH/2,SCREEN_HEIGHT/2};
+
+        if(shrink) {
+            dr.h = shrink->h;
+            dr.w = shrink->w;
+        }
 
         switch(number)
         {
             case V_BARS:
-                draw_rect(vis_surface,0,0,SCREEN_WIDTH,SCREEN_HEIGHT,0); // clear backbuffer
+                draw_rect(vis_surface,0,0,SCREEN_WIDTH,SCREEN_HEIGHT,bgcolor); // clear backbuffer
                 if (!visuals_ptr[V_BARS]) visuals_ptr[V_BARS] = new vis_bars(f,this);
                 else {
                     vis_bars* a = (vis_bars*)visuals_ptr[V_BARS];
@@ -277,12 +292,13 @@ class visualizer
                     a->render(vis_surface);
                 }
 
-                SDL_BlitSurface(vis_surface,0,s,0);
+                if (shrink) SDL_SoftStretch(vis_surface,0,s,&dr);
+                else  SDL_BlitSurface(vis_surface,0,s,0);
 
             break;
 
             case V_OSC:
-                draw_rect(vis_surface,0,0,SCREEN_WIDTH,SCREEN_HEIGHT,0); // clear backbuffer
+                draw_rect(vis_surface,0,0,SCREEN_WIDTH,SCREEN_HEIGHT,bgcolor); // clear backbuffer
                 if (!visuals_ptr[V_OSC]) {
                      visuals_ptr[V_OSC] = new vis_osc(f);
 
@@ -290,7 +306,8 @@ class visualizer
                     vis_osc*  a = (vis_osc*)visuals_ptr[V_OSC];
                     a->render(vis_surface);
                 }
-                SDL_BlitSurface(vis_surface,0,s,0);
+                if (shrink) SDL_SoftStretch(vis_surface,0,s,&dr);
+                else SDL_BlitSurface(vis_surface,0,s,0);
             break;
 
             case V_TUNNEL:
@@ -304,11 +321,14 @@ class visualizer
                     a->render(vis_surface);
                 }
 
-                SDL_SoftStretch(vis_surface,&sr,s,0);
+                if (shrink) SDL_SoftStretch(vis_surface,0,s,&dr);
+                else SDL_SoftStretch(vis_surface,&sr,s,0);
+
+                //SDL_SoftStretch(vis_surface,&sr,s,0);
             break;
 
             case V_FIRE:
-                draw_rect(vis_surface,0,0,SCREEN_WIDTH,SCREEN_HEIGHT,0); // clear backbuffer
+                draw_rect(vis_surface,0,0,SCREEN_WIDTH,SCREEN_HEIGHT,bgcolor); // clear backbuffer
                 if (!visuals_ptr[V_FIRE])
                 {
                      visuals_ptr[V_FIRE] = new vis_fire(f);
@@ -317,7 +337,10 @@ class visualizer
                     a->render(vis_surface);
                 }
 
-                SDL_SoftStretch(vis_surface,&sr,s,0);
+
+                if (shrink) SDL_SoftStretch(vis_surface,0,s,&dr);
+                else SDL_SoftStretch(vis_surface,&sr,s,0);
+
             break;
 
             case V_MIST:
@@ -331,12 +354,15 @@ class visualizer
                     a->render(vis_surface);
                 }
 
-                SDL_BlitSurface(vis_surface,0,s,0);
+
+                if (shrink) SDL_SoftStretch(vis_surface,0,s,&dr);
+                else SDL_BlitSurface(vis_surface,0,s,0);
+
             break;
 
             case V_GAME1:
 
-                draw_rect(vis_surface,0,0,SCREEN_WIDTH,SCREEN_HEIGHT,0); // clear backbuffer
+                draw_rect(vis_surface,0,0,SCREEN_WIDTH,SCREEN_HEIGHT,bgcolor); // clear backbuffer
                 if (!visuals_ptr[V_GAME1])
                 {
                     visuals_ptr[V_GAME1] = new vis_game1(f);
@@ -346,8 +372,26 @@ class visualizer
                     remap_keys = a->render(vis_surface);
                 }
 
-                 SDL_BlitSurface(vis_surface,0,s,0);
+                if (shrink) SDL_SoftStretch(vis_surface,0,s,&dr);
+                else SDL_BlitSurface(vis_surface,0,s,0);
+
             break;
+   /*         case V_GAME2:
+
+                draw_rect(vis_surface,0,0,SCREEN_WIDTH,SCREEN_HEIGHT,bgcolor); // clear backbuffer
+                if (!visuals_ptr[V_GAME2])
+                {
+                    visuals_ptr[V_GAME2] = new vis_heli(f);
+                    remap_keys = true;
+                }else{
+                    vis_heli* a =(vis_heli*)visuals_ptr[V_GAME2];
+                    remap_keys = a->render(vis_surface);
+                }
+
+                if (shrink) SDL_SoftStretch(vis_surface,0,s,&dr);
+                else SDL_BlitSurface(vis_surface,0,s,0);
+
+            break;*/
 /*            case V_EXPLODE:
 
                 if (!visuals_ptr[V_EXPLODE]) visuals_ptr[V_EXPLODE] = new vis_explode(f);

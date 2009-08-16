@@ -1,0 +1,179 @@
+skinname=SHOUTcast
+skinauthor=Scanff
+// text defs
+txt1_text=abcdef
+txt1_x=27
+txt1_y=27
+txt1_font_size=2
+txt1_font_color=#dddddd
+
+// -- general images (required)
+bgimg=bg.png
+mute=mute.png
+volume_over=volume_ol.png
+volume_bg=volume_bg.png
+
+// -- cusror (required)
+cursor_y_off=0
+cursor_x_off=2
+cursor=cursor.png
+
+// -- fonts (required)
+fontset=FreeSansBold.ttf
+fontsize_small=16
+fontsize_medium=22
+fontsize_large=26
+
+// -- vars for positioning the lists (required)
+listing_limit_text=400
+listing_start_x=27
+listing_start_y=130
+listing_pad_y=0
+listing_pad_text_y=11
+listing_pad_text_x=5
+listing_font_size=2
+listing_font_color=#dddddd
+listing_font_color_over=#FFBA34
+listing_number_of=5
+list_out=listing_out.png
+list_over=listing_out.png
+
+// -- delete button properties (required)
+delete_start_x=440
+delete_pad_y=10
+delete_out=delete_out.png
+delete_over=delete_over.png
+
+// -- for displaying visuals on the main gui (optional)
+show_vis=1
+vis_x=497
+vis_y=250
+vis_h=80
+vis_w=130
+vis_color_bar=#FFBA34
+vis_color_peak=#118DA7
+// - black = transparent
+vis_bgcolor=#000000
+
+
+// -- playing area (required)
+playing_x=49
+playing_y=416
+playing_text_color=#dddddd
+playing_text_color_over=#FDEAB3
+playing_text_size=2
+playing_pad_text_y=0
+playing_pad_text_x=0
+playing_limit_text=270
+playing_out=playing.png
+playing_over=playing.png
+
+// -- info dialog ... (dialog showing stream inf.) (required)
+dialog_text_color=#dddddd
+dialog=dialog.png
+
+// -- status text (i.e. buffering, connecting)
+// -- offset of text from the background image (image is centered DEFAULT)
+info_txt_x=20
+info_txt_y=8
+info_txt_size=1
+info=info.png
+
+// -- cancel button (required)
+info_cancel_x=165
+info_cancel_y=5
+info_cancel_text_size=1
+info_cancel_text_pad_y=10
+info_cancel_out=cancel_out.png
+info_cancel_over=cancel_out.png
+
+// -- button exit (optional)
+exit_x=527
+exit_y=39
+exit_text=$LANG_TXT_EXIT
+exit_text_color=#FFBA34
+exit_text_color_over=#dddddd
+exit_text_size=2
+exit_pad_y=5
+exit_pad_x=0
+exit_over=playlists_over.png
+exit_out=playlists_out.png
+
+// -- playlists buttons (required)
+pls_x=340
+pls_y=39
+pls_text=$LANG_TXT_PLAYLISTS
+pls_text_color=#FFBA34
+pls_text_color_over=#dddddd
+pls_text_size=2
+pls_pad_y=5
+pls_pad_x=0
+pls_out=playlists_out.png
+pls_over=playlists_over.png
+
+// -- genres (required)
+genres_x=439
+genres_y=39
+genres_text=$LANG_TXT_GENRE
+genres_text_color=#FFBA34
+genres_text_color_over=#dddddd
+genres_text_size=2
+genres_pad_y=5
+genres_pad_x=0
+genres_out=playlists_out.png
+genres_over=playlists_over.png
+
+
+// -- browser button (optional)
+browser_x=230
+browser_y=39
+browser_text=$LANG_TXT_BROWSER
+browser_text_color=#FFBA34
+browser_text_color_over=#dddddd
+browser_text_size=2
+browser_pad_y=5
+browser_pad_x=0
+browser_out=playlists_out.png
+browser_over=playlists_over.png
+
+// -- Show visuals button (optional)
+showvisuals_x=530
+showvisuals_y=413
+showvisuals_text=
+showvisuals_text_color=#FFBA34
+showvisuals_text_color_over=#F8D948
+showvisuals_text_size=2
+showvisuals_pad_y=8
+showvisuals_pad_x=0
+showvisuals_out=vis_out.png
+showvisuals_over=vis_over.png
+
+// -- button search (optional)
+search_x=570
+search_y=413
+search_text=
+search_text_color=#dddddd
+search_text_color_over=#14abd0
+search_text_size=2
+search_pad_y=0
+search_pad_x=0
+search_over=search_over.png
+search_out=search_out.png
+
+// -- back button (required)
+back_x=47
+back_y=350
+back_out=left_out.png
+back_over=left_over.png
+
+// -- logo (required)
+logo_x=20
+logo_y=42
+logo_out=logo_out.png
+logo_over=logo_over.png
+
+// -- next button (required)
+next_x=405
+next_y=350
+next_out=right_out.png
+next_over=right_over.png

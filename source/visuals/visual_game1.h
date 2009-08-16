@@ -34,7 +34,7 @@ class vis_game1 {
         game_pause = false;
         srand(get_tick_count());
         spritemap = 0;
-        spritemap = IMG_Load(make_path("visdata/game1/spritemap.png"));
+        spritemap = IMG_Load(make_path((char*)"visdata/game1/spritemap.png"));
         if (!spritemap) exit(0);
     };
 
@@ -382,35 +382,35 @@ class vis_game1 {
     void do_text(SDL_Surface* s, bool paused = false)
     {
         fnts->change_color(150,150,50);
-        fnts->set_size(FS_SMALL);
+        fnts->set_size(FS_SYSTEM);
         fnts->text(s,(char*)"\"A totally pointless game plugin for WiiRadio\"",
-                (DRAW_WIDTH / 2) - (fnts->get_length_px((char*)"\"A totally pointless game plugin for WiiRadio\"",FS_SMALL) /2),
+                (DRAW_WIDTH / 2) - (fnts->get_length_px((char*)"\"A totally pointless game plugin for WiiRadio\"",FS_SYSTEM) /2),
                 100,0);
 
         fnts->change_color(150,50,50);
         fnts->text(s,(char*)"Hopefully it provides you some entertainment while listening to good music!",
-                (DRAW_WIDTH / 2) - (fnts->get_length_px((char*)"Hopefully it provides you some entertainment while listening to good music!",FS_SMALL) /2),
+                (DRAW_WIDTH / 2) - (fnts->get_length_px((char*)"Hopefully it provides you some entertainment while listening to good music!",FS_SYSTEM) /2),
                 150,0);
 
         fnts->change_color(150,150,150);
-        fnts->set_size(FS_LARGE);
-        fnts->text(s,(char*)"D-Pad = Move",(DRAW_WIDTH / 2) - (fnts->get_length_px((char*)"D-Pad = Move",FS_LARGE) /2),240,0);
-        fnts->text(s,(char*)"(1) = Fire",(DRAW_WIDTH / 2) - (fnts->get_length_px((char*)"(1) = Fire",FS_LARGE) /2),280,0);
+        fnts->set_size(FS_SYSTEM);
+        fnts->text(s,(char*)"D-Pad = Move",(DRAW_WIDTH / 2) - (fnts->get_length_px((char*)"D-Pad = Move",FS_SYSTEM) /2),240,0);
+        fnts->text(s,(char*)"(1) = Fire",(DRAW_WIDTH / 2) - (fnts->get_length_px((char*)"(1) = Fire",FS_SYSTEM) /2),280,0);
 
         if (!paused) {
-            fnts->text(s,(char*)"Game Over Press (B) To Start",(DRAW_WIDTH / 2) - (fnts->get_length_px((char*)"Game Over Press (B) To Start",FS_LARGE) /2),200,0);
+            fnts->text(s,(char*)"Game Over Press (B) To Start",(DRAW_WIDTH / 2) - (fnts->get_length_px((char*)"Game Over Press (B) To Start",FS_SYSTEM) /2),200,0);
 
 
 
         }else{
-            fnts->text(s,(char*)"Game Paused Press (B) To Continue",(DRAW_WIDTH / 2) - (fnts->get_length_px((char*)"Game Paused Press (B) To Continue",FS_LARGE) /2),200,0);
+            fnts->text(s,(char*)"Game Paused Press (B) To Continue",(DRAW_WIDTH / 2) - (fnts->get_length_px((char*)"Game Paused Press (B) To Continue",FS_SYSTEM) /2),200,0);
         }
-        fnts->set_size(FS_SMALL);
+        fnts->set_size(FS_SYSTEM);
         fnts->change_color(50,200,50);
         fnts->text(s,make_string((char*)"High Score: %u",h_score),10,410,0);
         fnts->change_color(150,50,50);
-        fnts->text(s,(char*)"Press (D-Right) for next Visual/Plugin",(DRAW_WIDTH / 2) - (fnts->get_length_px((char*)"Press (D-Right) for next Visual/Plugin",FS_SMALL) /2),330,0);
-        fnts->text(s,(char*)"Press (D-Left) for previous Visual/Plugin",(DRAW_WIDTH / 2) - (fnts->get_length_px((char*)"Press (D-Left) for previous Visual/Plugin",FS_SMALL) /2),350,0);
+        fnts->text(s,(char*)"Press (D-Right) for next Visual/Plugin",(DRAW_WIDTH / 2) - (fnts->get_length_px((char*)"Press (D-Right) for next Visual/Plugin",FS_SYSTEM) /2),330,0);
+        fnts->text(s,(char*)"Press (D-Left) for previous Visual/Plugin",(DRAW_WIDTH / 2) - (fnts->get_length_px((char*)"Press (D-Left) for previous Visual/Plugin",FS_SYSTEM) /2),350,0);
     };
 
     bool render(SDL_Surface* s)
@@ -466,7 +466,7 @@ class vis_game1 {
 
                   // - score
 
-                fnts->set_size(FS_SMALL);
+                fnts->set_size(FS_SYSTEM);
                 fnts->change_color(50,200,50);
                 fnts->text(s,make_string((char*)"Score: %u",p1.score),10,410,0);
 

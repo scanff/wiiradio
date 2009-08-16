@@ -26,10 +26,11 @@ class texture_cache {
 
     };
 
-    SDL_Surface* texture_lookup(const char* name)
+    SDL_Surface* texture_lookup(char* name)
     {
         unsigned long hash = 0;
         const char* ptr = name;
+
 
         while (*ptr)
             hash = (hash << 5) + hash + *ptr++;
@@ -43,8 +44,8 @@ class texture_cache {
         loopi(MAX_TEXTURES) {
             if (!texture_id[i]) {
                 texture_id[i] = hash;
-                texture[i] = IMG_Load(make_path(name));
 
+                texture[i] = IMG_Load(make_path(name));
                 return texture[i];
             }
         }

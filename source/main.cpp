@@ -2,51 +2,28 @@
 #include "options.h"
 //#include "fonts.h"
 #include "client.h"
-
 #include "browser.h"
 #include "playlists.h"
 #include "favorites.h"
-
 #include "fft.h"
 #include "icy.h"
 #include "visuals.h"
 #include "gui.h"
 
-
-
-// extern functions
-char* make_path(const char*);
-Uint64 get_tick_count();
-bool refresh_genre_cache;
-bool sc_error;
-bool g_pause_draw;
 // ---------------------
 // Variables:
 // ---------------------
-int			g_nGlobalStatus;
-Uint8 *		g_nKetStatus;
-Uint8       g_real_keys[MAX_KEYS];
-Uint8       g_keys_last_state[MAX_KEYS];
-bool        g_running;
-bool        g_critical_running;
-int 		g_screen_status;
-Uint64      g_vol_lasttime;
+
 int         fullscreen;
 int         connected = 0;
-int         max_stations = 4; // request position + 4 stations
-int         status;
 int         display_idx;
 int         favs_idx;
-void*       p_fft;
 int         genre_display = 0;
 int         total_num_playlists = 0;
 int         pls_display = 0;
-int         mp3_volume;
-bool        visualize;
-int         visualize_number;
-bool        mute;
-Uint64      last_button_time;
 
+Uint64      last_button_time;
+bool        g_critical_running;
 
 texture_cache*      tx;
 SDL_Surface*        screen;
@@ -60,11 +37,11 @@ fft*                fourier;
 favorites*          favs;
 fav_item*           playing; // make now playing as fav struct so we can access the ip/name quickly
 visualizer*         visuals;
+langs*              lang;
+skins*              sk;
+int                 g_value;
+bool                g_haveplaylist;
 
-
-SDL_Event           event;
-
-unsigned long last_action;
 #ifdef _WIN32
 
 FMOD_SYSTEM             *fmod_system = 0;
@@ -80,82 +57,9 @@ SDL_Thread* mainthread = 0;
 int connect_thread (void *arg); // -- thread for connection request
 SDL_Thread* connectthread = 0;
 
-
 int search_thread (void *arg); // -- thread for genre searches
 SDL_Thread* searchthread = 0;
 
-// -- Functions
-void fade(SDL_Surface *screen2, Uint32 rgb, Uint8 a)
-{
-    SDL_Surface *tmp=0;
-
-    tmp=SDL_DisplayFormat(screen2);
-
-    if (!tmp) return;
-
-    SDL_FillRect(tmp,0,rgb);
-    SDL_SetAlpha(tmp,SDL_SRCALPHA,a);
-    SDL_BlitSurface(tmp,0,screen2,0);
-    SDL_FreeSurface(tmp);
-};
-Uint64 get_tick_count()
-{
-	return SDL_GetTicks();
-}
-
-char* make_path(const char* path_rel)
-{
-#ifdef _WII_
-	static char abs_path[100] = {0};
-	sprintf(abs_path,"sd:/apps/radiow/%s",path_rel);
-
-	return abs_path;
-#else
-	return (char*)path_rel;
-#endif
-
-}
-char* trim_string(char*, int);
-char* trim_string(char* s, int n_len)
-{
-    int c_len = strlen(s);
-    static char new_string[256] = {0};
-
-    if (n_len > 256) return s;
-
-    if(c_len > n_len)
-    {
-        memcpy(new_string,s,n_len);
-        return new_string;
-    }
-
-    return s;
-}
-
-char* make_string(char*,...);
-char* make_string(char* s ,...)
-{
-    static char buffer[256] = {0};
-
-    va_list args;
-    va_start (args, s);
-    vsprintf (buffer,s, args);
-    va_end (args);
-
-    return buffer;
-
-}
-
-void draw_rect(SDL_Surface*,int,int,int,int,unsigned long);
-void draw_rect(SDL_Surface* s,int x,int y, int w, int h,unsigned long color)
-{
-    SDL_Rect r;
-    r.x = x;
-    r.y = y;
-    r.h = h;
-    r.w = w;
-    SDL_FillRect(s, &r, color);
-};
 
 void translate_keys()
 {
@@ -222,8 +126,13 @@ void draw_ui(char* info)
     ui->draw(scb->sl_first,icy_info,favs);
     if (info) ui->draw_info(info);
     // flip to main screen buffer
+    //SDL_Rect ds = { 100,100,640,480};
     SDL_BlitSurface(ui->guibuffer,0,screen,0);
-
+  /*char out[100]={0};
+                fnts->change_color(10,10,10);
+                sprintf(out,"x= %u y=%u",event.motion.x,event.motion.y);
+                fnts->text(screen,out,30,90,0);
+*/
     SDL_Flip(screen);
 
 }
@@ -232,7 +141,7 @@ void draw_ui(char* info)
 void station_lister(const char* path,char* gen)
 {
     // rest gui pointer
-    ui->select_pos = 0;
+    //ui->select_pos = 0;
 
     // connect and get the web page
     if(!scb->connect(path,gen))    // parse the html and grab what we need
@@ -285,20 +194,18 @@ int search_thread(void* arg)
     // flag as searching so we don't try and draw the current station text ... the pointers will be deleted !!!
     g_screen_status = S_SEARCHING;
 
-    Sleep(100); // give the ui time to finish what it's doing before requesting a new list!
+    Sleep(200); // give the ui time to finish what it's doing before requesting a new list!
 
     // bring down upto 1k of stations per genre.  We will then cache them incase of shoutcast DB problems
     sprintf(path,"/sbin/newxml.phtml?service=winamp2&no_compress=1&genre=%s&limit=1000",selected);
     station_lister(path,selected);
 
     g_screen_status = S_BROWSER;
-	
+
 	return 0;
 }
 
 // -- Connect thread
-int g_value;
-bool g_haveplaylist;
 int connect_thread(void* arg)
 {
     char* url = playing->station_url;
@@ -307,14 +214,6 @@ int connect_thread(void* arg)
     char* host = 0;
     char request[1024] = {0};
 
-
-    // close the main thread
-    /*if (mainthread) // already running !
-    {
-        g_critical_running = false; // flag it to stop
-        SDL_WaitThread(mainthread, NULL); // wait for it to stop
-        mainthread = 0; // null
-    }*/
 
     // -- close current connection
     if (connected)
@@ -325,6 +224,7 @@ int connect_thread(void* arg)
 
     // stop mp3 if currently playing.
     stop_playback();
+
 
     if (!g_haveplaylist) {
 
@@ -351,7 +251,7 @@ int connect_thread(void* arg)
 
         // get playlists
         playlst->get_playlist(csl->station_id);
-        playlst->parse_playlist();
+        //playlst->parse_playlist();
 
         url = playlst->first_entry->url;
         port = playlst->first_entry->port;
@@ -393,14 +293,16 @@ int connect_thread(void* arg)
     }
 
 
-       // connect to new stream
-    int connect_try = net->client_connect(url,port,TCP);
+
+    // connect to new stream
+    int connect_try = net->client_connect(url,port,TCP,false);
 
     if (status != CONNECTING) return 0; // cancelled !
 
+    icy_info->icy_reset(); // reset icy state
+
     if (connect_try) // send stream request to the server
     {
-
 
         host = net->get_local_ip();
 
@@ -416,12 +318,7 @@ int connect_thread(void* arg)
         int len_req = strlen(request);
         len_req = net->client_send(request,len_req);
 
-        // reset icy state
-        icy_info->icy_reset();
-
         connected = connect_try;
-
-        status = BUFFERING;
 
     }else status = FAILED;
 
@@ -445,7 +342,6 @@ void connect_to_stream(int value,bool haveplaylist)
 
     // start a new connection thread
     connectthread = SDL_CreateThread(connect_thread,0);
-    if (!connectthread) return;
 
 }
 
@@ -499,8 +395,6 @@ void screen_timeout()
 
 void check_keys()
 {
-
-
     // -- send the keys to the ui (mainly the visuals) and see if they peform a fifferent action!
     if (!ui->override_keys())
     {
@@ -525,6 +419,7 @@ void check_keys()
             }
 
         }
+
 
         if (g_real_keys[SDLK_DOWN]) {
 
@@ -570,7 +465,8 @@ void check_keys()
         }
 
         if (g_real_keys[SDLK_b] && g_screen_status != S_BROWSER) g_screen_status = S_BROWSER;
-        if (g_real_keys[SDLK_PLUS] && status == PLAYING) request_save_fav(); // save playlist
+        if (g_real_keys[SDLK_PLUS] && status == PLAYING)
+            request_save_fav(); // save playlist
 
 
         if (g_real_keys[SDLK_RIGHT] && !g_keys_last_state[SDLK_RIGHT])
@@ -586,7 +482,7 @@ void check_keys()
             if (g_screen_status == S_BROWSER)
             {
                 if (display_idx > MAX_STATION_CACHE) return;
-                else display_idx += max_stations;
+                else display_idx += max_listings;
 
                 ui->reset_scrollings();
 
@@ -594,16 +490,17 @@ void check_keys()
 
             if (g_screen_status == S_PLAYLISTS)
             {
-                 if (pls_display + MAX_BUTTONS  >= total_num_playlists) return;
-                 else pls_display += MAX_BUTTONS;
+                 if (pls_display + max_listings  >= total_num_playlists) return;
+                 else pls_display += max_listings;
 
                  ui->reset_scrollings();
             }
 
             if (g_screen_status == S_GENRES)
             {
-                if (genre_display + MAX_BUTTONS  >= MAX_GENRE) return;
-                else genre_display += MAX_BUTTONS;
+                //if (genre_display + max_listings  >= MAX_GENRE) return;
+                if (genre_display + max_listings  >= ui->gl.total) return;
+                else genre_display += max_listings;
 
                 ui->reset_scrollings();
             }
@@ -624,14 +521,14 @@ void check_keys()
             if (g_screen_status == S_BROWSER)
             {
                 if (display_idx < 0) display_idx = 0;
-                else display_idx -= max_stations;
+                else display_idx -= max_listings;
 
                 ui->reset_scrollings();
             }
 
             if (g_screen_status == S_PLAYLISTS)
             {
-                pls_display -= MAX_BUTTONS;
+                pls_display -= max_listings;
                 if (pls_display < 0) pls_display = 0;
 
                 ui->reset_scrollings();
@@ -639,7 +536,7 @@ void check_keys()
 
             if (g_screen_status == S_GENRES)
             {
-                genre_display -= MAX_BUTTONS;
+                genre_display -= max_listings;
                 if (genre_display < 0) genre_display = 0;
 
                 ui->reset_scrollings();
@@ -657,7 +554,6 @@ void search_genre(char* selected)
     refresh_genre_cache = true; // everytime we search for a new genre let's refresh the cache
     display_idx = 0;
 
-
     if (searchthread)
     {
         SDL_WaitThread(searchthread, NULL); // wait for it to stop
@@ -667,7 +563,6 @@ void search_genre(char* selected)
 
     // start a new connection thread
     searchthread = SDL_CreateThread(search_thread,(void*)selected);
-    if (!searchthread) return;
 
 }
 
@@ -676,23 +571,19 @@ void genre_nex_prev(bool n,char* genre)
 {
     refresh_genre_cache = false; // use the cache
 
-    if(n) display_idx += max_stations;
-    else display_idx -= max_stations;
+    if(n) display_idx += max_listings;
+    else display_idx -= max_listings;
 
     if (display_idx <= 0 ) display_idx = 0;
-}
-
-void menu_button_click(int);
-void menu_button_click(int id)
-{
-    g_screen_status = id;
 }
 
 
 // callback called from mod of libmad
 void cb_fft(short* in, int max)
 {
-    if (visualize) // Only update if viewing
+    if (g_reloading_skin || !g_running) return; // -- bad ui is loading
+
+    if (visualize || ui->vis_on_screen) // Only update if viewing
     {
         fourier->setAudioData(in);
         fourier->getFFT(visuals->fft_results);
@@ -718,32 +609,35 @@ return the data from the buffer or a default zero stream if we are having proble
 s32 reader_callback(void *usr_data,void *cb,s32 len)
 {
     return icy_info->get_buffer(cb,len);
-
 }
 
-
+// shoutcast playback
+int errors = 0;
 int critical_thread(void *arg)
 {
     int len = 0;
-    int errors = 0;
     char* net_buffer = 0;
 
-    net_buffer = new char[2560];
-    if (!net_buffer) return 0;
+    net_buffer = new char[MAX_NET_BUFFER];
+    if (!net_buffer) exit(0);
 
     g_critical_running = true;
 
     while(g_critical_running)
     {
-
-        // network handler
+        // stream handler
         if (connected)
         {
-
-            len = net->client_recv(net_buffer,2560);
+            // stream handler
+            len = net->client_recv(net_buffer,MAX_NET_BUFFER);
 
             if(len > 0)
             {
+               /* char out[100]={0};
+                fnts->change_color(10,10,10);
+                sprintf(out,"mi= %d len= %d buf=%u  - bufsz =%u",icy_info->icy_metaint,len,icy_info->buffered,icy_info->buffer_size);
+                fnts->text(screen,out,30,90,0);SDL_Flip(screen);
+                */
                 // reset errors
                 errors = 0;
 
@@ -756,21 +650,31 @@ int critical_thread(void *arg)
                 cb_fft((short*)net_buffer,len/2);
 #endif
 
+            }else if(len < 0){
+
+                /* would block, not really an error in this case */
+                if (len != -11) errors++;
+
+                if (errors > 100)
+                {   // -- too many errors let's reset
+                    status = FAILED;
+                }
             }
 
 
-			if (!icy_info->bufferring) // only play if we've buffered enough data
-			{
+            if (!icy_info->bufferring) // only play if we've buffered enough data
+            {
+
 #ifdef _WII_
-				if(!MP3Player_IsPlaying())
-				{
+                if(!MP3Player_IsPlaying())
+                {
                     //modified function
-					if(connected)
+                    if(connected)
                     {
                         MP3Player_PlayFile(icy_info->buffer, reader_callback, 0, cb_fft);
                         status = PLAYING;
                     }
-				}
+                }
 #else
 
                 FMOD_BOOL is_playing = false;
@@ -783,49 +687,39 @@ int critical_thread(void *arg)
                     status = PLAYING;
                 }
 #endif
-			}else if (icy_info->bufferring){
+            }
 
-			    //status = BUFFERING;
-
-                /* would block, not really an error in this case */
-                if (len != -11) errors++;
-
-                if (errors > 120) { // too many errors let's reset
-                    status = FAILED;
-                    if (connected) net->client_close();
-                    connected = 0;
-                    errors = 0;
-                }
-			}
-
-            // -- stream connection was cancelled
-            if (status == STOPPED)
+            // -- stream connection was cancelled or timed out
+            if (status == STOPPED || status == FAILED)
             {
                 if (connected) net->client_close();
+                stop_playback(); // if playing stop!
                 connected = 0;
                 errors = 0;
             }
 
 	    }else{
+
 	        errors = 0; // no rec errors
             Sleep(500); // don't hog if not connected
+
 	    }
 
-
-        Sleep(25); // minimum delay
+        Sleep(15); // minimum delay
     }
 
     delete [] net_buffer; net_buffer =0;
+    if (connected) net->client_close();
 
     return 0;
 }
 
 #ifdef _WII_
+
 int evctr = 0;
 void countevs(int chan, const WPADData *data) {
 	evctr++;
 }
-
 
 //exit function
 void ShutdownCB()
@@ -850,13 +744,16 @@ int main(int argc, char **argv)
     mute = false;
     last_button_time = get_tick_count();
 
+
+
 #ifdef _WII_
 	fullscreen = 1;
 	fatInitDefault();
 
 	WPAD_Init();
 	WPAD_SetDataFormat(WPAD_CHAN_ALL, WPAD_FMT_BTNS_ACC_IR);
-    WPAD_SetVRes(WPAD_CHAN_ALL, SCREEN_WIDTH, SCREEN_HEIGHT);
+	// -- *2 so we don't lagg when hitting the right or bottom of the screen
+    WPAD_SetVRes(WPAD_CHAN_ALL, SCREEN_WIDTH*2, SCREEN_HEIGHT*2);
 	WPAD_SetIdleTimeout(200);
 
 	// Wii Power/Reset buttons
@@ -889,27 +786,22 @@ int main(int argc, char **argv)
     SDL_Flip(screen);
 
     // INIT
-    tx              = new texture_cache;
     fnts            = new fonts;
-    fnts->change_color(200,200,200);
-    fnts->size = 8;
+    fnts->change_color(200,200,200); fnts->set_size(FS_SYSTEM);
     fnts->text(screen,"Loading...",30,70,0);SDL_Flip(screen);
     fnts->text(screen,"Setting Up Network...",30,90,0);SDL_Flip(screen);
     net             = new network;
     scb             = new shoutcast_browser;
     playlst         = new playlists;
     fourier         = new fft;
-
-    fnts->text(screen,"Loading UI...",30,110,0);SDL_Flip(screen);
-
     visuals         = new visualizer(fourier);
-    ui              = new gui(fnts,visuals);
     icy_info        = new icy;
     favs            = new favorites;
     playing         = new fav_item;
+    sk              = new skins;
+    lang            = new langs;
 
     get_favorites();
-	g_running = true;
 
 
 #ifdef _WII_
@@ -917,6 +809,7 @@ int main(int argc, char **argv)
     MP3Player_Init();
     SND_ChangeVolumeVoice(0,mp3_volume,mp3_volume);
 #else
+
 
     memset(&exinfo, 0, sizeof(FMOD_CREATESOUNDEXINFO));
     exinfo.cbsize = sizeof(FMOD_CREATESOUNDEXINFO);
@@ -928,21 +821,59 @@ int main(int argc, char **argv)
 #endif
 
  // create a new reader thread
+    g_running = true;
     mainthread = SDL_CreateThread(critical_thread,0);
     if (!mainthread) exit(0);
 
     g_screen_status = S_BROWSER;
     status = STOPPED;
 
-    search_genre((char*)"pop"); // get list ...
-
-    DWORD last_time, current_time;
+    Uint64 last_time, current_time;
     last_time = current_time = get_tick_count();
-    int fps = 40; //attempt 40fps
+ //   int fps = 40; //attempt 60fps
+
+
+
+
+_reload:
+
+    if (g_reloading_skin) { // only if we have a skin open
+
+        char* sp = sk->get_current_skin_path();
+        if (sp) strcpy(g_currentskin,sp); // save as option
+
+    }else{
+        if (!*g_currentskin)
+            strcpy(g_currentskin,"skins/wiiradio/"); // -- load default
+
+        sk->set_current_skin(g_currentskin);
+    }
+    // -- Clear All Vars
+    vars.delete_all();
+
+    // -- language
+    if (!*g_currentlang)
+    {
+        strcpy(g_currentlang,"English"); // default
+    }
+
+    lang->load_lang(g_currentlang);
+
+    // --- skin
+    fnts->change_color(200,200,200); fnts->set_size(FS_SYSTEM);
+    fnts->text(screen,"Loading Skin...",30,110,0);SDL_Flip(screen);
+
+    tx              = new texture_cache;
+    ui              = new gui(fnts,visuals,g_currentskin);
+
+
+    //if (!g_reloading_skin) search_genre((char*)"pop"); // first time so get list ...
+
+	g_running = true;
+    g_reloading_skin = false;
 
     while(g_running)
     {
-        draw_rect(screen,0,0,SCREEN_WIDTH,SCREEN_HEIGHT,0); // clear backbuffer
 
         loopi(MAX_KEYS) {
             g_keys_last_state[i] = g_real_keys[i];
@@ -973,8 +904,6 @@ int main(int argc, char **argv)
         {
 //            cursor_rot = wd_one->orient.roll; // rotation
 
-          //  wd_one->ir.y > SCREEN_HEIGHT -1 ? wd_one->ir.y = SCREEN_HEIGHT -1 : wd_one->ir.y <0 ? wd_one->ir.y = 0 : 0;
-          //  wd_one->ir.x > SCREEN_WIDTH - 1 ? wd_one->ir.x = SCREEN_WIDTH - 1 : wd_one->ir.x <0 ? wd_one->ir.x = 0 : 0;
             event.motion.x = wd_one->ir.x;
             event.motion.y = wd_one->ir.y;
 
@@ -984,6 +913,10 @@ int main(int argc, char **argv)
             else event.type = SDL_MOUSEBUTTONUP;
 
             ui->handle_events(&event);
+        }else{
+            // place the cursor off screen so it does not act laggy, when infact it's just got negitive co-ords
+            event.motion.x = 1000;
+            event.motion.y = 1000;
         }
 #else
        if (SDL_PollEvent( &event )) {
@@ -993,26 +926,32 @@ int main(int argc, char **argv)
 
         check_keys();
 
-        if (!g_pause_draw)
-            draw_ui(0);
+        if (!g_pause_draw) draw_ui(0);
 
 
         // frame limit.....
         // never gets hit on Wii
-        int delay = 1000 / fps - (current_time-last_time);
+     /*   int delay = 1000 / fps - (current_time-last_time);
         last_time = current_time;
         if(delay > 0)
         {
             SDL_Delay(delay);
             current_time += delay;
         }
-
+     */
+        Sleep(5);
     }
-    g_critical_running = false;
+
+    delete ui; ui = 0;
+    delete tx; tx = 0;
+
+    // --- skin
+    if (g_reloading_skin) goto _reload;
+
+    g_critical_running = false; // -- stop the network / playback thread
+    SDL_WaitThread(mainthread, NULL);
 
     save_options(); // save options
-
-    SDL_WaitThread(mainthread, NULL);
 
     // clean up
     stop_playback();
@@ -1023,17 +962,17 @@ int main(int argc, char **argv)
 	FMOD_System_Release(fmod_system);
 #endif
 
-    delete playing; playing = 0;
-    delete favs; favs = 0;
-    delete visuals; visuals = 0;
-    delete ui; ui = 0;
-    delete fourier; fourier =0;
-    delete playlst; playlst = 0;
-    delete scb; scb=0;
-    delete net; net =0;
-    delete fnts; fnts = 0;
-    delete icy_info; icy_info = 0;
-    delete tx; tx = 0;
+    delete lang;
+    delete sk;
+    delete playing;
+    delete favs;
+    delete visuals;
+    delete fourier;
+    delete playlst;
+    delete scb;
+    delete net;
+    delete fnts;
+    delete icy_info;
 
     SDL_Quit();
 
