@@ -1,0 +1,39 @@
+﻿// -- lang name
+$LANG_NAME=Türkçe
+// - for buttons
+$LANG_TXT_PLAYLISTS=Çalma listeleri
+$LANG_TXT_GENRE=Tür
+$LANG_TXT_BROWSER=Tarayıcı
+$LANG_TXT_EXIT=Çıkış
+
+//-- for statuses
+$LANG_TXT_BUFFERING=Depolanıyor...
+$LANG_TXT_CONNECTING=Bağlanıyor...
+$LANG_TXT_ERROR=Akış hatası
+$LANG_TXT_STOPPED=Durdu
+$LANG_TXT_PLAYING=Çalıyor
+$LANG_TXT_SEARCHING=Aranıyor...
+
+// messages 
+$LANG_TXT_SC_ERROR_l1=Üzgünüz, SHOUTcast yanıt vermiyor!
+$LANG_TXT_SC_ERROR_l2=Lütfen farklı bir tür seçerek yeniden deneyin.
+
+// -- INFO SCREEN
+$LANG_TXT_BR=BitRate
+$LANG_TXT_URL=URL
+$LANG_TXT_STATION=İstasyon Adı
+$LANG_TXT_TITLE=Çalıyor
+
+// -- option screen
+$LANG_TXT_NEXT=Sonraki >
+$LANG_TXT_QUIT_LOADER=Yükleyiciye dön
+$LANG_TXT_QUIT_SYS=Sisteme dön
+$LANG_TXT_OK=OK
+$LANG_SCROLL_STATIONTEXT=Kayan istasyon metni:
+$LANG_SCREEN_SAVE=Screen Save After:
+$LANG_CHANGE_SKIN=Skin değiştir:
+$LANG_ABOUT=Hakkında:
+$LANG_VERSION=Versiyon
+$LANG_CHANGE_LANG=Change Language:
+$LANG_AUTHOR=By - 
+

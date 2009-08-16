@@ -4,10 +4,7 @@ enum _net_protocols {
     TCP = 0,
     UDP
 };
-enum _modes {
-    CLIENT = 0,
-    SERVER
-};
+
 
 
 class dns
@@ -48,9 +45,28 @@ class network : public dns
         client_connected = false;
         mode = -1;
 
-        net_init();
+
         #ifdef _WII_
-        if_config ( localip, netmask, gateway, TRUE);
+        if (net_init())
+        {
+			// try one more time
+			if(net_init() >= 0)
+			{
+				if (if_config ( localip, netmask, gateway, TRUE) < 0)
+				{
+
+					fnts->text(screen,"if_config() failed.",30,150,0);SDL_Flip(screen);
+					return;
+				}
+
+			}else{
+				fnts->text(screen,"net_init() failed.",30,150,0);SDL_Flip(screen);
+				return;
+			}
+		}
+
+        #else
+        net_init();
         #endif
 
     }
@@ -146,7 +162,7 @@ class network : public dns
 
 
 
-    int client_connect(char* ip,int port, int protocol)
+    int client_connect(char* ip,int port, int protocol, bool block = false)
     {
 
         char* ip_checked = 0;
@@ -181,16 +197,21 @@ class network : public dns
             }
         }
 
+        if (!block)
+        {
 #ifdef _WII_
-        s32 res = net_fcntl (connection_socket, F_GETFL, 0);
-        res = net_fcntl (connection_socket, F_SETFL, res | 4);
+
+            s32 res = net_fcntl (connection_socket, F_GETFL, 0);
+            res = net_fcntl (connection_socket, F_SETFL, res | 4);
+
 #endif
 #ifdef _WIN32
-        unsigned long flag = O_NONBLOCK;
-        net_ioctl(connection_socket, FIONBIO, &flag); // does not work on WII
+            unsigned long flag = O_NONBLOCK;
+            net_ioctl(connection_socket, FIONBIO, &flag); // does not work on WII
 #endif
+        }
+
         client_connected = true;
-        mode = CLIENT;
 
         return 1;
     }
@@ -219,12 +240,21 @@ class network : public dns
         net_close(connection_socket);
     }
 
+    void client_restart()
+    {
+#ifdef _WII_
+        //net_close(connection_socket);
+//        net_shutdown(connection_socket,SHUT_RDWR);
+//        if_config ( localip, netmask, gateway, TRUE);
+#endif
+    }
+
     // helper functions
 
     int send_http_request(char* type, char* path, char* host)
     {
 
-        char request[256] = {0};
+        char request[1024] = {0};
 
         //create the server request (to get the stream)
          sprintf(request,
@@ -233,7 +263,7 @@ class network : public dns
                 "User-Agent: Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)\r\n"
                 "Accept: */*\r\n"
                 "Connection: Keep-Alive\r\n\r\n",
-                type,path,host/*"www.shoutcast.com"*/);
+                type,path,host);
 
 
         int len_req = strlen(request);

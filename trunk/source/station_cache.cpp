@@ -8,7 +8,7 @@ void save_cache(char* data,long size,char* genre)
 {
     if (!genre) return;
 
-    char cache_path[255] = { 0 };
+    char cache_path[SMALL_MEM] = { 0 };
 
     sprintf(cache_path,"cache/%s.tmp",genre);
 
@@ -25,7 +25,7 @@ void save_cache(char* data,long size,char* genre)
 
 bool load_cache(char* genre,char* buffer)
 {
-    char cache_path[255] = { 0 };
+    char cache_path[SMALL_MEM] = { 0 };
 
     sprintf(cache_path,"cache/%s.tmp",genre);
 

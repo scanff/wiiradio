@@ -147,10 +147,10 @@ class shoutcast_browser
                     {
                         if ((get_tick_count() - start_time) > TIME_OUT_MS) break; //timeout
 
-                        len = net->client_recv(current_page+page_size,1024);
+                        len = net->client_recv(current_page+page_size,MAX_NET_BUFFER);
                         if (len > 0) page_size += len;
     #ifdef _WII_
-                        if(len==-11) len =1;//WOULDBLOCK
+                        if(len==-11) len = 1;//WOULDBLOCK
     #else
                         if(WSAGetLastError()==WSAEWOULDBLOCK) len=1;
     #endif

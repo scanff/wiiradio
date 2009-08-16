@@ -1,0 +1,45 @@
+﻿// lang file
+$LANG_NAME=Hebrew
+// - for buttons
+$LANG_TXT_PLAYLISTS=רשימת שירים
+$LANG_TXT_GENRE=ז'אנר
+$LANG_TXT_BROWSER=דפדפן
+$LANG_TXT_EXIT=יציאה
+
+//-- for statuses
+$LANG_TXT_BUFFERING=מוריד...
+$LANG_TXT_CONNECTINGמתחבר...
+$LANG_TXT_ERROR=תקלת זרם
+$LANG_TXT_STOPPED=נעצר
+$LANG_TXT_PLAYING=מנגן
+$LANG_TXT_SEARCHING=מחפש...
+
+// messages 
+$LANG_TXT_SC_ERROR_l1=מצטערים, שאוטקאסט לא מגיב! אנא נסה שנית ע"י בחירת ז'אנר אחר.
+$LANG_TXT_SC_ERROR_l2= שנית ע"י בחירת ז'אנר אחר.
+
+// -- INFO SCREEN
+$LANG_TXT_BR=קצב
+$LANG_TXT_URL=כתובת
+$LANG_TXT_STATION=שם התחנה
+$LANG_TXT_TITLE=מנגן
+
+// -- option screen
+$LANG_TXT_NEXT=הבא >
+$LANG_TXT_QUIT_LOADER=יציאה לטוען
+$LANG_TXT_QUIT_SYS=יציאה למערכת
+$LANG_TXT_OK=אישור
+$LANG_SCROLL_STATIONTEXT=גלול שם תחנה:
+$LANG_SCREEN_SAVE=Screen Save After:
+$LANG_CHANGE_SKIN=שנה סקין:
+$LANG_ABOUT=אודות:
+$LANG_VERSION=גרסה
+$LANG_CHANGE_LANG=Change Language:
+$LANG_AUTHOR=By - 
+
+// -- search screen
+$LANG_CLOSE=Close
+$LANG_SEARCH=Search
+$LANG_ADDGENRE=Add Genre
+$LANG_SEARCH_TITLE=Search/Add Genre
+

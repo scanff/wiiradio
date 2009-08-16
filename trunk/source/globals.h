@@ -1,49 +1,52 @@
 #ifndef _GLOBALS_H_
 #define _GLOBALS_H_
+
 #define B_ENDIAN 1
 #define L_ENDIAN 0
 
 
-#ifndef _WIN32
-#define ENDIAN B_ENDIAN
-#include <wiiuse/wpad.h>
-#include <ogc/lwp_watchdog.h>
-#include <fat.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-//#include <ogcsys.h>
-#include <gccore.h>
-#include <gctypes.h>
-#include <network.h>
-#include <debug.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <asndlib.h>
-#include <mp3player.h>
+#ifdef _WII_
+    #define MAX_PATH 255
+    #define ENDIAN B_ENDIAN
+    #include <wiiuse/wpad.h>
+    #include <ogc/lwp_watchdog.h>
+    #include <fat.h>
+    #include <stdio.h>
+    #include <stdlib.h>
+    #include <string.h>
+    //#include <ogcsys.h>
+    #include <gccore.h>
+    #include <gctypes.h>
+    #include <network.h>
+    #include <debug.h>
+    #include <unistd.h>
+    #include <fcntl.h>
+    #include <asndlib.h>
+    #include <mp3player.h>
 
-#define Sleep(x) usleep(x*1000);//1000?
-//#include <errno.h>
-#define _WII_
+    #define Sleep(x) usleep(x*1000);//1000?
+    //#include <errno.h>
 
 #else
 
-#ifdef _WIN32
-//#define WIN32
-#define ENDIAN L_ENDIAN
-#include <winsock2.h>
-#include <process.h>
+    #ifdef _WIN32
+        //#define WIN32
+        #define ENDIAN L_ENDIAN
+        #include <winsock2.h>
+        #include <process.h>
 
-#include "fmod/inc/fmod.h"
-#include "fmod/inc/fmod_errors.h"
+        #include "fmod/inc/fmod.h"
+        #include "fmod/inc/fmod_errors.h"
 
 
-typedef SOCKET s32;
-typedef int u32;
-#define O_NONBLOCK 1
+        typedef SOCKET s32;
+        typedef int u32;
+        #define O_NONBLOCK 1
+    #endif
+
 #endif
 
-#endif
+
 #include <math.h>
 #include <stdarg.h>
 #include <stdlib.h>
@@ -52,18 +55,28 @@ typedef int u32;
 #include <SDL/SDL_image.h>
 #include <SDL/SDL_ttf.h>
 #include <SDL/SDL_gfxPrimitives.h>
-
-
 #define MAX_KEYS 300
 
-enum _status{
+// -- audio source !
+enum
+{
+    AS_SHOUTCAST = 0,
+    AS_ICECAST,
+    AS_SD,
+    AS_USB,
+    AS_MAX
+};
+
+enum
+{
   STOPPED = 0,
   PLAYING,
   BUFFERING,
   FAILED,
   CONNECTING
 };
-enum _screens{
+enum
+{
   S_ALL = 0,
   S_BROWSER,
   S_PLAYLISTS,
@@ -72,17 +85,19 @@ enum _screens{
   S_STREAM_INFO,
   S_CANCEL_CON_BUF,
   S_SEARCHING,
+  S_SEARCHGENRE,
   S_MAX
 
 };
 
-enum _visuals
+enum
 {
   V_BARS = 0,
   V_OSC,
   V_TUNNEL,
   V_FIRE,
   V_MIST,
+//  V_GAME2,
   V_GAME1,
 //  V_EXPLODE,
   MAX_VISUALS
@@ -102,19 +117,19 @@ extern int          mp3_volume;
 extern Uint64       g_vol_lasttime;
 extern bool         mute;
 extern bool         screen_sleeping;
-
-typedef unsigned long DWORD;
-typedef unsigned char BYTE;
+extern int          g_reloading_skin;
 
 extern Uint64 get_tick_count();
-extern char* make_path(const char*);
-extern SDL_Surface *screen;
+extern char* make_path(char*);
+//extern SDL_Surface *screen;
 extern void draw_rect(SDL_Surface*,int,int,int,int,unsigned long);
-extern void menu_button_click(int);
 extern void delete_playlist(int);
 extern char* make_string(char*,...);
 extern char* trim_string(char*, int);
+extern void next_skin();
+extern void next_lang();
 
+extern SDL_Surface*        screen;
 #define K_UP_1      SDLK_UP
 #define K_DOWN_1    SDLK_DOWN
 #define K_LEFT_1    SDLK_LEFT
@@ -128,20 +143,20 @@ extern char* trim_string(char*, int);
 #define K_RIGHT_2   SDLK_d
 #define K_FIRE_2    SDLK_r
 
-#define SCREEN_WIDTH    (640)//(852)//(
+#define SCREEN_WIDTH    (640)
 #define SCREEN_HEIGHT   (480)
 #define FONT_SIZE       (40)
-#define VERSION_NUMBER  (0.4)
+#define VERSION_NUMBER  (0.5)
 #define VERSION_NAME    ("Version")
 #define BITDEPTH        (24)
-#define TIME_OUT_MS     (10000)
+#define TIME_OUT_MS     (80000) // eight second timeout
 #define SC_DOWN         ("503 Service Temporarily Unavailable")
-#define MAX_BUTTONS     (4)
 #define MAX_FFT_RES     (16)
 #define SMALL_MEM       (255)
 #define MED_MEM         (1024)
 #define TINY_MEM        (50)
 #define MAX_FFT_SAMPLE  (8192/4)
+#define MAX_NET_BUFFER  (2500)
 
 #define MAX_STATION_CACHE (1000)
 // macros
@@ -153,8 +168,10 @@ extern char* trim_string(char*, int);
 #define bloopj(m) bloop(j,m)
 #define CLIP(mx,x)  x>mx ? (mx) : x < 0 ? (0) : (x);
 #define MAX_Z_ORDERS (3)
-#define X_OFFSET 17 // The pointer's hotspot is 17px from the left
-#define Y_OFFSET 10
+
+extern int X_OFFSET;
+extern int Y_OFFSET;
+extern int max_listings;
 
 extern void connect_to_stream(int,bool);
 extern void search_genre(char*);
@@ -162,18 +179,24 @@ extern void genre_nex_prev(bool,char*);
 extern void request_save_fav();
 extern void screen_saver();
 extern void fade(SDL_Surface*, Uint32, Uint8);
+
 extern int display_idx; //holds the current displaying browser index
 extern int genre_display; //holds the genre list start display value
-
 extern int pls_display;
 extern int total_num_playlists;
 extern SDL_Event event;
 extern bool refresh_genre_cache;
 extern bool sc_error;
+#include "variables.h"
+extern wiiradio_variables vars;
 #include "fonts.h"
 extern fonts* fnts;
 #include "textures.h"
 extern texture_cache* tx;
+#include "skins.h"
+extern skins* sk;
+#include "lang.h"
+extern langs* lang;
 #endif
 
 
