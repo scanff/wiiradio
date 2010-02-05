@@ -176,7 +176,7 @@ class icy {
 
     int parse_header(char* buf,int len)
     {
-        char* found = strstr(buf,"ICY 200 OK"); // expect this response from the server !
+        char* found = strstr(buf,"icy-metaint:"); // expect this response from the server !
         if (!found) return 0;
 
         parse_header_item(buf);
