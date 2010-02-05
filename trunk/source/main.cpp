@@ -671,7 +671,11 @@ int critical_thread(void *arg)
                     //modified function
                     if(connected)
                     {
+#ifdef STD_MAD
+                        MP3Player_PlayFile(icy_info->buffer, reader_callback, 0);
+#else
                         MP3Player_PlayFile(icy_info->buffer, reader_callback, 0, cb_fft);
+#endif
                         status = PLAYING;
                     }
                 }
