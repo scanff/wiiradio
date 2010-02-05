@@ -135,7 +135,7 @@ extern bool         screen_sleeping;
 extern int          g_reloading_skin;
 
 extern Uint64 get_tick_count();
-extern char* make_path(char*);
+extern char* make_path(const char*);
 //extern SDL_Surface *screen;
 extern void draw_rect(SDL_Surface*,int,int,int,int,unsigned long);
 extern void delete_playlist(int);
