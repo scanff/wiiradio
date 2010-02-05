@@ -15,12 +15,12 @@ int         mp3_volume;
 bool        visualize;
 int         visualize_number;
 bool        mute;
-int			g_nGlobalStatus;
-Uint8 *		g_nKetStatus;
+int            g_nGlobalStatus;
+Uint8 *        g_nKetStatus;
 Uint8       g_real_keys[MAX_KEYS];
 Uint8       g_keys_last_state[MAX_KEYS];
 bool        g_running;
-int 		g_screen_status;
+int         g_screen_status;
 Uint64      g_vol_lasttime;
 int         status;
 
@@ -60,18 +60,18 @@ void fade(SDL_Surface *screen2, Uint32 rgb, Uint8 a)
 };
 Uint64 get_tick_count()
 {
-	return SDL_GetTicks();
+    return SDL_GetTicks();
 }
 
 char* make_path(char* path_rel)
 {
 #ifdef _WII_
-	static char abs_path[SMALL_MEM] = {0};
-	sprintf(abs_path,"sd:/apps/radiow/%s",path_rel);
+    static char abs_path[SMALL_MEM] = {0};
+    sprintf(abs_path,"sd:/apps/radiow/%s",path_rel);
 
-	return abs_path;
+    return abs_path;
 #else
-	return (char*)path_rel;
+    return (char*)path_rel;
 #endif
 
 }

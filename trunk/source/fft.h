@@ -4,11 +4,11 @@
 class fft {
     public:
 
-		float *real;
-		float *imaginary;
-		float *real2;
-		float *imaginary2;
-		int dataSize;
+        float *real;
+        float *imaginary;
+        float *real2;
+        float *imaginary2;
+        int dataSize;
 
         #define START 5
         #define DIVISIONS 24
