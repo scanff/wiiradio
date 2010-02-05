@@ -41,7 +41,7 @@ class skins {
 
         if(!str) return 0;
 
-        unsigned long color = 0;
+        unsigned int color = 0;
 
         if (*str == '#') str++;
 
@@ -295,7 +295,10 @@ class skins {
     {
         char* p = x;
 
-        while(*p) *p++ = tolower(*p);
+        while(*p) {
+          *p = tolower(*p);
+          p++;
+        }
 
         return x;
     };

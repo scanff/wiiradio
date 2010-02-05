@@ -206,7 +206,10 @@ class langs
     {
         char* p = x;
 
-        while(*p) *p++ = tolower(*p);
+        while(*p) {
+          *p = tolower(*p);
+          p++;
+        }
 
         return x;
     };
