@@ -117,12 +117,12 @@ enum
 //  V_EXPLODE,
   MAX_VISUALS
 };
-extern Uint8 *		g_nKetStatus;
+extern Uint8 *        g_nKetStatus;
 extern Uint8        g_real_keys[MAX_KEYS];
 extern Uint8        g_keys_last_state[MAX_KEYS];
-extern int			g_FPS;
-extern int 			g_nGlobalStatus;
-extern int 			g_screen_status;
+extern int            g_FPS;
+extern int             g_nGlobalStatus;
+extern int             g_screen_status;
 extern bool         g_running;
 extern int          status;
 extern bool         visualize;

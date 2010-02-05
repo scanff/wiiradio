@@ -399,7 +399,7 @@ class favorites {
             {
                 memset(pent->d_name,0,NAME_MAX+1);
                 continue;
-			}
+            }
           //  if(S_ISDIR(statbuf.st_mode)) // no dirs sorry
           //      continue; //printf("%s <dir>\n", pent->d_name);
 

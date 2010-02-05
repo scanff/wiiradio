@@ -41,7 +41,7 @@ class gui_keyboard
         ok_click = _ok_click;
         cancel_click = _cancel_click;
 
-      	Key thekeys[4][11] = {
+          Key thekeys[4][11] = {
         {
             {'1','!'},
             {'2','@'},

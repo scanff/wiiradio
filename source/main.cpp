@@ -153,7 +153,7 @@ void station_lister(const char* path,char* gen)
 void stop_playback()
 {
 #ifdef _WII_
-	if(MP3Player_IsPlaying()) MP3Player_Stop();
+    if(MP3Player_IsPlaying()) MP3Player_Stop();
 #else
     FMOD_BOOL is_playing = false;
     FMOD_Channel_IsPlaying(channel1,&is_playing);
@@ -202,7 +202,7 @@ int search_thread(void* arg)
 
     g_screen_status = S_BROWSER;
 
-	return 0;
+    return 0;
 }
 
 // -- Connect thread
@@ -702,12 +702,12 @@ int critical_thread(void *arg)
                 errors = 0;
             }
 
-	    }else{
+        }else{
 
-	        errors = 0; // no rec errors
+            errors = 0; // no rec errors
             Sleep(500); // don't hog if not connected
 
-	    }
+        }
 
         Sleep(15); // minimum delay
     }
@@ -722,13 +722,13 @@ int critical_thread(void *arg)
 
 int evctr = 0;
 void countevs(int chan, const WPADData *data) {
-	evctr++;
+    evctr++;
 }
 
 //exit function
 void ShutdownCB()
 {
-	g_running = false;
+    g_running = false;
 }
 
 #endif
@@ -738,7 +738,7 @@ int main(int argc, char **argv)
 
     display_idx = 0;
     favs_idx = 0;
-	fullscreen = 0;
+    fullscreen = 0;
     refresh_genre_cache = true; // default is to refresh cache
     visualize = false;
     g_pause_draw = false;
@@ -750,19 +750,19 @@ int main(int argc, char **argv)
 
 
 #ifdef _WII_
-	fullscreen = 1;
-	fatInitDefault();
+    fullscreen = 1;
+    fatInitDefault();
 
-	WPAD_Init();
-	WPAD_SetDataFormat(WPAD_CHAN_ALL, WPAD_FMT_BTNS_ACC_IR);
-	// -- *2 so we don't lagg when hitting the right or bottom of the screen
+    WPAD_Init();
+    WPAD_SetDataFormat(WPAD_CHAN_ALL, WPAD_FMT_BTNS_ACC_IR);
+    // -- *2 so we don't lagg when hitting the right or bottom of the screen
     WPAD_SetVRes(WPAD_CHAN_ALL, SCREEN_WIDTH*2, SCREEN_HEIGHT*2);
-	WPAD_SetIdleTimeout(200);
+    WPAD_SetIdleTimeout(200);
 
-	// Wii Power/Reset buttons
-	WPAD_SetPowerButtonCallback((WPADShutdownCallback)ShutdownCB);
-	SYS_SetPowerCallback(ShutdownCB);
-	//SYS_SetResetCallback(ResetCB);
+    // Wii Power/Reset buttons
+    WPAD_SetPowerButtonCallback((WPADShutdownCallback)ShutdownCB);
+    SYS_SetPowerCallback(ShutdownCB);
+    //SYS_SetResetCallback(ResetCB);
 
 #endif
 
@@ -774,19 +774,19 @@ int main(int argc, char **argv)
         exit(1);
     }
 
-	if ( SDL_SetVideoMode( SCREEN_WIDTH, SCREEN_HEIGHT, BITDEPTH,
-			 (fullscreen ? SDL_FULLSCREEN : 0) | SDL_HWSURFACE | SDL_DOUBLEBUF ) < 0 ) { //SDL_HWSURFACE
+    if ( SDL_SetVideoMode( SCREEN_WIDTH, SCREEN_HEIGHT, BITDEPTH,
+             (fullscreen ? SDL_FULLSCREEN : 0) | SDL_HWSURFACE | SDL_DOUBLEBUF ) < 0 ) { //SDL_HWSURFACE
     printf("SDL_SetVideoMode() failed\n");
-		exit(1);
-	}
+        exit(1);
+    }
 
     last_button_time = get_tick_count();
-	SDL_ShowCursor(0);
+    SDL_ShowCursor(0);
 
-	screen = NULL;
-	screen = SDL_GetVideoSurface();
+    screen = NULL;
+    screen = SDL_GetVideoSurface();
 
-	if (!screen) {
+    if (!screen) {
     printf("SDL_GetVideoSurface() failed\n");
     exit(1);
   }
@@ -825,7 +825,7 @@ int main(int argc, char **argv)
     exinfo.length = icy_info->buffer_size;
 
     FMOD_System_Create(&fmod_system);
-	FMOD_System_Init(fmod_system, 32, FMOD_INIT_NORMAL, NULL);
+    FMOD_System_Init(fmod_system, 32, FMOD_INIT_NORMAL, NULL);
 
 #endif
 
@@ -878,7 +878,7 @@ _reload:
 
     //if (!g_reloading_skin) search_genre((char*)"pop"); // first time so get list ...
 
-	g_running = true;
+    g_running = true;
     g_reloading_skin = false;
 
     while(g_running)
@@ -891,18 +891,18 @@ _reload:
 
 
 #ifdef _WII_
-		WPAD_ScanPads();
+        WPAD_ScanPads();
 
         u32 type;
-		WPADData *wd_one;
-		WPAD_ReadPending(WPAD_CHAN_ALL, countevs);
-		WPAD_Probe(WPAD_CHAN_ALL, &type);
+        WPADData *wd_one;
+        WPAD_ReadPending(WPAD_CHAN_ALL, countevs);
+        WPAD_Probe(WPAD_CHAN_ALL, &type);
 
-		wd_one = WPAD_Data(0);
+        wd_one = WPAD_Data(0);
 
         translate_keys();
 #else
-		SDL_PumpEvents();
+        SDL_PumpEvents();
         g_nKetStatus = SDL_GetKeyState(NULL);
         loopi(MAX_KEYS) g_real_keys[i] = g_nKetStatus[i];
 #endif
@@ -967,8 +967,8 @@ _reload:
 
 #ifndef _WII_
     FMOD_Sound_Release(sound1);
-	FMOD_System_Close(fmod_system);
-	FMOD_System_Release(fmod_system);
+    FMOD_System_Close(fmod_system);
+    FMOD_System_Release(fmod_system);
 #endif
 
     delete lang;
@@ -985,6 +985,6 @@ _reload:
 
     SDL_Quit();
 
-	return 0;
+    return 0;
 
 }

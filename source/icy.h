@@ -52,7 +52,7 @@ class icy {
     public:
 
     icy() : icy_metaint(10000), // must not be zero on start, otherwise will never buffer
-			metaint_pos(0),
+            metaint_pos(0),
             looking_for_header(true),
             buffered(0),
             pre_buffer(200000),

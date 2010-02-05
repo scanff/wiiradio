@@ -14,27 +14,27 @@ class dns
     public:
 
 
-	char* getipbyname(char *domain)
-	{
-		struct hostent *host = 0;
+    char* getipbyname(char *domain)
+    {
+        struct hostent *host = 0;
 #ifdef _WII_
-		host = net_gethostbyname(domain);
+        host = net_gethostbyname(domain);
 #else
-		host = gethostbyname(domain);
+        host = gethostbyname(domain);
 #endif
-		if(host == NULL) {
-			return 0;
-		}
+        if(host == NULL) {
+            return 0;
+        }
 
-		struct sockaddr_in tmp;
+        struct sockaddr_in tmp;
 #ifdef _WII_
-		memcpy(&tmp.sin_addr,host->h_addr_list[0],host->h_length);
+        memcpy(&tmp.sin_addr,host->h_addr_list[0],host->h_length);
 #else
-		memcpy(&tmp.sin_addr,host->h_addr,host->h_length);
+        memcpy(&tmp.sin_addr,host->h_addr,host->h_length);
 #endif
 
-		return inet_ntoa(tmp.sin_addr);
-	};
+        return inet_ntoa(tmp.sin_addr);
+    };
 
 };
 
@@ -51,17 +51,17 @@ class network : public dns
         #ifdef _WII_
         int ret = 0;
         for(int i=0;i<MAX_INIT_RETRIES && (ret=net_init())==-EAGAIN;i++);
-			  if(ret >= 0)
-			  {
-				  if (if_config ( localip, netmask, gateway, TRUE) < 0)
-				  {
-					  fnts->text(screen,"if_config() failed.",30,150,0);SDL_Flip(screen);
-					  return;
-			  	}
-			  }else{
-				  fnts->text(screen,"net_init() failed.",30,150,0);SDL_Flip(screen);
-			  	return;
-			  }
+              if(ret >= 0)
+              {
+                  if (if_config ( localip, netmask, gateway, TRUE) < 0)
+                  {
+                      fnts->text(screen,"if_config() failed.",30,150,0);SDL_Flip(screen);
+                      return;
+                  }
+              }else{
+                  fnts->text(screen,"net_init() failed.",30,150,0);SDL_Flip(screen);
+                  return;
+              }
 
         #else
         net_init();
@@ -81,9 +81,9 @@ class network : public dns
     char            gateway[16];
     char            netmask[16];
     struct          sockaddr_in client;
-	unsigned int	clientlen;
-	int             c_protocol;
-	int             mode;
+    unsigned int    clientlen;
+    int             c_protocol;
+    int             mode;
 
 #ifdef _WIN32
 
