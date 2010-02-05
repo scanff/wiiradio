@@ -928,7 +928,7 @@ _reload:
             event.motion.y = 1000;
         }
 #else
-       if (SDL_PollEvent( &event )) {
+       while (SDL_PollEvent( &event )) {
            ui->handle_events(&event);
        }
 #endif
