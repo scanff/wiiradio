@@ -264,8 +264,9 @@ class skins {
     {
         if (current_skin < 0 || current_skin >= total_skins) return 0; //safety
 
-        char value[SMALL_MEM] = {0};
-        sprintf(value,"%s/",skin_list[current_skin]);
+        char *value = new char[SMALL_MEM];
+        snprintf(value,SMALL_MEM-1,"%s/",skin_list[current_skin]);
+        value[SMALL_MEM-1] = '\0';
 
         return value;
     };
