@@ -42,7 +42,7 @@ skins*              sk;
 int                 g_value;
 bool                g_haveplaylist;
 
-#ifdef _WIN32
+#ifndef _WII_
 
 FMOD_SYSTEM             *fmod_system = 0;
 FMOD_SOUND              *sound1 = 0 ;
@@ -771,11 +771,13 @@ int main(int argc, char **argv)
     load_options();
 
     if ( SDL_Init( SDL_INIT_VIDEO | SDL_INIT_TIMER  ) < 0 ) {
+        printf("SDL_Init() failed\n");
         exit(1);
     }
 
 	if ( SDL_SetVideoMode( SCREEN_WIDTH, SCREEN_HEIGHT, BITDEPTH,
 			 (fullscreen ? SDL_FULLSCREEN : 0) | SDL_HWSURFACE | SDL_DOUBLEBUF ) < 0 ) { //SDL_HWSURFACE
+    printf("SDL_SetVideoMode() failed\n");
 		exit(1);
 	}
 
@@ -784,7 +786,10 @@ int main(int argc, char **argv)
 	screen = NULL;
 	screen = SDL_GetVideoSurface();
 
-	if (!screen) exit(1);
+	if (!screen) {
+    printf("SDL_GetVideoSurface() failed\n");
+    exit(1);
+  }
 
     draw_rect(screen,0,0,SCREEN_WIDTH,SCREEN_HEIGHT,0); // clear backbuffer
     SDL_Flip(screen);
@@ -960,7 +965,7 @@ _reload:
     // clean up
     stop_playback();
 
-#ifdef _WIN32
+#ifndef _WII_
     FMOD_Sound_Release(sound1);
 	FMOD_System_Close(fmod_system);
 	FMOD_System_Release(fmod_system);

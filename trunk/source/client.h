@@ -158,6 +158,65 @@ class network : public dns
 
 #endif
 
+#ifdef _LINUX_
+
+    /* wrappers for functions on windows */
+
+    int net_init()
+    {
+        return 0;
+    }
+
+    int net_bind(s32 s, struct sockaddr * sa, int size)
+    {
+        return bind(s,( struct sockaddr*) sa, size);
+    }
+
+    int net_listen(s32 s, int a)
+    {
+        return listen(s, a);
+    }
+
+    s32 net_accept (s32 s, struct sockaddr * c, u32* len)
+    {
+        return accept (s, (struct sockaddr *) c, len);
+    }
+
+    s32 net_socket(int domain,int type,int protocol)
+    {
+        return socket(domain, type, protocol);
+    }
+
+    s32 net_connect(s32 s,sockaddr * addy, int socklen_t)
+    {
+       return connect(s,addy,socklen_t);
+    }
+
+    int net_send(s32 s, char *buffer,int len,int flags)
+    {
+        return send(s, buffer, len, flags);
+    }
+
+    int net_recv(s32 s, char* buffer, int len, int flags)
+    {
+        return recv(s, buffer, len, flags);
+    }
+
+    int net_sendto(s32 s, char* buffer, int len,int flags,struct sockaddr * addy,u32 addy_len)
+    {
+        return sendto(s,buffer,len,flags,addy,(int)addy_len);
+    }
+
+    int net_recvfrom(s32 s,char*buffer,int len,int flags,struct sockaddr * addy,u32* addy_len)
+    {
+        return recvfrom(s,buffer,len,flags,addy,addy_len);
+    }
+
+    void net_close(s32 s)
+    {
+    }
+
+#endif
 
 
     int client_connect(char* ip,int port, int protocol, bool block = false)
@@ -179,6 +238,9 @@ class network : public dns
         client.sin_addr.S_un.S_addr = inet_addr(ip_checked);
 #endif
 #ifdef _WII_
+        client.sin_addr.s_addr = inet_addr(ip_checked);
+#endif
+#ifdef _LINUX_
         client.sin_addr.s_addr = inet_addr(ip_checked);
 #endif
 
@@ -286,14 +348,13 @@ class network : public dns
     {
 #ifdef _WII_
         return localip;
-#endif
-#ifdef _WIN32
+#else
         char buffer[80] = {0};
         struct in_addr addr;
         static char sip[80];
         sip[0] = '\0';
 
-        if (gethostname(buffer, sizeof(buffer)) != SOCKET_ERROR )
+        if (gethostname(buffer, sizeof(buffer)) == 0 )
         {
             struct hostent *phe = gethostbyname(buffer);
 

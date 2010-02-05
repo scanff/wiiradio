@@ -151,7 +151,8 @@ class shoutcast_browser
                         if (len > 0) page_size += len;
     #ifdef _WII_
                         if(len==-11) len = 1;//WOULDBLOCK
-    #else
+    #endif
+    #ifdef _WIN32
                         if(WSAGetLastError()==WSAEWOULDBLOCK) len=1;
     #endif
 
