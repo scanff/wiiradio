@@ -1,4 +1,6 @@
 #include "globals.h"
+#include <errno.h>
+#define MAX_INIT_RETRIES 20
 
 enum _net_protocols {
     TCP = 0,
@@ -47,23 +49,19 @@ class network : public dns
 
 
         #ifdef _WII_
-        if (net_init())
-        {
-			// try one more time
-			if(net_init() >= 0)
-			{
-				if (if_config ( localip, netmask, gateway, TRUE) < 0)
-				{
-
-					fnts->text(screen,"if_config() failed.",30,150,0);SDL_Flip(screen);
-					return;
-				}
-
-			}else{
-				fnts->text(screen,"net_init() failed.",30,150,0);SDL_Flip(screen);
-				return;
-			}
-		}
+        int ret = 0;
+        for(int i=0;i<MAX_INIT_RETRIES && (ret=net_init())==-EAGAIN;i++);
+			  if(ret >= 0)
+			  {
+				  if (if_config ( localip, netmask, gateway, TRUE) < 0)
+				  {
+					  fnts->text(screen,"if_config() failed.",30,150,0);SDL_Flip(screen);
+					  return;
+			  	}
+			  }else{
+				  fnts->text(screen,"net_init() failed.",30,150,0);SDL_Flip(screen);
+			  	return;
+			  }
 
         #else
         net_init();
