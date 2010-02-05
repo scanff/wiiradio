@@ -65,7 +65,7 @@ class vis_bars {
 
             //draw
             draw_rect(s,x+i*bar_width,newY,bar_width-4,h,0xcc0022 +  i*10 );
-            draw_rect(s,x+i*bar_width,peaks_newy,bar_width-4,5,0xcc0022 + i*10 << 16 );
+            draw_rect(s,x+i*bar_width,peaks_newy,bar_width-4,5,(0xcc0022 + i*10) << 16 );
         }
 
     };
