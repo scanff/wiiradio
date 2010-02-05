@@ -746,7 +746,6 @@ int main(int argc, char **argv)
     g_vol_lasttime = 0;
     visualize_number = 0;
     mute = false;
-    last_button_time = get_tick_count();
 
 
 
@@ -781,6 +780,7 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 
+    last_button_time = get_tick_count();
 	SDL_ShowCursor(0);
 
 	screen = NULL;
