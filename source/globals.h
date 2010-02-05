@@ -43,6 +43,21 @@
         typedef int u32;
         #define O_NONBLOCK 1
     #endif
+    #ifdef _LINUX_
+        #include <netdb.h>
+        #include <sys/socket.h>
+        #include <netinet/in.h>
+        #include <arpa/inet.h>
+        #include <unistd.h>
+
+        #include "inc/fmod.h"
+        #include "inc/fmod_errors.h"
+
+        typedef socklen_t s32;
+        typedef unsigned int u32;
+
+        #define Sleep(x) usleep(x*1000);
+    #endif
 
 #endif
 
