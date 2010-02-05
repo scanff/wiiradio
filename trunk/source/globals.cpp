@@ -63,7 +63,7 @@ Uint64 get_tick_count()
     return SDL_GetTicks();
 }
 
-char* make_path(char* path_rel)
+char* make_path(const char* path_rel)
 {
 #ifdef _WII_
     static char abs_path[SMALL_MEM] = {0};
