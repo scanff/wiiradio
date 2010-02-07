@@ -1,6 +1,13 @@
 #ifndef _ICY_H_
 #define _ICY_H_
 
+#ifdef ICY_DEBUG
+#define DEB(x) { printf(x); }
+#else
+#define DEB(x) {}
+#endif
+
+// ICY header data fields
 #define ICY_META_MAX (9)
 char icy_meta[ICY_META_MAX][20] = {     "icy-notice1:",
                                         "icy-notice2:",
@@ -87,16 +94,16 @@ class icy {
     // clean all the variables on new connect
     void clean_icy_data()
     {
+        DEB("clean_icy_data\n");
         memset(icy_notice1,0,SMALL_MEM);
         memset(icy_notice2,0,SMALL_MEM);
         memset(icy_name,0,SMALL_MEM);
         memset(icy_genre,0,SMALL_MEM);
         memset(icy_url,0,SMALL_MEM);
-        memset(track_title,0,SMALL_MEM);
         memset(content_type,0,SMALL_MEM);
 
+        memset(track_title,0,SMALL_MEM);
         strcpy(last_track_title,"last");
-
 
         icy_pub = 0;
         icy_br = 0;
@@ -105,17 +112,21 @@ class icy {
 
     void icy_reset()
     {
+        DEB("icy_reset\n");
         memset(buffer,0,buffer_size);
-        memset(track_title,0,SMALL_MEM);
-        strcpy(last_track_title,"last");
+        icy_stream_reset();
+        icy_metaint=10000; // some default, hsa to be overwritten
         metaint_pos = 0;
+        metaint_receive_pos = 0;
+        pre_buffer = 200000;
         looking_for_header = true;
 
-        icy_stream_reset();
+        clean_icy_data();
     };
 
     void icy_stream_reset()
     {
+        DEB("icy_stream_reset\n");
         buffers_sent = buffers_recvd = 0;
         buffered = 0;
         bufferring = true;
@@ -126,6 +137,7 @@ class icy {
 
     void parse_header_item(const char* obj)
     {
+        DEB("parse_header_item\n");
         char* start = 0;
         char* end = 0;
         char tmp[10] = {0};
@@ -176,8 +188,17 @@ class icy {
 
     int parse_header(char* buf,int len)
     {
+        DEB("parse_header\n");
         char* found = strstr(buf,"icy-metaint:"); // expect this response from the server !
-        if (!found) return 0;
+        if (!found)
+        {
+          DEB("  not found\n");
+#ifdef ICY_DEBUG
+          printf("%s\n", buf);
+#endif
+          return 0;
+        }
+        DEB("  found\n");
 
         parse_header_item(buf);
 
@@ -196,6 +217,7 @@ class icy {
         char* title_start = 0;
         char* title_end = 0;
 
+        DEB("parse_meta_data\n");
         title_start = strstr(data,"StreamTitle='");
         if (title_start) {
             title_start += strlen("StreamTitle='");
@@ -209,51 +231,71 @@ class icy {
         }
      };
 
+    // Parses received net-buffer for meta information and removes it from
+    // stream, returning new buffer length
     int parse_metaint(char* net_buffer,int len)
     {
-
+        // Position in real data stream
         int netbuf_counter = 0;
         int new_len = len;
 
         loopi(len)
         {
-
+            // Check if we are inside a metaint section
             if (metaint_size != 0)
             {
-
+                // Copy current data to metaint buffer
                 metaint_buffer[metaint_receive_pos++] = net_buffer[i];
 
+                // If we reached the end of the metaint section
                 if (metaint_receive_pos == metaint_size)
                 {
+#ifndef ICY_DEBUG
+                    // Parse the metaint section
                     parse_meta_data(metaint_buffer); // parse the data
+#endif
+                    // Return to data stream handling
                     metaint_size = 0;
                 }
 
-                // remove from stream
+                // remove current metaint data from stream
                 new_len--;
             }
+            // We are inside a data section
             else
             {
-                if (metaint_pos++ < icy_metaint) // only add data
+                // Check for end of data section
+                if (metaint_pos++ < icy_metaint)
                 {
+                     // Not yet reached: shift data in buffer if necessary
+                     // and go on
                      net_buffer[netbuf_counter++] = net_buffer[i];
                 }
                 else
                 {
+                    // End of data section reached, reset metaint buffers
                     memset(metaint_buffer,0,MAX_METADATA_SIZE);
-                    metaint_size = (unsigned int)((unsigned char)net_buffer[i]);
-                    metaint_size > 0 ? metaint_size *= 16 : 0;
+                    metaint_size = 16 * (unsigned int)((unsigned char)net_buffer[i]);
+
+#ifdef ICY_DEBUG
+                    printf("Metaint_size: %d\n", metaint_size);
+#endif
+
                     metaint_pos = 0;
                     metaint_receive_pos = 0;
 
+                    // If there is no data to parse, remove that zero and
+                    // continue
                     if (metaint_size == 0)
-                    { // remove from stream
+                    {
                         new_len--;
                     }
                 }
             }
-
         }
+#ifdef ICY_DEBUG
+        printf("parse_metaint len, new_len: %d %d (%d)\n", len, new_len, len-new_len);
+#endif
 
         return new_len;
     };
@@ -287,24 +329,45 @@ class icy {
         }
 
         /*  state on fist connected ... needed to parse out the header.
-            512 is a number I selected to ensure that there is enough data in the buffer
-            to check for a full header.
         */
-        if (looking_for_header && buffered > 512)
+        if (looking_for_header && buffered > 0)
         {
+          // overwrite last byte of buffer temporarily to protect strstr
+          char tmp = buffer[buffered-1];
+          buffer[buffered-1] = '\0';
+          if (strstr(buffer,"\r\n\r\n"))
+          {
+            DEB("looking_for_header");
             int remove = parse_header(buffer,buffered);
+            buffer[buffered-1] = tmp;
             if (remove)
             {
-                memcpy(buffer,buffer+remove,buffered+remove);
+                // memmove instead of memcpy because of overlapping memory
+                memmove(buffer, buffer+remove, buffered+remove);
                 buffered -= remove;
-                metaint_pos-=remove;
+                metaint_pos -= remove;
 
                 pre_buffer = ((icy_br * 8) * 1000) / 8;
+                // Protect against too less or too high buffer values
+                if (pre_buffer < 64000)
+                {
+                  pre_buffer = 64000;
+                } else if (pre_buffer > 512000)
+                {
+                  pre_buffer = 512000;
+                }
+#ifdef ICY_DEBUG
+                printf("pre_buffer: %d\n", pre_buffer);
+#endif
 
                 looking_for_header = false;
 
             }
-
+          }
+          else
+          {
+            buffer[buffered-1] = tmp;
+          }
         }
 
         if (buffered >= pre_buffer) bufferring = false; // got enough data, change the state to allow playback
