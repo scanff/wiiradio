@@ -411,10 +411,14 @@ void check_keys()
             {
 #ifdef _WII_
                 MP3Player_Volume(0);
+#else
+                FMOD_Channel_SetVolume(channel1, 0.);
 #endif
             }else{
 #ifdef _WII_
                 MP3Player_Volume(mp3_volume);
+#else
+                FMOD_Channel_SetVolume(channel1, mp3_volume/255.);
 #endif
             }
 
@@ -429,6 +433,8 @@ void check_keys()
             mp3_volume <= 0 ? mp3_volume = 0 : 0;
 #ifdef _WII_
             MP3Player_Volume(mp3_volume);
+#else
+            FMOD_Channel_SetVolume(channel1, mp3_volume/255.);
 #endif
             g_vol_lasttime = get_tick_count();
         }
@@ -441,6 +447,8 @@ void check_keys()
             mp3_volume >= 255 ? mp3_volume = 255 : 0;
 #ifdef _WII_
             MP3Player_Volume(mp3_volume);
+#else
+            FMOD_Channel_SetVolume(channel1, mp3_volume/255.);
 #endif
 
             g_vol_lasttime = get_tick_count();
