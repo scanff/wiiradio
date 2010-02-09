@@ -218,15 +218,24 @@ class icy {
         char* title_end = 0;
 
         DEB("parse_meta_data\n");
+#ifdef ICY_DEBUG
+        printf("%s\n", data);
+#endif
         title_start = strstr(data,"StreamTitle='");
         if (title_start) {
             title_start += strlen("StreamTitle='");
             title_end = strstr(title_start,"';");
-            if(title_end) {
-                memset(track_title,0,SMALL_MEM);
-                memcpy(track_title,title_start,(title_end-title_start)>SMALL_MEM-1 ? SMALL_MEM-1 : (title_end-title_start)); //127 for NULL term
-                memset(metaint_buffer,0,MAX_METADATA_SIZE); // clear the holding metadata buffer
-
+            if (title_end) {
+                // If an empty title is send, use the station name as title
+                if (title_start == title_end) {
+                    strncpy(track_title, icy_name, SMALL_MEM);
+                } else {
+                    strncpy(track_title, title_start, title_end-title_start);
+                }
+                // Make sure the title string is complete
+                track_title[SMALL_MEM-1] = '\0';
+                // clear the holding metadata buffer
+                memset(metaint_buffer,0,MAX_METADATA_SIZE);
             }
         }
      };
@@ -250,10 +259,12 @@ class icy {
                 // If we reached the end of the metaint section
                 if (metaint_receive_pos == metaint_size)
                 {
-#ifndef ICY_DEBUG
+#ifdef ICY_DEBUG
+                    if (net_buffer[i] != '\0')
+                      DEB("Error in metaint section: no padding at end");
+#endif
                     // Parse the metaint section
                     parse_meta_data(metaint_buffer); // parse the data
-#endif
                     // Return to data stream handling
                     metaint_size = 0;
                 }
@@ -337,7 +348,7 @@ class icy {
           buffer[buffered-1] = '\0';
           if (strstr(buffer,"\r\n\r\n"))
           {
-            DEB("looking_for_header");
+            DEB("looking_for_header\n");
             int remove = parse_header(buffer,buffered);
             buffer[buffered-1] = tmp;
             if (remove)
