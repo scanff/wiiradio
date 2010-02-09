@@ -357,7 +357,7 @@ class icy {
                   pre_buffer = 512000;
                 }
 #ifdef ICY_DEBUG
-                printf("pre_buffer: %d\n", pre_buffer);
+                printf("pre_buffer: %d\n", (int)pre_buffer);
 #endif
 
                 looking_for_header = false;
