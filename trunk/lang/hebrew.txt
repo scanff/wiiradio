@@ -25,7 +25,8 @@ $LANG_TXT_STATION=שם התחנה
 $LANG_TXT_TITLE=מנגן
 
 // -- option screen
-$LANG_TXT_NEXT=הבא >
+$LANG_TXT_NEXT_SKIN=הבא >
+$LANG_TXT_NEXT_LANG=הבא >
 $LANG_TXT_QUIT_LOADER=יציאה לטוען
 $LANG_TXT_QUIT_SYS=יציאה למערכת
 $LANG_TXT_OK=אישור

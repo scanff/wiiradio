@@ -25,7 +25,8 @@ $LANG_TXT_STATION=Station
 $LANG_TXT_TITLE=Jeu
 
 // -- option screen
-$LANG_TXT_NEXT=Après >>>
+$LANG_TXT_NEXT_SKIN=Après >>>
+$LANG_TXT_NEXT_LANG=Après >>>
 $LANG_TXT_QUIT_LOADER=Stoppé - Chargeur
 $LANG_TXT_QUIT_SYS=Stoppé - Système
 $LANG_TXT_OK=OK

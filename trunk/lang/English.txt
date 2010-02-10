@@ -27,8 +27,9 @@ $LANG_TXT_STATION=Station
 $LANG_TXT_TITLE=Playing
 
 // -- option screen
-$LANG_TXT_NEXT=Next >>>
-$LANG_TXT_QUIT_LOADER=Quit - loader
+$LANG_TXT_NEXT_SKIN=Next >>>
+$LANG_TXT_NEXT_LANG=Next >>>
+$LANG_TXT_QUIT_LOADER=Quit
 $LANG_TXT_QUIT_SYS=Quit (system)
 $LANG_TXT_OK=OK
 $LANG_SCROLL_STATIONTEXT=Scroll Station Text:
