@@ -27,6 +27,7 @@ INCLUDES	:=
 #---------------------------------------------------------------------------------
 
 CFLAGS	= -D_WII_ -g -O3 -Wall $(MACHDEP) $(INCLUDE)
+#CFLAGS	= -D_WII_ -DSTD_MAD -g -O3 -Wall $(MACHDEP) $(INCLUDE)
 CXXFLAGS	=	$(CFLAGS)
 
 LDFLAGS	=	-g $(MACHDEP) -Wl,-Map,$(notdir $@).map
@@ -40,7 +41,8 @@ LIBS	:=	 -lSDL_gfx -lSDL_ttf -lSDL_image -lfreetype -ljpeg -lpng -lz -lSDL -lfat
 # list of directories containing libraries, this must be the top level containing
 # include and lib
 #---------------------------------------------------------------------------------
-LIBDIRS	:= -L../../../libogc/lib/wii
+#LIBDIRS	:= -L../../../libogc/lib/wii
+LIBDIRS	:= $(DEVKITPPC)/../portlibs/ppc
 
 #---------------------------------------------------------------------------------
 # no real need to edit anything past this point unless you need to add additional
@@ -98,7 +100,8 @@ export OUTPUT	:=	$(CURDIR)/$(TARGET)
 #---------------------------------------------------------------------------------
 $(BUILD):
 	@[ -d $@ ] || mkdir -p $@
-	@make --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
+#	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
+	@$(MAKE) -C $(BUILD) -f $(CURDIR)/Makefile
 
 #---------------------------------------------------------------------------------
 clean:
