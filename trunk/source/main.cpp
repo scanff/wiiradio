@@ -257,6 +257,11 @@ int connect_thread(void* arg)
         port = playlst->first_entry->port;
         path = playlst->first_entry->path;
 
+        // Set standard port
+        if (!port) {
+            port = STD_STREAM_PORT;
+        }
+
         //save to the now playing mem
         strcpy(playing->station_name,csl->station_name);
         strcpy(playing->station_url,url);
@@ -283,6 +288,11 @@ int connect_thread(void* arg)
         url = csl->station_url;
         port = csl->port;
         path = csl->station_path;
+
+        // Set standard port
+        if (!port) {
+            port = STD_STREAM_PORT;
+        }
 
         //save to the now playing mem
         strcpy(playing->station_name,csl->station_name);

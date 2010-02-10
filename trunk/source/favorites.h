@@ -315,6 +315,10 @@ class favorites {
                 strcpy(n->station_url,split);
             }else if(part==1) {
                 n->port = atoi(split);
+                if (n->port == 0) {
+                    strcat(n->station_path,"/");
+                    strcat(n->station_path,split);
+                }
             }else{
                 strcat(n->station_path,"/");
                 strcat(n->station_path,split);

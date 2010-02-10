@@ -170,6 +170,10 @@ class playlists
                 strcpy(first_entry->url,split);
             }else if(part==1) {
                 first_entry->port = atoi(split);
+                if (first_entry->port == 0) {
+                    strcat(first_entry->path,"/");
+                    strcat(first_entry->path,split);
+                }
             }else{
                 strcat(first_entry->path,"/");
                 strcat(first_entry->path,split);
