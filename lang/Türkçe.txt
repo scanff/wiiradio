@@ -25,7 +25,8 @@ $LANG_TXT_STATION=İstasyon Adı
 $LANG_TXT_TITLE=Çalıyor
 
 // -- option screen
-$LANG_TXT_NEXT=Sonraki >
+$LANG_TXT_NEXT_SKIN=Sonraki >
+$LANG_TXT_NEXT_LANG=Sonraki >
 $LANG_TXT_QUIT_LOADER=Yükleyiciye dön
 $LANG_TXT_QUIT_SYS=Sisteme dön
 $LANG_TXT_OK=OK
