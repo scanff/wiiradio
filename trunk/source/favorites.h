@@ -147,8 +147,9 @@ class favorites {
         unsigned int size = ftell(f);
         fseek(f,0,SEEK_SET);
 
-        char* data = new char[size];
+        char* data = new char[size+1];
         fread(data,size,1,f);
+        data[size] = '\0';
 
         char* start = data;
         char* end = 0;
@@ -220,7 +221,7 @@ class favorites {
             }
 
         }
-
+        delete[] data;
     };
 
     void parse_items_pls(FILE* f,char* fname)
@@ -229,8 +230,9 @@ class favorites {
         unsigned int size = ftell(f);
         fseek(f,0,SEEK_SET);
 
-        char* data = new char[size];
+        char* data = new char[size+1];
         fread(data,size,1,f);
+        data[size] = '\0';
 
 
         char* start = data;
@@ -295,7 +297,7 @@ class favorites {
             }
 
         }
-
+        delete[] data;
     };
 
     void split_url(fav_item* n,char* url)
