@@ -33,14 +33,14 @@ bool load_options()
     fseek(f,0,SEEK_SET);
 
     char* options_data = 0;
-    options_data = new char[size];
+    options_data = new char[size+1];
     if (!options_data)
     {
         fclose(f);
         return false;
     }
 
-    memset(options_data,0,size);
+    memset(options_data,0,size+1);
 
 
     fread(options_data,size,1,f);
