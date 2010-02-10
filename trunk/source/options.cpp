@@ -47,7 +47,7 @@ bool load_options()
 
     parse_options(options_data);
 
-    delete options_data;
+    delete[] options_data;
     options_data = 0;
 
     fclose(f);
