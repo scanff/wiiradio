@@ -33,10 +33,10 @@ $LANG_TXT_QUIT_SYS=Beenden (System)
 $LANG_TXT_OK=OK
 $LANG_SCROLL_STATIONTEXT=Scrolltext:
 $LANG_SCREEN_SAVE=Bildschirmschoner:
-$LANG_CHANGE_SKIN=Aussehen wechseln:
+$LANG_CHANGE_SKIN=Aussehen:
 $LANG_ABOUT=Version:
 $LANG_VERSION=Version
-$LANG_CHANGE_LANG=Ändern Sie Sprache:
+$LANG_CHANGE_LANG=Sprache:
 $LANG_AUTHOR=Durch - 
 
 // -- search screen
