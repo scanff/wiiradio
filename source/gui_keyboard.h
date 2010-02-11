@@ -217,6 +217,7 @@ class gui_keyboard
     {
         delete text_out;
         delete key_space;
+        delete key_backspace;
         delete key_shift;
         delete key_caps;
         delete ok;
