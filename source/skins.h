@@ -103,7 +103,7 @@ class skins {
         {
             i = 0;
             // -- get a line
-            while((*ptr != '\n' && *ptr != '\r') && (*ptr) && (i<MED_MEM))
+            while((*ptr != '\n' && *ptr != '\r') && (*ptr) && (i<MED_MEM-1))
                 line[i++] = *ptr++;
 
             // -- parse the line
@@ -137,7 +137,8 @@ class skins {
 
 
             memset(line,0,MED_MEM);
-            ptr++;
+            if (*ptr)
+                ptr++;
         }
 
     };
