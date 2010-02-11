@@ -156,29 +156,34 @@ class gui_object {
     //-- hit test
     int hit_test(SDL_Event *event, int current_z)
     {
-        int x = event->motion.x;
-        int y = event->motion.y;
         if (!test_zorder(current_z))
         {
             switch(obj_type)
             {
                 case GUI_BUTTON:
                 case GUI_TEXTBOX:
-                obj_state = B_OUT;
+                    obj_state = B_OUT;
                 break;
-
-                case GUI_TOGGLE:
-
-                break;
-
             }
-
             return obj_state;
         }
-
-
-        x+=X_OFFSET;
-        y+=Y_OFFSET;
+        int x=0;
+        int y=0;
+        switch (event->type) {
+            case SDL_MOUSEMOTION:
+                x = event->motion.x;
+                y = event->motion.y;
+                break;
+            case SDL_MOUSEBUTTONDOWN:
+            case SDL_MOUSEBUTTONUP:
+                x = event->motion.x;
+                y = event->motion.y;
+                break;
+            default:
+                return obj_state;
+        }
+        x += X_OFFSET;
+        y += Y_OFFSET;
 
         if ((x > s_x && x < (s_x+s_w) && y > s_y && y < (s_y+s_h)))
         {
@@ -186,13 +191,13 @@ class gui_object {
             {
                 case GUI_BUTTON:
                 case GUI_TEXTBOX:
-                event->type == SDL_MOUSEBUTTONDOWN ? obj_state = B_CLICK : obj_state = B_OVER;
-                break;
+                  obj_state = (event->type == SDL_MOUSEBUTTONDOWN) ? B_CLICK : B_OVER;
+                  break;
 
                 case GUI_TOGGLE:
-                if(event->type == SDL_MOUSEBUTTONDOWN) obj_state == B_ON ? obj_state = B_OFF : obj_state = B_ON;
+                  if (event->type == SDL_MOUSEBUTTONDOWN)
+                      obj_state = (obj_state == B_ON) ? B_OFF : B_ON;
                 break;
-
             }
         }
 
