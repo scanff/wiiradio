@@ -253,7 +253,7 @@ class gui_keyboard
             }
         }
     };
-    int handle_events()
+    int handle_events(SDL_Event* event)
     {
 
         for(int z = MAX_Z_ORDERS; z >= 0; z--)
@@ -264,7 +264,7 @@ class gui_keyboard
                 {
                     if (key_buttons[i][j])
                     {
-                        if(key_buttons[i][j]->hit_test(event.motion.x,event.motion.y,z)==B_CLICK)
+                        if(key_buttons[i][j]->hit_test(event,z)==B_CLICK)
                         {
                             char tb[2] = {0};
 
@@ -276,12 +276,12 @@ class gui_keyboard
                     }
                 }
             }
-            if (key_space->hit_test(event.motion.x,event.motion.y,z)==B_CLICK)
+            if (key_space->hit_test(event,z)==B_CLICK)
             {
                 strcat(dest_buffer," ");
             }
 
-            if (key_backspace->hit_test(event.motion.x,event.motion.y,z)==B_CLICK)
+            if (key_backspace->hit_test(event,z)==B_CLICK)
             {
                 char* ptr = dest_buffer;
 
@@ -291,20 +291,20 @@ class gui_keyboard
                 else *(ptr-1) = 0;
             }
 
-            if(key_shift->hit_test(event.motion.x,event.motion.y,z)==B_CLICK)
+            if(key_shift->hit_test(event,z)==B_CLICK)
             {
                 shift ^= 1;
                 update_keys();
             }
 
-            if(key_caps->hit_test(event.motion.x,event.motion.y,z)==B_CLICK)
+            if(key_caps->hit_test(event,z)==B_CLICK)
             {
                 caps ^= 1;
                 update_keys();
             }
 
-            if(ok->hit_test(event.motion.x,event.motion.y,z)==B_CLICK) ok_click(dest_buffer);//( //
-            if(cancel->hit_test(event.motion.x,event.motion.y,z)==B_CLICK) cancel_click();
+            if(ok->hit_test(event,z)==B_CLICK) ok_click(dest_buffer);//( //
+            if(cancel->hit_test(event,z)==B_CLICK) cancel_click();
         }
 
 

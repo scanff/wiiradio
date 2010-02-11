@@ -125,16 +125,6 @@ void draw_ui(char* info)
     // drawing stuff
     ui->draw(scb->sl_first,icy_info,favs);
     if (info) ui->draw_info(info);
-    // flip to main screen buffer
-    //SDL_Rect ds = { 100,100,640,480};
-    SDL_BlitSurface(ui->guibuffer,0,screen,0);
-  /*char out[100]={0};
-                fnts->change_color(10,10,10);
-                sprintf(out,"x= %u y=%u",event.motion.x,event.motion.y);
-                fnts->text(screen,out,30,90,0);
-*/
-    SDL_Flip(screen);
-
 }
 
 
@@ -764,8 +754,9 @@ int main(int argc, char **argv)
     g_vol_lasttime = 0;
     visualize_number = 0;
     mute = false;
-
-
+    SDL_Event event;
+    int cursor_x = 0;
+    int cursor_y = 0;
 
 #ifdef _WII_
     fullscreen = 1;
@@ -947,13 +938,27 @@ _reload:
         }
 #else
        while (SDL_PollEvent( &event )) {
+           if (event.type == SDL_MOUSEMOTION) {
+               cursor_x = event.motion.x;
+               cursor_y = event.motion.y;
+           }
+
            ui->handle_events(&event);
        }
 #endif
 
         check_keys();
 
-        if (!g_pause_draw) draw_ui(0);
+        if (!g_pause_draw) {
+          draw_ui(0);
+          if (!visualize) {
+            ui->draw_cursor(cursor_x, cursor_y);
+          }
+          // flip to main screen buffer
+          // SDL_Rect ds = { 100,100,640,480};
+          SDL_BlitSurface(ui->guibuffer,0,screen,0);
+          SDL_Flip(screen);
+        }
 
 
         // frame limit.....

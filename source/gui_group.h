@@ -48,7 +48,7 @@ class gui_group : public gui_object
         loopi(number) items[i]->draw();
     };
 
-    int hit_test(int x, int y, int current_z)
+    int hit_test(SDL_Event *event, int current_z)
     {
         int h = 0;
         int on = 0;
@@ -62,7 +62,7 @@ class gui_group : public gui_object
         // test for a change
         for(h=0;h<number;h++)
         {
-            if (items[h]->hit_test(x,y,current_z) == B_ON)
+            if (items[h]->hit_test(event,current_z) == B_ON)
             {
                return h;
             }

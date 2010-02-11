@@ -671,7 +671,7 @@ class gui {
 
         if (S_SEARCHGENRE == g_screen_status)
         {
-            search_gui->handle_events();
+            search_gui->handle_events(events);
             return 0;
         }
 
@@ -681,7 +681,7 @@ class gui {
         // -- cancel buffering
         if (status == BUFFERING || status == CONNECTING)
         {
-            if(buttons[BTN_CANCEL]->hit_test(events->motion.x,events->motion.y,1)==B_CLICK)
+            if(buttons[BTN_CANCEL]->hit_test(events,1)==B_CLICK)
             {
                 status = STOPPED;
             }
@@ -697,21 +697,21 @@ class gui {
 
             //logo
 
-            if (buttons[BTN_LOGO]->hit_test(events->motion.x,events->motion.y,j)==B_CLICK) g_screen_status = S_OPTIONS;
+            if (buttons[BTN_LOGO]->hit_test(events,j)==B_CLICK) g_screen_status = S_OPTIONS;
 
             //playing area
-             if(buttons[BTN_PLAYING]->hit_test(events->motion.x,events->motion.y,j)==B_CLICK) {
+             if(buttons[BTN_PLAYING]->hit_test(events,j)==B_CLICK) {
                 buttons[BTN_PLAYING]->scroll_reset();
                 return 0;
              }
             // genre select
-            if( buttons[BTN_GENRES_SELECT]->hit_test(events->motion.x,events->motion.y,j)==B_CLICK) {
+            if( buttons[BTN_GENRES_SELECT]->hit_test(events,j)==B_CLICK) {
                 g_screen_status = S_GENRES;
                 reset_scrollings();
                 return 0;
             }
             // playlist select
-            if(buttons[BTN_PLAYLISTS]->hit_test(events->motion.x,events->motion.y,j)==B_CLICK) {
+            if(buttons[BTN_PLAYLISTS]->hit_test(events,j)==B_CLICK) {
                 g_screen_status = S_PLAYLISTS;
                 reset_scrollings();
                 return 0;
@@ -721,7 +721,7 @@ class gui {
             loopi(max_listings) {
                 if (g_screen_status == S_BROWSER) {
 
-                    if ((obj_state = buttons_listing[i]->hit_test(events->motion.x,events->motion.y,j)))
+                    if ((obj_state = buttons_listing[i]->hit_test(events,j)))
                     {
                         if (obj_state == B_CLICK)
                         {
@@ -736,7 +736,7 @@ class gui {
                 if (g_screen_status == S_PLAYLISTS)
                 {
 
-                    if ((obj_state = buttons_delete[i]->hit_test(events->motion.x,events->motion.y,j)))
+                    if ((obj_state = buttons_delete[i]->hit_test(events,j)))
                     {
                         if (obj_state == B_CLICK)
                         {
@@ -750,7 +750,7 @@ class gui {
                         return 0;
                     }
 
-                    if ((obj_state = buttons_playlists[i]->hit_test(events->motion.x,events->motion.y,j)))
+                    if ((obj_state = buttons_playlists[i]->hit_test(events,j)))
                     {
                         if (obj_state == B_CLICK)
                         {
@@ -767,7 +767,7 @@ class gui {
                 }
 
                 if (g_screen_status == S_GENRES) {
-                    if (buttons_genre[i]->hit_test(events->motion.x,events->motion.y,j)==B_CLICK) {
+                    if (buttons_genre[i]->hit_test(events,j)==B_CLICK) {
                         genre_selected = i;
                         genre_selected += genre_display;
 
@@ -788,7 +788,7 @@ class gui {
 
             if (buttons[BTN_ADD]) // -- optional button
             {
-                if (buttons[BTN_ADD]->hit_test(events->motion.x,events->motion.y,j)==B_CLICK) {
+                if (buttons[BTN_ADD]->hit_test(events,j)==B_CLICK) {
                     if (status == PLAYING)
                         request_save_fav(); // save the pls
 
@@ -797,7 +797,7 @@ class gui {
             }
             if (buttons[BTN_STOP]) // -- optional button
             {
-                if (buttons[BTN_STOP]->hit_test(events->motion.x,events->motion.y,j)==B_CLICK)
+                if (buttons[BTN_STOP]->hit_test(events,j)==B_CLICK)
                 {
                     status = STOPPED;
                     return 0;
@@ -806,7 +806,7 @@ class gui {
 
             if (buttons[BTN_EXIT]) // -- optional button
             {
-                if (buttons[BTN_EXIT]->hit_test(events->motion.x,events->motion.y,j)==B_CLICK)
+                if (buttons[BTN_EXIT]->hit_test(events,j)==B_CLICK)
                 {
                     g_running = false;
                     return 0;
@@ -815,7 +815,7 @@ class gui {
 
             if (buttons[BTN_BROWSER]) // -- optional button
             {
-                if (buttons[BTN_BROWSER]->hit_test(events->motion.x,events->motion.y,j)==B_CLICK)
+                if (buttons[BTN_BROWSER]->hit_test(events,j)==B_CLICK)
                 {
                     g_screen_status = S_BROWSER;
                     return 0;
@@ -824,7 +824,7 @@ class gui {
 
             if (buttons[BTN_VISUALS]) // -- optional button
             {
-                if (buttons[BTN_VISUALS]->hit_test(events->motion.x,events->motion.y,j)==B_CLICK)
+                if (buttons[BTN_VISUALS]->hit_test(events,j)==B_CLICK)
                 {
                     visualize ? visualize = false : visualize = true;
                     return 0;
@@ -833,7 +833,7 @@ class gui {
 
             if (buttons[BTN_SEARCH]) // -- optional button
             {
-                if (buttons[BTN_SEARCH]->hit_test(events->motion.x,events->motion.y,j)==B_CLICK)
+                if (buttons[BTN_SEARCH]->hit_test(events,j)==B_CLICK)
                 {
                     g_screen_status = S_SEARCHGENRE;
                     return 0;
@@ -842,14 +842,14 @@ class gui {
 
             if (buttons[BTN_NX_SKIN]) // -- optional button
             {
-                if (buttons[BTN_NX_SKIN]->hit_test(events->motion.x,events->motion.y,j)==B_CLICK)
+                if (buttons[BTN_NX_SKIN]->hit_test(events,j)==B_CLICK)
                 {
                     next_skin();
                     return 0;
                 }
             }
 
-             if (buttons[BTN_NEXT]->hit_test(events->motion.x,events->motion.y,j)==B_CLICK) {
+             if (buttons[BTN_NEXT]->hit_test(events,j)==B_CLICK) {
                 if (g_screen_status == S_BROWSER) {
                     char* g = gl.get_genre(genre_selected);
                     genre_nex_prev(true,g);//(char*)genres[genre_selected]);
@@ -881,7 +881,7 @@ class gui {
 
              }
 
-            if(buttons[BTN_PRIOR]->hit_test(events->motion.x,events->motion.y,j)==B_CLICK) {
+            if(buttons[BTN_PRIOR]->hit_test(events,j)==B_CLICK) {
                 if (g_screen_status == S_BROWSER) {
                     char* g = gl.get_genre(genre_selected);
                     if (display_idx>1) genre_nex_prev(false,g);
@@ -945,7 +945,7 @@ class gui {
 
     unsigned long visual_show_title;
     char visual_last_track_title[SMALL_MEM];
-    void draw(station_list* current_list,icy* ic,favorites* favs)
+    void draw(station_list* current_list, icy* ic, favorites* favs)
     {
          draw_rect(guibuffer,0,0,SCREEN_WIDTH,SCREEN_HEIGHT,0); // clear the buffer
 
@@ -1087,24 +1087,18 @@ class gui {
         if (g_screen_status == S_OPTIONS) draw_about();
 
 
-
-
         // always inform user if buffering
         if (status == BUFFERING) draw_info(vars.search_var("$LANG_TXT_BUFFERING"));
         if (status == CONNECTING) draw_info(vars.search_var("$LANG_TXT_CONNECTING"));
         if (g_screen_status == S_SEARCHING) draw_info(vars.search_var("$LANG_TXT_SEARCHING"));
 
-        //cursor
         if (!visualize) {
-            draw_cursor(event.motion.x,event.motion.y);
             visual_show_title = get_tick_count();
-            strcpy(visual_last_track_title,ic->track_title);
+            strcpy(visual_last_track_title, ic->track_title);
         }
 
         // volume display ... like an OSD
         draw_volume();
-
-
 
     };
 
