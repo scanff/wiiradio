@@ -922,13 +922,23 @@ _reload:
         {
 //            cursor_rot = wd_one->orient.roll; // rotation
 
+            event.type = SDL_MOUSEMOTION;
             event.motion.x = wd_one->ir.x;
             event.motion.y = wd_one->ir.y;
 
-
-            if(g_real_keys[SDLK_RETURN] && !g_keys_last_state[SDLK_RETURN])  // (A) Mapped to SDLK_RETURN
+            // (A) Mapped to SDLK_RETURN
+            if(g_real_keys[SDLK_RETURN] && !g_keys_last_state[SDLK_RETURN])
+            {
                 event.type = SDL_MOUSEBUTTONDOWN;
-            else event.type = SDL_MOUSEBUTTONUP;
+                event.button.x = wd_one->ir.x;
+                event.button.y = wd_one->ir.y;
+            }
+            else
+            {
+                event.type = SDL_MOUSEBUTTONUP;
+                event.button.x = wd_one->ir.x;
+                event.button.y = wd_one->ir.y;
+            }
 
             ui->handle_events(&event);
         }else{

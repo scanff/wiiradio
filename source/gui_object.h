@@ -176,8 +176,8 @@ class gui_object {
                 break;
             case SDL_MOUSEBUTTONDOWN:
             case SDL_MOUSEBUTTONUP:
-                x = event->motion.x;
-                y = event->motion.y;
+                x = event->button.x;
+                y = event->button.y;
                 break;
             default:
                 return obj_state;
