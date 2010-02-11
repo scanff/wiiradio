@@ -39,7 +39,7 @@ class gui_group : public gui_object
             items[i] = 0;
         }
 
-        delete items;
+        delete[] items;
         items = 0;
     };
 
