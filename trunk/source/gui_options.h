@@ -131,14 +131,14 @@ class gui_options
 
         bloopj(MAX_Z_ORDERS)
         {
-            if(b_quit->hit_test(events->motion.x,events->motion.y,j)==B_CLICK) g_running = false;
-            if(b_return->hit_test(events->motion.x,events->motion.y,j)==B_CLICK) g_screen_status = S_BROWSER;
-            if(b_next_skin->hit_test(events->motion.x,events->motion.y,j)==B_CLICK) next_skin();
-            if(b_next_lang->hit_test(events->motion.x,events->motion.y,j)==B_CLICK) next_lang();
+            if(b_quit->hit_test(events,j)==B_CLICK) g_running = false;
+            if(b_return->hit_test(events,j)==B_CLICK) g_screen_status = S_BROWSER;
+            if(b_next_skin->hit_test(events,j)==B_CLICK) next_skin();
+            if(b_next_lang->hit_test(events,j)==B_CLICK) next_lang();
 
-            loopi(O_MAX) b_option_item[i]->hit_test(events->motion.x,events->motion.y,j);
+            loopi(O_MAX) b_option_item[i]->hit_test(events,j);
 
-            g_screensavetime = saver_group->hit_test(events->motion.x,events->motion.y,j);
+            g_screensavetime = saver_group->hit_test(events,j);
             b_option_item[O_SCROLL_TEXT]->obj_state == B_OFF ? g_oscrolltext = 0 : g_oscrolltext = 1;
 
         }

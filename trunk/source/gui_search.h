@@ -47,13 +47,13 @@ class gui_search {
         g_screen_status = S_BROWSER;
     };
 
-    void handle_events()
+    void handle_events(SDL_Event* events)
     {
-        keyboard->handle_events();
+        keyboard->handle_events(events);
         bloopj(MAX_Z_ORDERS)
         {
 
-            if(add_genre->hit_test(event.motion.x,event.motion.y,j)==B_CLICK)
+            if(add_genre->hit_test(events,j)==B_CLICK)
                 parent->gl.add_genre(keyboard->dest_buffer);
         }
 

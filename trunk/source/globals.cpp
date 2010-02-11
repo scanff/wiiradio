@@ -3,9 +3,6 @@
 
 // --- anything in this file has global scope !!!!!!
 
-
-SDL_Event   event;
-
 int         X_OFFSET;
 int         Y_OFFSET;
 int         max_listings;
