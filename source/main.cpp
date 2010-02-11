@@ -933,7 +933,7 @@ _reload:
                 event.button.x = wd_one->ir.x;
                 event.button.y = wd_one->ir.y;
             }
-            else
+            if(!g_real_keys[SDLK_RETURN] && g_keys_last_state[SDLK_RETURN])
             {
                 event.type = SDL_MOUSEBUTTONUP;
                 event.button.x = wd_one->ir.x;
