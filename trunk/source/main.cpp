@@ -970,18 +970,7 @@ _reload:
           SDL_Flip(screen);
         }
 
-
-        // frame limit.....
-        // never gets hit on Wii
-     /*   int delay = 1000 / fps - (current_time-last_time);
-        last_time = current_time;
-        if(delay > 0)
-        {
-            SDL_Delay(delay);
-            current_time += delay;
-        }
-     */
-        Sleep(5);
+        Sleep(20);
     }
 
     delete ui; ui = 0;
