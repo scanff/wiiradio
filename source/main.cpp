@@ -757,6 +757,7 @@ int main(int argc, char **argv)
     SDL_Event event;
     int cursor_x = 0;
     int cursor_y = 0;
+    int cursor_visible = 1;
 
 #ifdef _WII_
     fullscreen = 1;
@@ -765,7 +766,8 @@ int main(int argc, char **argv)
     WPAD_Init();
     WPAD_SetDataFormat(WPAD_CHAN_ALL, WPAD_FMT_BTNS_ACC_IR);
     // -- *2 so we don't lagg when hitting the right or bottom of the screen
-    WPAD_SetVRes(WPAD_CHAN_ALL, SCREEN_WIDTH*2, SCREEN_HEIGHT*2);
+    WPAD_SetVRes(WPAD_CHAN_ALL, SCREEN_WIDTH +2*SCREEN_WIDTH_BUFFER,
+                                SCREEN_HEIGHT+2*SCREEN_HEIGHT_BUFFER);
     WPAD_SetIdleTimeout(200);
 
     // Wii Power/Reset buttons
@@ -918,35 +920,36 @@ _reload:
 
 #ifdef _WII_
 
+        // Some valid dummy value
+        event.type = SDL_USEREVENT;
         if (wd_one->ir.valid)
         {
 //            cursor_rot = wd_one->orient.roll; // rotation
 
             event.type = SDL_MOUSEMOTION;
-            event.motion.x = wd_one->ir.x;
-            event.motion.y = wd_one->ir.y;
+            event.motion.x = wd_one->ir.x-SCREEN_WIDTH_BUFFER;
+            event.motion.y = wd_one->ir.y-SCREEN_HEIGHT_BUFFER;
             cursor_x = event.motion.x;
             cursor_y = event.motion.y;
+            cursor_visible = 1;
 
             // (A) Mapped to SDLK_RETURN
             if(g_real_keys[SDLK_RETURN] && !g_keys_last_state[SDLK_RETURN])
             {
                 event.type = SDL_MOUSEBUTTONDOWN;
-                event.button.x = wd_one->ir.x;
-                event.button.y = wd_one->ir.y;
+                event.button.x = event.motion.x;
+                event.button.y = event.motion.y;
             }
             if(!g_real_keys[SDLK_RETURN] && g_keys_last_state[SDLK_RETURN])
             {
                 event.type = SDL_MOUSEBUTTONUP;
-                event.button.x = wd_one->ir.x;
-                event.button.y = wd_one->ir.y;
+                event.button.x = event.motion.x;
+                event.button.y = event.motion.y;
             }
 
             ui->handle_events(&event);
-        }else{
-            // place the cursor off screen so it does not act laggy, when infact it's just got negitive co-ords
-            event.motion.x = 1000;
-            event.motion.y = 1000;
+        } else {
+            cursor_visible = 0;
         }
 #else
        while (SDL_PollEvent( &event )) {
@@ -963,7 +966,7 @@ _reload:
 
         if (!g_pause_draw) {
           draw_ui(0);
-          if (!visualize) {
+          if (cursor_visible && !visualize) {
             ui->draw_cursor(cursor_x, cursor_y);
           }
           // flip to main screen buffer
