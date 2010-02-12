@@ -757,6 +757,7 @@ int main(int argc, char **argv)
     SDL_Event event;
     int cursor_x = 0;
     int cursor_y = 0;
+    float cursor_angle = 0.;
     int cursor_visible = 1;
 
 #ifdef _WII_
@@ -924,7 +925,7 @@ _reload:
         event.type = SDL_USEREVENT;
         if (wd_one->ir.valid)
         {
-//            cursor_rot = wd_one->orient.roll; // rotation
+            cursor_angle = -wd_one->ir.angle;
 
             event.type = SDL_MOUSEMOTION;
             event.motion.x = wd_one->ir.x-SCREEN_WIDTH_BUFFER;
@@ -967,7 +968,7 @@ _reload:
         if (!g_pause_draw) {
           draw_ui(0);
           if (cursor_visible && !visualize) {
-            ui->draw_cursor(cursor_x, cursor_y);
+            ui->draw_cursor(cursor_x, cursor_y, cursor_angle);
           }
           // flip to main screen buffer
           // SDL_Rect ds = { 100,100,640,480};
