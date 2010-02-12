@@ -14,8 +14,8 @@ volume_over=volume_ol.png
 volume_bg=volume_bg.png
 
 // -- cusror (required)
-cursor_y_off=0
-cursor_x_off=2
+cursor_y_off=26
+cursor_x_off=26
 cursor=cursor.png
 
 // -- fonts (required)

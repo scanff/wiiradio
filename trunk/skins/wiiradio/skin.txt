@@ -31,8 +31,8 @@ info_cancel_out=gen_button_out.png
 info_cancel_over=gen_button_over.png
 
 [variables]
-cursor_y_off=10
-cursor_x_off=17
+cursor_y_off=57
+cursor_x_off=57
 
 fontset=FreeSansBold.ttf
 fontsize_small=14
