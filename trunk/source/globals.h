@@ -160,6 +160,8 @@ extern SDL_Surface*        screen;
 
 #define SCREEN_WIDTH    (640)
 #define SCREEN_HEIGHT   (480)
+#define SCREEN_WIDTH_BUFFER  (50)
+#define SCREEN_HEIGHT_BUFFER (50)
 #define FONT_SIZE       (40)
 #define VERSION_NUMBER  (0.5)
 #define VERSION_NAME    ("Version")
