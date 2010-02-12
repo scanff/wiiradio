@@ -1196,7 +1196,9 @@ class gui {
     {
         SDL_Rect r = { x,y,cursor->w,cursor->h };
         SDL_Surface *rot = rotozoomSurface (cursor, angle, 1, 0);
+        if(!rot) return; // don't count on rotozoomSurface to always allocate surface
         SDL_BlitSurface(rot,0, guibuffer, &r);
+        SDL_FreeSurface(rot); // free
     };
 
     char* gui_gettext(char* t)
