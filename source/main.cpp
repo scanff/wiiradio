@@ -925,6 +925,8 @@ _reload:
             event.type = SDL_MOUSEMOTION;
             event.motion.x = wd_one->ir.x;
             event.motion.y = wd_one->ir.y;
+            cursor_x = event.motion.x;
+            cursor_y = event.motion.y;
 
             // (A) Mapped to SDLK_RETURN
             if(g_real_keys[SDLK_RETURN] && !g_keys_last_state[SDLK_RETURN])
@@ -970,7 +972,11 @@ _reload:
           SDL_Flip(screen);
         }
 
+#ifdef _WII_
+        Sleep(5);
+#else
         Sleep(20);
+#endif
     }
 
     delete ui; ui = 0;
