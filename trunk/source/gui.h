@@ -1192,10 +1192,11 @@ class gui {
         }
     };
 
-    void draw_cursor(int x,int y)
+    void draw_cursor(int x,int y, float angle)
     {
         SDL_Rect r = { x,y,cursor->w,cursor->h };
-        SDL_BlitSurface( cursor,0, guibuffer,&r);
+        SDL_Surface *rot = rotozoomSurface (cursor, angle, 1, 0);
+        SDL_BlitSurface(rot,0, guibuffer, &r);
     };
 
     char* gui_gettext(char* t)
