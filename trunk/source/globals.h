@@ -174,7 +174,7 @@ extern SDL_Surface*        screen;
 #define MED_MEM         (1024)
 #define TINY_MEM        (50)
 #define MAX_FFT_SAMPLE  (8192/4)
-#define MAX_NET_BUFFER  (2500)
+#define MAX_NET_BUFFER  (10000)
 #define STD_STREAM_PORT (80)
 
 #define MAX_STATION_CACHE (1000)
