@@ -138,6 +138,9 @@ class playlists
 #ifdef _WIN32
                     if(WSAGetLastError()==WSAEWOULDBLOCK) len=1;
 #endif
+#ifdef _LINUX_
+                    if(net->client_connected) len = 1;
+#endif
                 }
 
             }

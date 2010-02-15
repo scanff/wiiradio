@@ -308,6 +308,11 @@ class favorites {
         char* search = strstr(url,"http://");
         if(!search) return;
 
+        // Clear data
+        strcpy(n->station_url,  "");
+        strcpy(n->station_path, "");
+        n->port = 0;
+
         search += strlen("http://");
 
         split = strtok(search,":/");

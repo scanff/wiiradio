@@ -28,7 +28,8 @@ class icy {
         char            icy_notice2[SMALL_MEM]; // notice 2
         char            icy_name[SMALL_MEM]; // station name
         char            icy_genre[SMALL_MEM]; // station genre
-        char            icy_url[SMALL_MEM]; // url
+        char            icy_pls_url[SMALL_MEM]; // url in playlist
+        char            icy_url[SMALL_MEM]; // url of stream
         char            content_type[SMALL_MEM]; // type
         int             icy_pub; // public
         unsigned int    icy_metaint; // metaint .. very important
@@ -39,6 +40,7 @@ class icy {
         // vars
         unsigned long   metaint_pos;
         bool            looking_for_header;
+        int             redirect_detected;
         unsigned long   buffered;
         unsigned long   pre_buffer; // buffer before playback ...
         unsigned long   buffer_size;
@@ -61,6 +63,7 @@ class icy {
     icy() : icy_metaint(10000), // must not be zero on start, otherwise will never buffer
             metaint_pos(0),
             looking_for_header(true),
+            redirect_detected(0),
             buffered(0),
             pre_buffer(200000),
             buffer_size(2000000),
@@ -100,6 +103,7 @@ class icy {
         memset(icy_name,0,SMALL_MEM);
         memset(icy_genre,0,SMALL_MEM);
         memset(icy_url,0,SMALL_MEM);
+        memset(icy_pls_url,0,SMALL_MEM);
         memset(content_type,0,SMALL_MEM);
 
         memset(track_title,0,SMALL_MEM);
@@ -120,6 +124,7 @@ class icy {
         metaint_receive_pos = 0;
         pre_buffer = 200000;
         looking_for_header = true;
+        redirect_detected = 0;
 
         clean_icy_data();
     };
@@ -186,13 +191,36 @@ class icy {
 
     };
 
-    int parse_header(char* buf,int len)
+    void parse_http_redirect(char *buf)
+    {
+        DEB("HTTP redirect\n");
+        char *found = strstr(buf,"Location: ");
+        if (!found)
+        {
+            DEB("  redirect target not found\n");
+            return;
+        }
+        found += strlen("Location: ");
+        char *end = strstr(found,"\r\n");
+        memcpy(icy_url,found,(end-found < SMALL_MEM-1 ? end-found : SMALL_MEM-1));
+        redirect_detected++;
+#ifdef ICY_DEBUG
+        printf("redirect: %s\n", icy_url);
+#endif
+    }
+
+    int parse_header(char* buf)
     {
         DEB("parse_header\n");
         char* found = strstr(buf,"icy-metaint:"); // expect this response from the server !
         if (!found)
         {
-          DEB("  not found\n");
+          // This does not look like a icy stream, but it still could be
+          // something else we can handle, e.g. an html redirect
+          DEB("  icy header not found\n");
+          found = strstr(buf," 302 Moved Temporarily\r\n");
+          if (found)
+              parse_http_redirect(buf);
 #ifdef ICY_DEBUG
           printf("%s\n", buf);
 #endif
@@ -329,11 +357,11 @@ class icy {
             if (remain > 0 ) {
                 memcpy(buffer,net_buffer+end_bytes,remain);
                 buffered = remain;
-            }else buffered = 0;
+            } else buffered = 0;
 
 
             buffers_recvd++; // total number of buffers we've gotten for this stream
-        }else{
+        } else {
             // keep copying to the buffer
             memcpy(buffer+buffered,net_buffer,len);
             buffered += len;
@@ -346,10 +374,10 @@ class icy {
           // overwrite last byte of buffer temporarily to protect strstr
           char tmp = buffer[buffered-1];
           buffer[buffered-1] = '\0';
-          if (strstr(buffer,"\r\n\r\n"))
+          if (strstr(buffer,"\r\n\r\n") || strstr(buffer,"\r\n\r\0"))
           {
             DEB("looking_for_header\n");
-            int remove = parse_header(buffer,buffered);
+            int remove = parse_header(buffer);
             buffer[buffered-1] = tmp;
             if (remove)
             {
