@@ -49,6 +49,7 @@
         #include <netinet/in.h>
         #include <arpa/inet.h>
         #include <unistd.h>
+        #include <sys/select.h>
 
         #include "inc/fmod.h"
         #include "inc/fmod_errors.h"
@@ -118,6 +119,14 @@ enum
 //  V_EXPLODE,
   MAX_VISUALS
 };
+
+enum connect_info
+{
+  I_STATION = 0,
+  I_PLAYLIST,
+  I_HASBEENSET
+};
+
 extern Uint8 *        g_nKetStatus;
 extern Uint8        g_real_keys[MAX_KEYS];
 extern Uint8        g_keys_last_state[MAX_KEYS];
@@ -174,7 +183,7 @@ extern SDL_Surface*        screen;
 #define MED_MEM         (1024)
 #define TINY_MEM        (50)
 #define MAX_FFT_SAMPLE  (8192/4)
-#define MAX_NET_BUFFER  (10000)
+#define MAX_NET_BUFFER  (2500)
 #define STD_STREAM_PORT (80)
 
 #define MAX_STATION_CACHE (1000)
@@ -192,7 +201,7 @@ extern int X_OFFSET;
 extern int Y_OFFSET;
 extern int max_listings;
 
-extern void connect_to_stream(int,bool);
+extern void connect_to_stream(int,connect_info);
 extern void search_genre(char*);
 extern void genre_nex_prev(bool,char*);
 extern void request_save_fav();

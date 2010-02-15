@@ -287,12 +287,40 @@ class network : public dns
 
     int client_recv(char* buffer,int len)
     {
+        int ret;
         if (!client_connected) return 0;
+        // Check if there is data to read before trying to read,
+        // otherwise we cannot detect closed sockets
+        fd_set rfds;
+        FD_ZERO(&rfds);
+        FD_SET(connection_socket, &rfds);
+        struct timeval tv;
+        tv.tv_sec = 0;
+        tv.tv_usec = 0;
+        #ifdef _WII_
+          ret = net_select(connection_socket+1, &rfds, NULL, NULL, &tv);
+        #else
+          ret = select(connection_socket+1, &rfds, NULL, NULL, &tv);
+        #endif
+        // If there is no data to read, don't try
+        if (!ret) return 0;
+        // TODO: We probably should do some error handling here
+        if (ret < 0) return ret;
 
         u32 clen = sizeof(client);
-        return c_protocol == TCP ?   net_recv(connection_socket, buffer, len, 0) :
-                                     net_recvfrom(connection_socket, (char*)buffer, len, 0,(struct sockaddr*)&client,&clen);
-
+        if (c_protocol == TCP)
+            ret = net_recv(connection_socket, buffer, len, 0);
+        else
+            ret = net_recvfrom(connection_socket, (char*)buffer, len, 0,
+                               (struct sockaddr*)&client,&clen);
+        // If select() returned >0 but recv() returned 0, we got EOF
+        // and the socket has to be regarded as closed from now on
+        if (ret == 0)
+        {
+            client_close();
+            client_connected = 0;
+        }
+        return ret;
     }
 
     void client_close()

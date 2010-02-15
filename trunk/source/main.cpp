@@ -39,8 +39,6 @@ fav_item*           playing; // make now playing as fav struct so we can access 
 visualizer*         visuals;
 langs*              lang;
 skins*              sk;
-int                 g_value;
-bool                g_haveplaylist;
 
 #ifndef _WII_
 
@@ -204,7 +202,6 @@ int connect_thread(void* arg)
     char* host = 0;
     char request[1024] = {0};
 
-
     // -- close current connection
     if (connected)
     {
@@ -214,85 +211,6 @@ int connect_thread(void* arg)
 
     // stop mp3 if currently playing.
     stop_playback();
-
-
-    if (!g_haveplaylist) {
-
-        g_value += display_idx;
-        if (g_value > scb->total_items)
-        {
-            status = FAILED;
-            return 0;
-        }
-
-        station_list* csl = scb->sl_first;
-        // loop through stations
-        int x = 0;
-        while(csl){
-            if (x==g_value) break;
-
-            csl = csl->nextnode;
-            x++;
-        }
-        if (!csl) {
-            status = FAILED;
-            return 0;
-        }
-
-        // get playlists
-        playlst->get_playlist(csl->station_id);
-        //playlst->parse_playlist();
-
-        url = playlst->first_entry->url;
-        port = playlst->first_entry->port;
-        path = playlst->first_entry->path;
-
-        // Set standard port
-        if (!port) {
-            port = STD_STREAM_PORT;
-        }
-
-        //save to the now playing mem
-        strcpy(playing->station_name,csl->station_name);
-        strcpy(playing->station_url,url);
-        strcpy(playing->station_path,path);
-        playing->port = port;
-
-
-    }else{
-        // play from playlst file
-        fav_item* csl = favs->first;
-        // loop through stations
-        int x = 0;
-        while(csl){
-            if (x==g_value) break;
-
-            csl = csl->nextnode;
-            x++;
-        }
-        if (!csl) {
-            status = FAILED;
-            return 0;
-        }
-
-        url = csl->station_url;
-        port = csl->port;
-        path = csl->station_path;
-
-        // Set standard port
-        if (!port) {
-            port = STD_STREAM_PORT;
-        }
-
-        //save to the now playing mem
-        strcpy(playing->station_name,csl->station_name);
-        strcpy(playing->station_url,url);
-        strcpy(playing->station_path,path);
-        playing->port = port;
-
-    }
-
-
 
     // connect to new stream
     int connect_try = net->client_connect(url,port,TCP,false);
@@ -320,18 +238,15 @@ int connect_thread(void* arg)
 
         connected = connect_try;
 
-    }else status = FAILED;
+    } else status = FAILED;
 
     return 0;
 }
 
 
 void connect_to_stream(int,bool); //extern'd
-void connect_to_stream(int value,bool haveplaylist)
+void connect_to_stream(int value, connect_info info)
 {
-    g_value = value;
-    g_haveplaylist = haveplaylist;
-
     if (connectthread)
     {
         SDL_WaitThread(connectthread, NULL); // wait for it to stop
@@ -339,6 +254,80 @@ void connect_to_stream(int value,bool haveplaylist)
     }
 
     status = CONNECTING; // attempting a new connection
+
+    // Sort out data for stream to connect to
+    switch (info) {
+      case I_STATION:
+      {
+        value += display_idx;
+        if (value > scb->total_items)
+        {
+            status = FAILED;
+            return;
+        }
+
+        station_list* csl = scb->sl_first;
+        // loop through stations
+        int x = 0;
+        while(csl){
+            if (x==value) break;
+
+            csl = csl->nextnode;
+            x++;
+        }
+        if (!csl) {
+            status = FAILED;
+            return;
+        }
+
+        // get playlists
+        playlst->get_playlist(csl->station_id);
+
+        strcpy(playing->station_url, playlst->first_entry->url);
+        playing->port = playlst->first_entry->port;
+        strcpy(playing->station_path, playlst->first_entry->path);
+
+        // Set standard port
+        if (!playing->port) {
+            playing->port = STD_STREAM_PORT;
+        }
+
+        //save to the now playing mem
+        strcpy(playing->station_name,csl->station_name);
+        break;
+      }
+      case I_PLAYLIST:
+      {
+        // play from playlst file
+        fav_item* csl = favs->first;
+        // loop through stations
+        int x = 0;
+        while(csl){
+            if (x==value) break;
+
+            csl = csl->nextnode;
+            x++;
+        }
+        if (!csl) {
+            status = FAILED;
+            return;
+        }
+
+        strcpy(playing->station_url, csl->station_url);
+        playing->port = csl->port;
+        strcpy(playing->station_path, csl->station_path);
+
+        // Set standard port
+        if (!playing->port) {
+            playing->port = STD_STREAM_PORT;
+        }
+
+        //save to the now playing mem
+        strcpy(playing->station_name,csl->station_name);
+        break;
+      }
+      case I_HASBEENSET: break;
+    }
 
     // start a new connection thread
     connectthread = SDL_CreateThread(connect_thread,0);
@@ -638,14 +627,8 @@ int critical_thread(void *arg)
         {
             // stream handler
             len = net->client_recv(net_buffer,MAX_NET_BUFFER);
-
             if(len > 0)
             {
-               /* char out[100]={0};
-                fnts->change_color(10,10,10);
-                sprintf(out,"mi= %d len= %d buf=%u  - bufsz =%u",icy_info->icy_metaint,len,icy_info->buffered,icy_info->buffer_size);
-                fnts->text(screen,out,30,90,0);SDL_Flip(screen);
-                */
                 // reset errors
                 errors = 0;
 
@@ -657,9 +640,8 @@ int critical_thread(void *arg)
 #ifndef _WII_
                 cb_fft((short*)net_buffer,len/2);
 #endif
-
-            }else if(len < 0){
-
+            } else if (len < 0)
+            {
                 /* would block, not really an error in this case */
                 if (len != -11) errors++;
 
@@ -668,27 +650,38 @@ int critical_thread(void *arg)
                     status = FAILED;
                 }
             }
-
+            if (!net->client_connected)
+            {
+                status = FAILED;
+            }
+            // Too many nested reconnects
+            if (icy_info->redirect_detected > 20)
+            {
+                status = FAILED;
+            }
+            else if (icy_info->redirect_detected)
+            {
+                favs->split_url(playing, icy_info->icy_url);
+                connect_to_stream(0, I_HASBEENSET);
+            }
 
             if (!icy_info->bufferring) // only play if we've buffered enough data
             {
-
 #ifdef _WII_
                 if(!MP3Player_IsPlaying())
                 {
-                    //modified function
                     if(connected)
                     {
 #ifdef STD_MAD
                         MP3Player_PlayFile(icy_info->buffer, reader_callback, 0);
 #else
+                        //modified function
                         MP3Player_PlayFile(icy_info->buffer, reader_callback, 0, cb_fft);
 #endif
                         status = PLAYING;
                     }
                 }
 #else
-
                 FMOD_BOOL is_playing = false;
                 FMOD_Channel_IsPlaying(channel1,&is_playing);
                 if (!is_playing)
