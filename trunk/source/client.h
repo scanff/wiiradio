@@ -291,7 +291,7 @@ class network : public dns
         if (!client_connected) return 0;
         // Check if there is data to read before trying to read,
         // otherwise we cannot detect closed sockets
-        fd_set rfds;
+   /*     fd_set rfds;
         FD_ZERO(&rfds);
         FD_SET(connection_socket, &rfds);
         struct timeval tv;
@@ -306,7 +306,7 @@ class network : public dns
         if (!ret) return 0;
         // TODO: We probably should do some error handling here
         if (ret < 0) return ret;
-
+*/
         u32 clen = sizeof(client);
         if (c_protocol == TCP)
             ret = net_recv(connection_socket, buffer, len, 0);
