@@ -20,7 +20,7 @@ char* tests[] = {   "http://205.188.215.225:8002",
 
 int test_lib()
 {
-    printf("\n\n\n\nTest libWiiRadio, will test three streams!\n");
+    printf("\n\n\nTest libWiiRadio, will test three streams!\n");
 
     for(int i = 0; i < 3;i++)
     {

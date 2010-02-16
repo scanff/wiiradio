@@ -363,3 +363,15 @@ int LWR_GetCurrentBitRate()
     return icy_info->icy_br;
 
 };
+
+// set up libwiiradio
+int LWR_SetBufferSize(unsigned long maxbuffer)
+{
+	if(!LWP_playing) return 0;
+
+    icy_info->buffer_size = maxbuffer;
+	icy_info->pre_buffer = (unsigned long)(icy_info->buffer_size / 10);
+
+	return icy_info->buffer_size;
+
+};
