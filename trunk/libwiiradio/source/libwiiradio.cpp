@@ -8,7 +8,7 @@ static icy* icy_info = 0;
 static int connected = false;
 static int LWP_playing = false;
 static int errors = 0;
-static int mp3_volume = 255;
+static int LWR_mp3_volume = 255;
 #define MAX_NET_BUFFER (10000) // 10k
 
 #ifdef _WII_
@@ -151,7 +151,7 @@ unsigned __stdcall critical_thread(void *arg)
 
             // stream handler
             len = net->client_recv(net_buffer,MAX_NET_BUFFER);
-			
+
             if(len > 0)
             {
                 // reset errors
@@ -179,7 +179,7 @@ unsigned __stdcall critical_thread(void *arg)
 
             if (!icy_info->bufferring) // only play if we've buffered enough data
             {
-			
+
 #ifdef _WII_
                 if(!MP3Player_IsPlaying())
                 {
@@ -240,7 +240,7 @@ int LWR_Play(char* name)
 #ifdef _WII_
     ASND_Init();
     MP3Player_Init();
-    SND_ChangeVolumeVoice(0,mp3_volume,mp3_volume);
+    SND_ChangeVolumeVoice(0,LWR_mp3_volume,LWR_mp3_volume);
 #else
     memset(&exinfo, 0, sizeof(FMOD_CREATESOUNDEXINFO));
     exinfo.cbsize = sizeof(FMOD_CREATESOUNDEXINFO);
@@ -248,7 +248,7 @@ int LWR_Play(char* name)
 
     FMOD_System_Create(&fmod_system);
     FMOD_System_Init(fmod_system, 32, FMOD_INIT_NORMAL, NULL);
-
+    FMOD_Channel_SetVolume(channel1, LWR_mp3_volume/255.);
 #endif
 
 #ifdef _WII_
@@ -269,8 +269,8 @@ int LWR_Play(char* name)
 
 int LWR_Stop()
 {
-	
-	
+
+
     if (LWP_playing)
     {
 
@@ -318,12 +318,32 @@ int LWR_Stop()
     return 1;
 };
 
+// set the volume
+void LWR_SetVolume(int vol)
+{
+    LWR_mp3_volume = vol;
+
+    if(!LWP_playing) return;
+
+#ifdef _WII_
+    SND_ChangeVolumeVoice(0,LWR_mp3_volume,LWR_mp3_volume);
+#else
+    FMOD_Channel_SetVolume(channel1, LWR_mp3_volume/255.);
+#endif
+};
+
+// return the current volume
+int LWR_GetVolume()
+{
+    return LWR_mp3_volume;
+};
+
 // return the current URL
 char* LWR_GetUrl()
 {
     if(!LWP_playing) return 0;
 
-    return 0;
+    return icy_info->icy_url;
 };
 
 // return what's playing

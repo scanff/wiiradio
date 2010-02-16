@@ -20,6 +20,11 @@ char* LWR_GetCurrentTrack();
 // return bitrate
 int LWR_GetCurrentBitRate();
 
+// return the volume
+int LWR_GetVolume();
+
+// set the volume
+void LWR_SetVolume(int);
 
 #ifdef __cplusplus
    }
