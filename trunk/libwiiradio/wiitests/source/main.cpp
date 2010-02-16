@@ -26,6 +26,11 @@ int test_lib()
     {
         printf("Connecting to %s\n", tests[i]);
 
+
+		LWR_SetVolume(40*(i+1));
+        printf("setting volume %d\n", 40*(i+1));
+		
+
         if(LWR_Play(tests[i]) < 0)
         {
             printf("ERROR!\n");
@@ -40,12 +45,18 @@ int test_lib()
 
         int br = LWR_GetCurrentBitRate();
         if (br != -1) printf("current bitrate = %d\n", br);
-
+		
+		char* url = LWR_GetUrl();
+		if (url) printf("current url = %s\n", url);
+		
+		int vol = LWR_GetVolume();
+        if (vol != -1) printf("current volume = %d\n", vol);
+		
         
 		usleep(30000000); // play for a while
 		
 
-		printf("Quitting Playback!\n");
+		printf("Stop Playback!\n");
 
         LWR_Stop();
     }

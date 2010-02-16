@@ -240,7 +240,7 @@ int LWR_Play(char* name)
 #ifdef _WII_
     ASND_Init();
     MP3Player_Init();
-    SND_ChangeVolumeVoice(0,LWR_mp3_volume,LWR_mp3_volume);
+    MP3Player_Volume(LWR_mp3_volume);
 #else
     memset(&exinfo, 0, sizeof(FMOD_CREATESOUNDEXINFO));
     exinfo.cbsize = sizeof(FMOD_CREATESOUNDEXINFO);
@@ -326,7 +326,7 @@ void LWR_SetVolume(int vol)
     if(!LWP_playing) return;
 
 #ifdef _WII_
-    SND_ChangeVolumeVoice(0,LWR_mp3_volume,LWR_mp3_volume);
+    MP3Player_Volume(LWR_mp3_volume);
 #else
     FMOD_Channel_SetVolume(channel1, LWR_mp3_volume/255.);
 #endif
