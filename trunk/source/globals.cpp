@@ -19,7 +19,7 @@ Uint8       g_keys_last_state[MAX_KEYS];
 bool        g_running;
 int         g_screen_status;
 Uint64      g_vol_lasttime;
-int         status;
+enum_status status;
 
 wiiradio_variables vars;
 
