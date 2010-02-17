@@ -85,7 +85,7 @@ enum
     AS_MAX
 };
 
-enum
+enum enum_status
 {
   STOPPED = 0,
   PLAYING,
@@ -135,7 +135,7 @@ extern int            g_FPS;
 extern int             g_nGlobalStatus;
 extern int             g_screen_status;
 extern bool         g_running;
-extern int          status;
+extern enum_status  status;
 extern bool         visualize;
 extern int          visualize_number;
 extern bool         g_pause_draw;

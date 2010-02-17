@@ -993,23 +993,23 @@ class gui {
                     char s_status[TINY_MEM] = {0};
                     char* l = 0;
                     switch(status){
-                        case 0:
+                        case STOPPED:
                             l = vars.search_var("$LANG_TXT_STOPPED");
-                            if (l) strcpy(s_status,l);
                         break;
-                        case 1:
+                        case PLAYING:
                             l = vars.search_var("$LANG_TXT_PLAYING");
-                            if (l) strcpy(s_status,l);
                         break;
-                        case 2:
+                        case BUFFERING:
                             l = vars.search_var("$LANG_TXT_BUFFERING");
-                            if (l) strcpy(s_status,l);
                         break;
-                        case 3:
+                        case FAILED:
                             l = vars.search_var("$LANG_TXT_ERROR");
-                            if (l) strcpy(s_status,l);
+                        break;
+                        case CONNECTING:
+                            l = vars.search_var("$LANG_TXT_CONNECTING");
                         break;
                     }
+                    if (l) strcpy(s_status,l);
 
                     buttons[BTN_PLAYING]->set_text(s_status);
                 }
