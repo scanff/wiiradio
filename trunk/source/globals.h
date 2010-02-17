@@ -50,6 +50,7 @@
         #include <arpa/inet.h>
         #include <unistd.h>
         #include <sys/select.h>
+        #include <poll.h>
 
         #include "inc/fmod.h"
         #include "inc/fmod_errors.h"
