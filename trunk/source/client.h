@@ -230,7 +230,7 @@ class network : public dns
 
         client_connected = false;
         connection_socket = net_socket(AF_INET, protocol == TCP ? SOCK_STREAM : SOCK_DGRAM,IPPROTO_IP);
-        if (connection_socket == 0) return 0;
+        if (connection_socket < 0) return 0;
 
         memset(&client,0, sizeof(client));
 
