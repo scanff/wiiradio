@@ -6,6 +6,17 @@
    extern "C" {
 #endif /* __cplusplus */
 
+// lib status
+
+enum {
+	STOPPED = 0,
+	PLAYING,
+	BUFFERING,
+	FAILED,
+	CONNECTING
+};
+
+
 // lib functions
 int LWR_Play(char*);
 
@@ -34,6 +45,10 @@ int LWR_SetBufferSize(unsigned long);
 
 // Get decoded PCM audio samples
 int LWR_GetSamples(short*,int);
+
+
+// Get the status
+int LWR_GetStatus();
 
 #ifdef __cplusplus
    }
