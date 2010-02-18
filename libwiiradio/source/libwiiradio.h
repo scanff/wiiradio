@@ -32,6 +32,9 @@ void LWR_SetVolume(int);
 */
 int LWR_SetBufferSize(unsigned long);
 
+// Get decoded PCM audio samples
+int LWR_GetSamples(short*,int);
+
 #ifdef __cplusplus
    }
 #endif /* __cplusplus */

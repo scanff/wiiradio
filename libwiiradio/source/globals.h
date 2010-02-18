@@ -20,7 +20,7 @@
     #include <unistd.h>
     #include <fcntl.h>
     #include <asndlib.h>
-    #include <mp3player.h>
+    #include "mp3player.h"
 
     #define Sleep(x) usleep(x*1000);//1000?
     //#include <errno.h>

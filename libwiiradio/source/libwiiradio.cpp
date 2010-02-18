@@ -2,6 +2,7 @@
 #include "libwiiradio.h"
 #include "client.h"
 #include "icy.h"
+#include "mp3player.h"
 
 static network* net = 0;
 static icy* icy_info = 0;
@@ -9,6 +10,9 @@ static int connected = false;
 static int LWP_playing = false;
 static int errors = 0;
 static int LWR_mp3_volume = 255;
+#define MAX_SAMPLES (8192/4)
+static short sample_data[MAX_SAMPLES] = {0};
+
 #define MAX_NET_BUFFER (10000) // 10k
 
 #ifdef _WII_
@@ -129,6 +133,17 @@ static s32 reader_callback(void *usr_data,void *cb,s32 len)
     return icy_info->get_buffer(cb,len);
 }
 
+#ifndef STD_MAD
+// callback called from mod of libmad
+static void cb_fft(short* in, int max)
+{
+	
+	if (max < MAX_SAMPLES) memmove(sample_data,in,max);
+	else memmove(sample_data,in,MAX_SAMPLES);
+
+}
+#endif
+
 // shoutcast playback
 #ifdef _WII_
 void *critical_thread(void *arg)
@@ -181,7 +196,7 @@ unsigned __stdcall critical_thread(void *arg)
             {
 
 #ifdef _WII_
-                if(!MP3Player_IsPlaying())
+                if(!LWR_MP3Player_IsPlaying())
                 {
                     //modified function
                     if(connected)
@@ -189,7 +204,7 @@ unsigned __stdcall critical_thread(void *arg)
 #ifdef STD_MAD
                         MP3Player_PlayFile(icy_info->buffer, reader_callback, 0);
 #else
-                        MP3Player_PlayFile(icy_info->buffer, reader_callback, 0);
+                        LWR_MP3Player_PlayFile(icy_info->buffer, reader_callback, 0,cb_fft);
 #endif
                     }
                 }
@@ -239,8 +254,8 @@ int LWR_Play(char* name)
     // set up sound system
 #ifdef _WII_
     ASND_Init();
-    MP3Player_Init();
-    MP3Player_Volume(LWR_mp3_volume);
+    LWR_MP3Player_Init();
+    LWR_MP3Player_Volume(LWR_mp3_volume);
 #else
     memset(&exinfo, 0, sizeof(FMOD_CREATESOUNDEXINFO));
     exinfo.cbsize = sizeof(FMOD_CREATESOUNDEXINFO);
@@ -265,6 +280,22 @@ int LWR_Play(char* name)
 
 
     return 1;
+};
+
+
+// return the decoded samples
+int LWR_GetSamples(short* in,int size)
+{
+    if(size >= MAX_SAMPLES)
+	{
+		memmove(in,sample_data,MAX_SAMPLES);
+		return MAX_SAMPLES;
+	}else{
+		memmove(in,sample_data,size);
+		return size;
+	
+	}
+	return 0;
 };
 
 int LWR_Stop()
@@ -293,7 +324,7 @@ int LWR_Stop()
 
 
 #ifdef _WII_
-    if(MP3Player_IsPlaying()) MP3Player_Stop();
+    if(LWR_MP3Player_IsPlaying()) LWR_MP3Player_Stop();
 #else
     FMOD_BOOL is_playing = false;
     FMOD_Channel_IsPlaying(channel1,&is_playing);
@@ -326,7 +357,7 @@ void LWR_SetVolume(int vol)
     if(!LWP_playing) return;
 
 #ifdef _WII_
-    MP3Player_Volume(LWR_mp3_volume);
+    LWR_MP3Player_Volume(LWR_mp3_volume);
 #else
     FMOD_Channel_SetVolume(channel1, LWR_mp3_volume/255.);
 #endif
