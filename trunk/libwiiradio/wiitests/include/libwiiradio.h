@@ -26,6 +26,15 @@ int LWR_GetVolume();
 // set the volume
 void LWR_SetVolume(int);
 
+/* 
+  Set the audio buffer size - default is 2MB which works well.
+  This must be called before LWR_Play or it has no effect!
+*/
+int LWR_SetBufferSize(unsigned long);
+
+// Get decoded PCM audio samples
+int LWR_GetSamples(short*,int);
+
 #ifdef __cplusplus
    }
 #endif /* __cplusplus */

@@ -22,6 +22,8 @@ int test_lib()
 {
     printf("\n\n\nTest libWiiRadio, will test three streams!\n");
 
+	unsigned long bs = 0;
+	
     for(int i = 0; i < 3;i++)
     {
         printf("Connecting to %s\n", tests[i]);
@@ -30,7 +32,10 @@ int test_lib()
 		LWR_SetVolume(40*(i+1));
         printf("setting volume %d\n", 40*(i+1));
 		
-
+		bs = (i+1)*1000000;
+		printf("setting buffer size : %lu\n", bs);
+		LWR_SetBufferSize(bs);
+		
         if(LWR_Play(tests[i]) < 0)
         {
             printf("ERROR!\n");

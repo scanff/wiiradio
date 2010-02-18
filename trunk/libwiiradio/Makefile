@@ -25,8 +25,8 @@ INCLUDES	:=	include
 # options for code generation
 #---------------------------------------------------------------------------------
 
-CFLAGS	=   -D_WII_ -g -O3 -Wall $(MACHDEP) $(INCLUDE)
-CXXFLAGS	=	$(CFLAGS)
+CFLAGS	=   -D_WII_ -g -O3 -Wall -mcpu=750 -meabi -msdata=eabi -mhard-float -fmodulo-sched -ffunction-sections -fdata-sections -DHW_RVL $(MACHDEP) $(INCLUDE)
+CXXFLAGS	=	$(CFLAGS) 
 
 LDFLAGS	=	-g $(MACHDEP) -Wl,-Map,$(notdir $@).map
 
@@ -83,7 +83,9 @@ export OFILES	:=	$(addsuffix .o,$(BINFILES)) \
 export INCLUDE	:=	$(foreach dir,$(INCLUDES), -I$(CURDIR)/$(dir)) \
 					$(foreach dir,$(LIBDIRS),-I$(CURDIR)/$(dir)/include) \
 					-I$(CURDIR)/$(BUILD) \
-					-I$(LIBOGC_INC)
+					-I$(LIBOGC_INC) \
+					-I$(LIBOGC_INC)/ogc \
+					-I$(LIBOGC_INC)/ogc/machine
 
 #---------------------------------------------------------------------------------
 # build a list of library paths
