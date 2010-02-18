@@ -13,6 +13,7 @@ static int LWR_mp3_volume = 255;
 #define MAX_SAMPLES (8192/4)
 static short sample_data[MAX_SAMPLES] = {0};
 static unsigned long LWR_BufferSize = 2000000;
+static int LWR_Status = STOPPED;
 
 #define MAX_NET_BUFFER (10000) // 10k
 
@@ -196,6 +197,7 @@ unsigned __stdcall critical_thread(void *arg)
             if (!icy_info->bufferring) // only play if we've buffered enough data
             {
 
+				LWR_Status = PLAYING;
 #ifdef _WII_
                 if(!LWR_MP3Player_IsPlaying())
                 {
@@ -226,6 +228,7 @@ unsigned __stdcall critical_thread(void *arg)
 
             errors = 0; // no rec errors
             LWP_playing = false; // not connected
+			LWR_Status = STOPPED;
         }
 
 
@@ -235,9 +238,12 @@ unsigned __stdcall critical_thread(void *arg)
     delete [] net_buffer; net_buffer =0;
     if (connected) net->client_close();
 
+	LWR_Status = STOPPED;
+
 #ifdef _WIN32
     _endthreadex( 0 );
 #endif
+
 
     return 0;
 }
@@ -251,8 +257,16 @@ int LWR_Play(char* name)
     icy_info = new icy;
 	icy_info->buffer_size = LWR_BufferSize;
 
-    if (!connect(name)) return -2;
+	LWR_Status = CONNECTING;
+	
+    if (!connect(name))
+	{
+		LWR_Status = FAILED;
+		return -2;
+	}
 
+	LWR_Status = BUFFERING;
+	
     // set up sound system
 #ifdef _WII_
     ASND_Init();
@@ -303,6 +317,7 @@ int LWR_GetSamples(short* in,int size)
 int LWR_Stop()
 {
 
+	LWR_Status = STOPPED;
 
     if (LWP_playing)
     {
@@ -406,4 +421,10 @@ int LWR_SetBufferSize(unsigned long maxbuffer)
 	
 	return LWR_BufferSize;
 
+};
+
+// get the status
+int LWR_GetStatus()
+{
+	return LWR_Status;
 };
