@@ -12,6 +12,7 @@ static int errors = 0;
 static int LWR_mp3_volume = 255;
 #define MAX_SAMPLES (8192/4)
 static short sample_data[MAX_SAMPLES] = {0};
+static unsigned long LWR_BufferSize = 2000000;
 
 #define MAX_NET_BUFFER (10000) // 10k
 
@@ -248,6 +249,7 @@ int LWR_Play(char* name)
 
     net = new network;
     icy_info = new icy;
+	icy_info->buffer_size = LWR_BufferSize;
 
     if (!connect(name)) return -2;
 
@@ -400,9 +402,8 @@ int LWR_SetBufferSize(unsigned long maxbuffer)
 {
 	if(!LWP_playing) return 0;
 
-    icy_info->buffer_size = maxbuffer;
-	icy_info->pre_buffer = (unsigned long)(icy_info->buffer_size / 10);
-
-	return icy_info->buffer_size;
+    LWR_BufferSize = maxbuffer;
+	
+	return LWR_BufferSize;
 
 };
