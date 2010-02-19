@@ -283,7 +283,7 @@ void connect_to_stream(int value, connect_info info)
         }
 
         // get playlists
-        int ret = playlst->get_playlist(csl->station_id);
+        playlst->get_playlist(csl->station_id);
 
         strcpy(playing->station_url, playlst->first_entry->url);
         playing->port = playlst->first_entry->port;
