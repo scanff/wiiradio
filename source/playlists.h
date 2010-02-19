@@ -65,7 +65,7 @@ class playlists
                     len = net->client_recv(head+page_size,MAX_NET_BUFFER);
                     if (len > 0) page_size += len;
 #ifdef _WII_
-                    if(len==-11) len =1;//WOULDBLOCK
+                    if(len==EAGAIN) len =1;//WOULDBLOCK
 #else
                     if(WSAGetLastError()==WSAEWOULDBLOCK) len=1;
 #endif
@@ -95,21 +95,24 @@ class playlists
 
     };
 */
-    void get_playlist(const char* path)
+    int get_playlist(const char* path)
     {
+        int ret = 0;
         network* net = 0;
         char* current_page = 0;
        // unsigned long content_size = 0;
 
         net = new network;
-        if (!net) return;
+        if (!net) {
+            return -1000;
+        }
 
         current_page = new char[MAX_PLAYLIST_SIZE];
         if (!current_page)
         {
             delete net;
             net = 0;
-            return;
+            return -1001;
         }
 
         memset(current_page,0,MAX_PLAYLIST_SIZE);
@@ -123,17 +126,18 @@ class playlists
 
      //   get_head(trailing_path); // TODO handle http header ... using Content-Length to allocate the buffer!
 
+        int len;
         if (net->client_connect((char*)"yp.shoutcast.com",80,TCP)) {
 
             // get the page !
             if(net->send_http_request((char*)"GET",(char*)trailing_path,(char*)"yp.shoutcast.com"))
             {
-                int len = 1;
+                len = 1;
                 while(len > 0) {
                     len = net->client_recv(current_page+page_size,MAX_NET_BUFFER);
                     if (len > 0) page_size += len;
 #ifdef _WII_
-                    if(len==-11) len = 1;//WOULDBLOCK
+                    if(len==EAGAIN) len = 1;//WOULDBLOCK
 #endif
 #ifdef _WIN32
                     if(WSAGetLastError()==WSAEWOULDBLOCK) len=1;
@@ -144,14 +148,20 @@ class playlists
                 }
 
             }
+            else ret = -1004;
 
             net->client_close();
         }
+        else ret = -1003;
 
         parse_playlist(current_page);
 
         delete [] current_page;
         current_page = 0;
+        if (len < 0) {
+            return len;
+        }
+        return ret;
     };
 
     void split_url(char* url)

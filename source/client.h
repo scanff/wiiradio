@@ -317,7 +317,7 @@ class network : public dns
         #endif
 #endif
         // If there is no data to read, don't try
-        if (!ret) return 0;
+        if (!ret) return -EAGAIN;
         // TODO: We probably should do some error handling here
         if (ret < 0) return ret;
 

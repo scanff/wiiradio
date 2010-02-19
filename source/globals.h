@@ -104,8 +104,8 @@ enum
   S_CANCEL_CON_BUF,
   S_SEARCHING,
   S_SEARCHGENRE,
-  S_MAX
-
+  S_MAX,
+  S_LOG
 };
 
 enum
