@@ -11,6 +11,7 @@ class gui {
     #include "gui_textbox.h"
     #include "gui_options.h"
     #include "gui_search.h"
+    #include "gui_log.h"
 
     public:
 
@@ -82,6 +83,8 @@ class gui {
 
 
     gui_options*    g_options;
+
+    gui_log*        g_log;
 
     unsigned long   dialog_text_color;
 
@@ -171,6 +174,7 @@ class gui {
 
         g_options = new gui_options(f,guibuffer);
 
+        g_log = new gui_log(f,guibuffer);
 
         loopi(BTN_MAX) buttons[i] = 0; // NULL
 
@@ -622,6 +626,7 @@ class gui {
         if(visbuffer) SDL_FreeSurface(visbuffer);
 
         delete g_options;
+        delete g_log;
         delete search_gui;
     };
 
@@ -668,6 +673,10 @@ class gui {
              g_options->handle_events(events);
              return 0;
         }
+        if(g_screen_status == S_LOG)
+        {
+             return g_log->handle_events(events);
+        }
 
         if (S_SEARCHGENRE == g_screen_status)
         {
@@ -697,7 +706,11 @@ class gui {
 
             //logo
 
+#ifdef LOG_ENABLED
+            if (buttons[BTN_LOGO]->hit_test(events,j)==B_CLICK) g_screen_status = S_LOG;
+#else
             if (buttons[BTN_LOGO]->hit_test(events,j)==B_CLICK) g_screen_status = S_OPTIONS;
+#endif
 
             //playing area
              if(buttons[BTN_PLAYING]->hit_test(events,j)==B_CLICK) {
@@ -978,7 +991,8 @@ class gui {
             SDL_BlitSurface(guibackground,0, guibuffer,0); //background
             buttons[BTN_LOGO]->draw(); // title
 
-            if (g_screen_status != S_OPTIONS && g_screen_status != S_SEARCHGENRE )
+            if (g_screen_status != S_OPTIONS && g_screen_status != S_SEARCHGENRE &&
+                g_screen_status != S_LOG)
             {
                 if(vis_on_screen)
                 {
@@ -1085,6 +1099,7 @@ class gui {
 
         if (g_screen_status == S_SEARCHGENRE) search_gui->draw();
         if (g_screen_status == S_OPTIONS) draw_about();
+        if (g_screen_status == S_LOG) draw_log();
 
 
         // always inform user if buffering
@@ -1143,6 +1158,16 @@ class gui {
     void draw_about()
     {
         g_options->draw();
+    };
+
+    void draw_log()
+    {
+        g_log->draw();
+    };
+
+    char *logtext()
+    {
+        return g_log->text;
     };
 
     void draw_stream_details(icy* ic)

@@ -238,7 +238,9 @@ int connect_thread(void* arg)
 
         connected = connect_try;
 
-    } else status = FAILED;
+    } else {
+      status = FAILED;
+    }
 
     return 0;
 }
@@ -281,7 +283,7 @@ void connect_to_stream(int value, connect_info info)
         }
 
         // get playlists
-        playlst->get_playlist(csl->station_id);
+        int ret = playlst->get_playlist(csl->station_id);
 
         strcpy(playing->station_url, playlst->first_entry->url);
         playing->port = playlst->first_entry->port;
@@ -643,7 +645,7 @@ int critical_thread(void *arg)
             } else if (len < 0)
             {
                 /* would block, not really an error in this case */
-                if (len != -11) errors++;
+                if (len != EAGAIN) errors++;
 
                 if (errors > 100)
                 {   // -- too many errors let's reset
