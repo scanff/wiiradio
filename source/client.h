@@ -247,16 +247,7 @@ class network : public dns
         client.sin_family = AF_INET;
         client.sin_port = htons(port);
 
-        if(protocol == TCP)
-        {
-            if (net_connect(connection_socket,(struct sockaddr*)&client,sizeof(client)) != 0)
-            {
-                net_close(connection_socket);
-                connection_socket = 0;
-                return 0;
-            }
-        }
-
+        // set this before so net_connect does not block
         if (!block)
         {
 #ifdef _WII_
@@ -270,6 +261,41 @@ class network : public dns
             net_ioctl(connection_socket, FIONBIO, &flag); // does not work on WII
 #endif
         }
+
+        if(protocol == TCP)
+        {
+            unsigned long start_time = get_tick_count();
+
+            while(1)
+            {
+                if ((get_tick_count() - start_time) > 5000) return 0; // 5 sec timeout
+
+                int res = net_connect(connection_socket,(struct sockaddr*)&client,sizeof(client));
+
+                if (res < 0)
+                {
+                    if (res == -EISCONN)
+                    {
+                        break;
+                    }
+
+                    if (res == -EINPROGRESS || res == -EALREADY)
+                    {
+                        usleep (20 * 1000);
+                        continue;
+                    }
+
+
+                    net_close(connection_socket);
+                    connection_socket = 0;
+                    return 0;
+
+                }else break;
+
+            }
+        }
+
+
 
         client_connected = true;
 
@@ -307,13 +333,17 @@ class network : public dns
         #ifdef _WII_
           pollsd fds;
           fds.socket = connection_socket;
-          fds.events = POLLIN | POLLPRI; 
+          fds.events = POLLIN | POLLPRI;
           ret = net_poll(&fds, 1, 1);
         #else
-          pollfd fds;
-          fds.fd = connection_socket;
-          fds.events = POLLIN | POLLPRI; 
-          ret = poll(&fds, 1, 1);
+            #ifdef _WIN32
+                ret = 1;
+            #else
+              pollfd fds;
+              fds.fd = connection_socket;
+              fds.events = POLLIN | POLLPRI;
+              ret = poll(&fds, 1, 1);
+            #endif
         #endif
 #endif
         // If there is no data to read, don't try
