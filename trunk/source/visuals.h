@@ -163,9 +163,11 @@ class visualizer
     visual_object*  visuals_ptr[MAX_VISUALS];
     bool            remap_keys;
     double          angle;
-
+    int r1, r2;
+    unsigned long vt;
     visualizer(fft* p_f) : f(p_f), remap_keys(false), angle(0.0)
     {
+        r1 = r2 = vt = 0;
         loopi(MAX_FFT_RES)
         {
             fft_results[i] = 0;
@@ -190,6 +192,16 @@ class visualizer
 
         vis_surface = SDL_CreateRGBSurface(SDL_SWSURFACE,SCREEN_WIDTH,SCREEN_HEIGHT,BITDEPTH,
                                           rmask, gmask, bmask,amask);
+
+
+        // create all visuals
+        visuals_ptr[V_BARS] = new vis_bars(f);
+        visuals_ptr[V_OSC] = new vis_osc(f);
+        visuals_ptr[V_TUNNEL]= new vis_tunnel(f);
+        visuals_ptr[V_FIRE] = new vis_fire(f);
+        visuals_ptr[V_MIST] =  new vis_mist(f);
+
+
 
     };
 
@@ -241,39 +253,54 @@ class visualizer
             case V_MIST:
                return new vis_mist(f);
             break;
+
+          //  case V_EXPLODE:
+          //      return new vis_explode(f);
+          //  break;
         }
 
         return 0;
     };
 
+
     void draw_visuals(SDL_Surface* s,int number)
     {
         // clean up if not using
-       delete_visuals(number);
+      // delete_visuals(number);
 
-        if (!visuals_ptr[number])
+        /*if (!visuals_ptr[number])
         {
             draw_rect(s,0,0,SCREEN_WIDTH,SCREEN_HEIGHT,0); // clear backbuffer
             visuals_ptr[number] = newvisual(number);
+        }*/
+
+        if ((get_tick_count() - vt) > 15000)
+        {
+            r1 = V_FIRE;
+            while((r2 = rand() % MAX_VISUALS) != V_FIRE);
+            vt = get_tick_count();
         }
 
-        loopi(MAX_FFT_RES)  visuals_ptr[number]->fft_results[i] =  fft_results[i];
-
-        visuals_ptr[number]->render(vis_surface);
-
-        if (visuals_ptr[number]->DRAW_WIDTH != SCREEN_WIDTH)
+        loopj(2)
         {
-            SDL_Rect sr = {0,0,visuals_ptr[number]->DRAW_WIDTH,visuals_ptr[number]->DRAW_HEIGHT};
-            SDL_SoftStretch(vis_surface,&sr,s,0);
-        }else SDL_BlitSurface(vis_surface,0,s,0);
+            int v =0;
+            j==0?v=r1:v=r2;
 
+            loopi(MAX_FFT_RES)  visuals_ptr[v]->fft_results[i] =  fft_results[i];
+
+            visuals_ptr[v]->render(vis_surface);
+
+            if (visuals_ptr[v]->DRAW_WIDTH != SCREEN_WIDTH)
+            {
+                SDL_Rect sr = {0,0,visuals_ptr[v]->DRAW_WIDTH,visuals_ptr[v]->DRAW_HEIGHT};
+                SDL_SoftStretch(vis_surface,&sr,s,0);
+
+            }else SDL_BlitSurface(vis_surface,0,s,0);
+        }
     };
 
-
-
-
-
-
 };
+
+
 
 #endif // VISUALS_H_INCLUDED

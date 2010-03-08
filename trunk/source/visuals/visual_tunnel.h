@@ -12,15 +12,15 @@ class vis_tunnel : public visual_object
 
     unsigned int* texture;
     int* distanceTable;
-    int angleTable[(SCREEN_WIDTH/2)*2][(SCREEN_HEIGHT/2)*2];
+    int angleTable[(SCREEN_WIDTH/4)*2][(SCREEN_HEIGHT/4)*2];
 
     vis_tunnel(fft* _f) : texture(0), distanceTable(0)
     {
         loaded = false;
         f = _f;
 
-        DRAW_WIDTH = SCREEN_WIDTH / 2;
-        DRAW_HEIGHT = SCREEN_HEIGHT / 2;
+        DRAW_WIDTH = SCREEN_WIDTH / 4;
+        DRAW_HEIGHT = SCREEN_HEIGHT / 4;
 
         texture = new unsigned int[texWidth*texHeight];
         if (!texture) exit(0);

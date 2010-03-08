@@ -137,7 +137,7 @@ class playlists
                     len = net->client_recv(current_page+page_size,MAX_NET_BUFFER);
                     if (len > 0) page_size += len;
 #ifdef _WII_
-                    if(len==EAGAIN) len = 1;//WOULDBLOCK
+                    if(len==-EAGAIN) len = 1;//WOULDBLOCK
 #endif
 #ifdef _WIN32
                     if(WSAGetLastError()==WSAEWOULDBLOCK) len=1;

@@ -246,7 +246,7 @@ int connect_thread(void* arg)
 }
 
 
-void connect_to_stream(int,bool); //extern'd
+void connect_to_stream(int,connect_info); //extern'd
 void connect_to_stream(int value, connect_info info)
 {
     if (connectthread)
@@ -645,9 +645,9 @@ int critical_thread(void *arg)
             } else if (len < 0)
             {
                 /* would block, not really an error in this case */
-                if (len != EAGAIN) errors++;
+                if (len != -EAGAIN) errors++; // -11
 
-                if (errors > 100)
+                if (errors > 300)
                 {   // -- too many errors let's reset
                     status = FAILED;
                 }
@@ -781,7 +781,7 @@ int main(int argc, char **argv)
         exit(1);
     }
 
-    if ( SDL_SetVideoMode( SCREEN_WIDTH, SCREEN_HEIGHT, BITDEPTH,
+    if ( SDL_SetVideoMode( SCREEN_WIDTH, SCREEN_HEIGHT, SCREENDEPTH,
              (fullscreen ? SDL_FULLSCREEN : 0) | SDL_HWSURFACE | SDL_DOUBLEBUF ) < 0 ) { //SDL_HWSURFACE
     printf("SDL_SetVideoMode() failed\n");
         exit(1);
@@ -883,7 +883,7 @@ _reload:
     ui              = new gui(fnts,visuals,g_currentskin);
 
 
-    //if (!g_reloading_skin) search_genre((char*)"pop"); // first time so get list ...
+    if (!g_reloading_skin) search_genre((char*)"dance"); // first time so get list ...
 
     g_running = true;
     g_reloading_skin = false;
@@ -972,7 +972,7 @@ _reload:
         }
 
 #ifdef _WII_
-        Sleep(5);
+        Sleep(2);
 #else
         Sleep(20);
 #endif

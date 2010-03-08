@@ -26,7 +26,7 @@ INCLUDES	:=
 # options for code generation
 #---------------------------------------------------------------------------------
 
-CFLAGS	= -D_WII_ -g -O3 -Wall $(MACHDEP) $(INCLUDE)
+CFLAGS	= -Wno-write-strings -g -D_WII_ -O3 -Wall -fsigned-char $(MACHDEP) $(INCLUDE)
 #CFLAGS	= -D_WII_ -DSTD_MAD -g -O3 -Wall $(MACHDEP) $(INCLUDE)
 CXXFLAGS	=	$(CFLAGS)
 
@@ -35,8 +35,8 @@ LDFLAGS	=	-g $(MACHDEP) -Wl,-Map,$(notdir $@).map
 #---------------------------------------------------------------------------------
 # any extra libraries we wish to link with the project
 #---------------------------------------------------------------------------------
-LIBS	:=	 -lSDL_gfx -lSDL_ttf -lSDL_image -lfreetype -ljpeg -lpng -lz -lSDL -lfat -lwiiuse -lmad -lasnd -lbte -logc -lm -lwiikeyboard
-#-lSDL_r24 
+LIBS	:=	 -lSDL_gfx -lSDL_ttf -lSDL_image -lfreetype -ljpeg -lpng -lz -lSDL -lfat -lwiiuse -lmadwiiradio -lasnd -lbte -logc -lm -lwiikeyboard
+
 #--------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
 # include and lib

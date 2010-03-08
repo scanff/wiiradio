@@ -22,7 +22,7 @@
     #include <unistd.h>
     #include <fcntl.h>
     #include <asndlib.h>
-    #include <mp3player.h>
+    #include <mp3player_wiiradio.h>
 
     #define Sleep(x) usleep(x*1000);//1000?
     //#include <errno.h>
@@ -116,8 +116,7 @@ enum
   V_FIRE,
   V_MIST,
 //  V_GAME2,
-  V_GAME1,
-//  V_EXPLODE,
+//  V_GAME1,
   MAX_VISUALS
 };
 
@@ -177,14 +176,15 @@ extern SDL_Surface*        screen;
 #define VERSION_NUMBER  (0.5)
 #define VERSION_NAME    ("Version")
 #define BITDEPTH        (24)
-#define TIME_OUT_MS     (80000) // eight second timeout
+#define SCREENDEPTH     (16)
+#define TIME_OUT_MS     (8000) // eight second timeout
 #define SC_DOWN         ("503 Service Temporarily Unavailable")
 #define MAX_FFT_RES     (16)
 #define SMALL_MEM       (255)
 #define MED_MEM         (1024)
 #define TINY_MEM        (50)
 #define MAX_FFT_SAMPLE  (8192/4)
-#define MAX_NET_BUFFER  (2500)
+#define MAX_NET_BUFFER  (25000)
 #define STD_STREAM_PORT (80)
 
 #define MAX_STATION_CACHE (1000)
