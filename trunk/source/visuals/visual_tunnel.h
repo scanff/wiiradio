@@ -1,23 +1,24 @@
 #ifndef VISUAL_TUNNEL_H_INCLUDED
 #define VISUAL_TUNNEL_H_INCLUDED
 
-class vis_tunnel {
-    public:
+#include "visual_object.h"
 
-    fft*            f;
-    bool            tunnel_loaded;
+class vis_tunnel : public visual_object
+{
+    public:
 
     #define texWidth 256
     #define texHeight 256
-    int             DRAW_WIDTH;
-    int             DRAW_HEIGHT;
 
     unsigned int* texture;
     int* distanceTable;
     int angleTable[(SCREEN_WIDTH/2)*2][(SCREEN_HEIGHT/2)*2];
 
-    vis_tunnel(fft* _f) : f(_f), tunnel_loaded(false), texture(0), distanceTable(0)
+    vis_tunnel(fft* _f) : texture(0), distanceTable(0)
     {
+        loaded = false;
+        f = _f;
+
         DRAW_WIDTH = SCREEN_WIDTH / 2;
         DRAW_HEIGHT = SCREEN_HEIGHT / 2;
 
@@ -43,7 +44,7 @@ class vis_tunnel {
     };
 
       // tunnel effects
-    void load_tunnel_text()
+    void load()
     {
         int x,y;
 
@@ -75,7 +76,7 @@ class vis_tunnel {
             }
 
         }
-        if(!tunnel_loaded)
+        if(!loaded)
         {
             for(x = 0; x < DRAW_WIDTH*2; x++)
             for(y = 0; y < DRAW_HEIGHT*2; y++)
@@ -90,14 +91,14 @@ class vis_tunnel {
 
             }
         }
-        tunnel_loaded = true;
+        loaded = true;
     };
 
     void render(SDL_Surface* s)
     {
 
 
-        load_tunnel_text();
+        load();
 
         fade(s,SDL_MapRGB(s->format,0,0,0),50);
 
