@@ -1,24 +1,24 @@
 #ifndef VISUAL_MIST_H_INCLUDED
 #define VISUAL_MIST_H_INCLUDED
 
-class vis_mist {
+#include "visual_object.h"
+
+class vis_mist : public visual_object
+{
     public:
 
-    fft*            f;
-    bool            loaded;
-    float*          fft_r;
-    int             DRAW_WIDTH;// = SCREEN_WIDTH / 2;
-    int             DRAW_HEIGHT;// = SCREEN_HEIGHT / 2;
+    int             shifter;
+    int             direction;
 
-    int             luma;
-    int             luma_dir;
-
-    vis_mist(fft* _f) : f(_f), loaded(false)
+    vis_mist(fft* _f)
     {
-        DRAW_WIDTH = SCREEN_WIDTH ;
-        DRAW_HEIGHT = SCREEN_HEIGHT;
-        luma = 50;
-        luma_dir = 1;
+        loaded = false;
+        f = _f;
+
+        DRAW_WIDTH = SCREEN_WIDTH /2 ;
+        DRAW_HEIGHT = SCREEN_HEIGHT /2 ;
+        direction = shifter = 0;
+
     };
 
     ~vis_mist()
@@ -43,12 +43,9 @@ class vis_mist {
         int len = (MAX_FFT_SAMPLE) - 1;
         int padding = 70;
         double ts = static_cast<double>(DRAW_WIDTH)/static_cast<double>(len-(padding*2));
-        long color,color_p;
+        long color;
         int x = 0;
         int y2 = 0;
-
-        color = hsl_rgba(150, 180, luma);
-        color_p = hsl_rgba(luma, 180, 200);
 
         fade(s,SDL_MapRGB(s->format,0,0,0),50);
 
@@ -60,19 +57,26 @@ class vis_mist {
 
             if (y >= 0) // filter bad reading
             {
-                for(y2=DRAW_HEIGHT;y2>y;y2--)
+                for(y2=DRAW_HEIGHT/2;y2>y/2;y2--)
                 {
-                    pixelColor(s,x,y2, color);
+                    int y3 = y2;// / 2;
+                    int d = y2;
+                    d = d / 2;
+                    d+=shifter;
+                    if (d > 255) d = 255;
+                    color = hsl_rgba(d, 255, d);
+
+                    pixelColor(s,x,y3, color);
+                    pixelColor(s,x,DRAW_HEIGHT-y3, color);
+
                 }
 
-                pixelColor(s,x,y2,color_p);
             }
 
         }
+        if (!direction) shifter < 150 ? shifter++ : direction = 1;
+        else shifter > 0 ? shifter-- : direction = 0;
 
-        luma += luma_dir;
-        if (luma >= 200) luma_dir = -1;
-        if (luma <= 50) luma_dir = 1;
 
     };
 };

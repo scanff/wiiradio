@@ -1,23 +1,20 @@
 #ifndef VISUAL_OSC_H_INCLUDED
 #define VISUAL_OSC_H_INCLUDED
 
+#include "visual_object.h"
 
-class vis_osc {
+class vis_osc : public visual_object
+{
     public:
 
-    fft*            f;
-    bool            loaded;
 
-    int             DRAW_WIDTH;
-    int             DRAW_HEIGHT;
-
-    int             colors[256];
-
-
-    vis_osc(fft* _f) : f(_f), loaded(false)
+    vis_osc(fft* _f)
     {
-        DRAW_WIDTH = SCREEN_WIDTH;
-        DRAW_HEIGHT = SCREEN_HEIGHT;
+        f = _f;
+        loaded = false;
+
+        DRAW_WIDTH = SCREEN_WIDTH / 2;
+        DRAW_HEIGHT = SCREEN_HEIGHT / 2;
     };
 
     ~vis_osc()
@@ -28,15 +25,7 @@ class vis_osc {
 
     void load()
     {
-        for(int x = 0; x < 256; x++)
-        {
-            colors[x] = hsl_rgba(x / 2, 255, lmin(255, x * 2));
-           //palette[x] = hsl_rgba((int)(x / 1.5), 255, lmin(255,(int)(peak * 1.1)));
-        }
-
         loaded = true;
-
-
     };
 
     void render(SDL_Surface* s)
@@ -53,8 +42,10 @@ class vis_osc {
         sx = 0;
         sy = zerolevel;
         int index = 0;
+        long color;
 
-         fade(s,SDL_MapRGB(s->format,0,0,0),40);
+        fade(s,SDL_MapRGB(s->format,0,0,0),40);
+
 
         for(int i = 8; i < (len-1); i+=8)
         {
@@ -64,14 +55,18 @@ class vis_osc {
             index = (int)y/8;
             index < 0 ? index = 0 : index > 255 ? index = 255 : 0;
 
-         //   unsigned long c = colors[index];
-            bresenham_line(s,x,y,sx,sy,0xffffffff);
+            int d = y;
+            d = d / 2;
+
+            if (d > 255) d = 255;
+            color = hsl_rgba(d, 200, 150);
+
+            bresenham_line(s,x,y,sx,sy,color);
 
             sy = y;
             sx = x;
 
         }
-
 
     };
 };

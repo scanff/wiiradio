@@ -1,30 +1,25 @@
 #ifndef VISUAL_FIRE_H_INCLUDED
 #define VISUAL_FIRE_H_INCLUDED
 
-class vis_fire {
+#include "visual_object.h"
+
+class vis_fire : public visual_object
+{
     public:
-
-    fft*            f;
-    bool            loaded;
-
-    int             DRAW_WIDTH;// = SCREEN_WIDTH / 2;
-    int             DRAW_HEIGHT;// = SCREEN_HEIGHT / 2;
 
     unsigned int fire[SCREEN_WIDTH / 2][SCREEN_HEIGHT / 2];  //this buffer will contain the fire
     unsigned int palette[256]; //this will contain the color palette
 
-
-
-
-    vis_fire(fft* _f) : f(_f), loaded(false)
+    vis_fire(fft* _f)
     {
+        f = _f;
+        loaded = false;
         DRAW_WIDTH = SCREEN_WIDTH / 2;
         DRAW_HEIGHT = SCREEN_HEIGHT / 2;
     };
 
     ~vis_fire()
     {
-
     };
 
 

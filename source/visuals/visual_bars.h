@@ -1,25 +1,20 @@
 #ifndef VISUAL_BARS_H_INCLUDED
 #define VISUAL_BARS_H_INCLUDED
 
+#include "visual_object.h"
+
 class visualizer;
-class vis_bars {
+class vis_bars : public visual_object
+{
     public:
 
-    fft*            f;
-    bool            loaded;
-
-    int             DRAW_WIDTH;
-    int             DRAW_HEIGHT;
-
-    int             peakResults[MAX_FFT_RES];
-    int             fft_results[MAX_FFT_RES];
-
-    visualizer*     parent;
-
-    vis_bars(fft* _f,visualizer* _p) : f(_f), loaded(false), parent(_p)
+    vis_bars(fft* _f)
     {
-        DRAW_WIDTH = SCREEN_WIDTH;
-        DRAW_HEIGHT = SCREEN_HEIGHT;
+        f = _f;
+        loaded = false;
+
+        DRAW_WIDTH = SCREEN_WIDTH /2;
+        DRAW_HEIGHT = SCREEN_HEIGHT /2;
 
         loopi(MAX_FFT_RES) {
             peakResults[i] = 0;
@@ -35,7 +30,6 @@ class vis_bars {
 
     void load()
     {
-
         loaded = true;
     };
 
@@ -43,10 +37,12 @@ class vis_bars {
     {
         if (!loaded) load();
 
+        draw_rect(s,0,0,SCREEN_WIDTH,SCREEN_HEIGHT,0); // clear backbuffer
+
         int x = 0;
-        int y = SCREEN_HEIGHT - 50;
-        int bar_height = 300;
-        int bar_width = SCREEN_WIDTH / MAX_FFT_RES;
+        int y = DRAW_HEIGHT - 10;
+        int bar_height = 250;
+        int bar_width = DRAW_WIDTH / MAX_FFT_RES;
         double percent = ((double)bar_height / (double)32767);
 
         loopi(MAX_FFT_RES)
