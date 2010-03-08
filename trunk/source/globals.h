@@ -115,6 +115,8 @@ enum
   V_TUNNEL,
   V_FIRE,
   V_MIST,
+  V_CIRCLES,
+  V_PLASMA,
 //  V_GAME2,
 //  V_GAME1,
   MAX_VISUALS

@@ -1,16 +1,16 @@
-#ifndef VISUAL_MIST_H_INCLUDED
-#define VISUAL_MIST_H_INCLUDED
+#ifndef VISUAL_CIRCLES_H_INCLUDED
+#define VISUAL_CIRCLES_H_INCLUDED
 
 #include "visual_object.h"
 
-class vis_mist : public visual_object
+class vis_circles : public visual_object
 {
     public:
 
     int             shifter;
     int             direction;
 
-    vis_mist(fft* _f)
+    vis_circles(fft* _f)
     {
         loaded = false;
         f = _f;
@@ -22,7 +22,7 @@ class vis_mist : public visual_object
 
     };
 
-    ~vis_mist()
+    ~vis_circles()
     {
 
     };
@@ -51,7 +51,7 @@ class vis_mist : public visual_object
 
         fade(s,SDL_MapRGB(s->format,0,0,0),50);
 
-        for(int l=padding;l<(len-1-padding);l++)
+        for(int l=padding;l<(len-1-padding);l+=2)
         {
             x = (int)((double)(l-padding)*ts);
             y = (int)(2 * (sqrt(abs((int)(f->real[l] / divisor)))));
@@ -59,17 +59,20 @@ class vis_mist : public visual_object
 
             if (y >= 0) // filter bad reading
             {
-                for(y2=DRAW_HEIGHT/2;y2>y/2;y2--)
+                for(y2=DRAW_HEIGHT/2;y2>y/2;y2-=10)
                 {
                     int y3 = y2;//(int)(y2/ 2);
                     int d = y2;
                     d = d / 2;
                     d+=shifter;
-                    if (d > 255) d = 255;
-                    color = hsl_rgba(d, 255, d);
+                    int r = d / 2;
 
-                    pixelColor(s,x,y3, color);
-                    pixelColor(s,x,DRAW_HEIGHT-y3, color);
+                    if (d > 255) d = 255;
+                    color = hsl_rgba(255, d, d);
+                    circleColor(s,x,y3,r+1,color);
+                    circleColor(s,x,DRAW_HEIGHT-y3,r+1,color);
+                    //pixelColor(s,x,y3, color);
+                    //pixelColor(s,x,DRAW_HEIGHT-y3, color);
 
                 }
 

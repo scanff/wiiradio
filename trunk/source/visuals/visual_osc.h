@@ -13,8 +13,8 @@ class vis_osc : public visual_object
         f = _f;
         loaded = false;
 
-        DRAW_WIDTH = SCREEN_WIDTH / 2;
-        DRAW_HEIGHT = SCREEN_HEIGHT / 2;
+        DRAW_WIDTH = SCREEN_WIDTH ;
+        DRAW_HEIGHT = SCREEN_HEIGHT;
     };
 
     ~vis_osc()
@@ -23,14 +23,14 @@ class vis_osc : public visual_object
     };
 
 
-    void load()
+    void load(void* userdata)
     {
         loaded = true;
     };
 
-    void render(SDL_Surface* s)
+    void render(SDL_Surface* s,void* userdata)
     {
-        if (!loaded) load();
+        if (!loaded) load(userdata);
 
         int sx,sy,x,y;
         int zerolevel = ((DRAW_HEIGHT/2)-10);

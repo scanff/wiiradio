@@ -44,7 +44,7 @@ class vis_tunnel : public visual_object
     };
 
       // tunnel effects
-    void load()
+    void load(void* user_data)
     {
         int x,y;
 
@@ -52,27 +52,25 @@ class vis_tunnel : public visual_object
         int peak = 0;
         loopi((MAX_FFT_SAMPLE) - 1) f->real[i] > peak ? peak = (int)f->real[i] : 0;
 
-
-
         //clean
          for(x = 0; x < texWidth; x++)
             for(y = 0; y < texHeight; y++)
                 texture[x+(y*texWidth)] = 0;
 
-
         unsigned int color = 0;
+        unsigned int* pixels = 0;
+
+        if (user_data) pixels = (unsigned int*)user_data;
+
         for(x = 0; x < texWidth; x++)
         {
             for(y = 0; y < texHeight; y++)
             {
-                // if ((y < (texHeight/2) -10 || y > (texHeight/2) +10) &&
-                //    (x< (texWidth/2)-10) || x > (texWidth/2)+10)
-                    color = hsl_rgba((x / 3), lmin(255,(int)(peak * 1.8)), lmin(100, x * 2));
-                // else color = 0;
-                 /*if (   y < 10 || x < 10 ||  x > texWidth - 10 ||
-                        y > texHeight - 10 || ((y > (texHeight/2)- 10)&& (y <(texHeight/2)+ 10))) texture[x+(y*texWidth)] = color;
-                 else  */
-                 if (rand()% 255 > 245) texture[x+(y*texWidth)] = color;
+                 if (user_data) color = *(pixels+=3);
+                 else color = hsl_rgba((x / 3), lmin(255,(int)(peak * 1.8)), lmin(100, x * 2));
+
+                 if (rand()% 255 > 245 && !user_data) texture[x+(y*texWidth)] = color;
+                 else if (rand()% 255 > 10) texture[x+(y*texWidth)] = color;
             }
 
         }
@@ -82,7 +80,7 @@ class vis_tunnel : public visual_object
             for(y = 0; y < DRAW_HEIGHT*2; y++)
             {
                 int angle, distance;
-                float ratio = 2.0;
+                float ratio = 1.0;
 
                 distance = int(ratio * texHeight / sqrt(float((x - DRAW_WIDTH) * (x - DRAW_WIDTH) + (y - DRAW_HEIGHT) * (y - DRAW_HEIGHT)))) % texHeight;
                 angle = (unsigned int)(0.5 * texWidth * atan2(float(y - DRAW_HEIGHT), float(x - DRAW_WIDTH)) / 3.1416);
@@ -94,11 +92,10 @@ class vis_tunnel : public visual_object
         loaded = true;
     };
 
-    void render(SDL_Surface* s)
+    void render(SDL_Surface* s,void* userdata)
     {
 
-
-        load();
+        load(userdata);
 
         fade(s,SDL_MapRGB(s->format,0,0,0),50);
 

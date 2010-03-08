@@ -24,7 +24,7 @@ class vis_fire : public visual_object
     };
 
 
-    void load()
+    void load(void* userdata)
     {
 
         int peak = 0;
@@ -47,9 +47,9 @@ class vis_fire : public visual_object
         loaded = true;
     };
 
-    void render(SDL_Surface* s)
+    void render(SDL_Surface* s,void* userdata)
     {
-        load();
+        load(userdata);
 
 
       //randomize the bottom row of the fire buffer
