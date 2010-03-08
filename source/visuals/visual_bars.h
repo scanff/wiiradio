@@ -14,8 +14,8 @@ class vis_bars : public visual_object
         loaded = false;
         layer = 1;
 
-        DRAW_WIDTH = SCREEN_WIDTH / 2;
-        DRAW_HEIGHT = SCREEN_HEIGHT / 2;
+        DRAW_WIDTH = SCREEN_WIDTH ;
+        DRAW_HEIGHT = SCREEN_HEIGHT;
 
         loopi(MAX_FFT_RES) {
             peakResults[i] = 0;
@@ -29,14 +29,14 @@ class vis_bars : public visual_object
     };
 
 
-    void load()
+    void load(void* userdata)
     {
         loaded = true;
     };
 
-    void render(SDL_Surface* s)
+    void render(SDL_Surface* s,void* user_data)
     {
-        if (!loaded) load();
+        if (!loaded) load(user_data);
 
         //draw_rect(s,0,0,SCREEN_WIDTH,SCREEN_HEIGHT,0); // clear backbuffer
 

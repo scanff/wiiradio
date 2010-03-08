@@ -56,7 +56,7 @@ class vis_explode : public visual_object
       particle->dead = 0;
     }
 
-    void load()
+    void load(void* userdata)
     {
         memset(fire, 0, DRAW_WIDTH * DRAW_HEIGHT * sizeof(unsigned int));
 
@@ -72,14 +72,14 @@ class vis_explode : public visual_object
         loaded = true;
     };
 
-    void render(SDL_Surface* s)
+    void render(SDL_Surface* s,void* userdata)
     {
         unsigned char* image;
         unsigned int buf, index, temp;
         int num_dead = 0;
         loopi(NUMBER_OF_PARTICLES) if(particles[i].dead) num_dead++;
 
-        if (!loaded || (num_dead >= NUMBER_OF_PARTICLES -5)) load();
+        if (!loaded || (num_dead >= NUMBER_OF_PARTICLES -5)) load(userdata);
 
         loopi(NUMBER_OF_PARTICLES)
         {

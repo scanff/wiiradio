@@ -149,6 +149,9 @@ int lmin(int a, int b)
 #include "visuals/visual_explode.h"
 #include "visuals/visual_game1.h"
 #include "visuals/visual_mist.h"
+#include "visuals/visual_circles.h"
+#include "visuals/visual_plasma.h"
+
 #include <SDL/SDL_imageFilter.h>
 
 #include "visuals/visual_object.h"
@@ -163,9 +166,11 @@ class visualizer
     visual_object*  visuals_ptr[MAX_VISUALS];
     bool            remap_keys;
     double          angle;
-    int r1, r2;
-    unsigned long vt;
-    visualizer(fft* p_f) : f(p_f), remap_keys(false), angle(0.0)
+    int             r1, r2;
+    unsigned long   vt;
+    int             mode;
+
+    visualizer(fft* p_f) : f(p_f), remap_keys(false), angle(0.0), mode(0)
     {
         r1 = r2 = vt = 0;
         loopi(MAX_FFT_RES)
@@ -200,7 +205,8 @@ class visualizer
         visuals_ptr[V_TUNNEL]= new vis_tunnel(f);
         visuals_ptr[V_FIRE] = new vis_fire(f);
         visuals_ptr[V_MIST] =  new vis_mist(f);
-
+        visuals_ptr[V_CIRCLES] = new vis_circles(f);
+        visuals_ptr[V_PLASMA] = new vis_plasma(f);
 
 
     };
@@ -218,84 +224,58 @@ class visualizer
         }
     };
 
-    void delete_visuals(int number)
-    {
-        loopi(MAX_VISUALS)
-        {
-            if (i != number && visuals_ptr[i])
-            {
-                delete visuals_ptr[i];
-                visuals_ptr[i] = 0;
-            }
-        }
-    };
-
-    visual_object* newvisual(int number)
-    {
-        switch(number)
-        {
-            case V_BARS:
-                return new vis_bars(f);
-            break;
-
-            case V_OSC:
-                return new vis_osc(f);
-            break;
-
-            case V_TUNNEL:
-                return new vis_tunnel(f);
-            break;
-
-            case V_FIRE:
-                return new vis_fire(f);
-            break;
-
-            case V_MIST:
-               return new vis_mist(f);
-            break;
-
-          //  case V_EXPLODE:
-          //      return new vis_explode(f);
-          //  break;
-        }
-
-        return 0;
-    };
-
 
     void draw_visuals(SDL_Surface* s,int number)
     {
-        // clean up if not using
-      // delete_visuals(number);
+        if (g_real_keys[SDLK_1] && !g_keys_last_state[SDLK_1])
+            mode = !mode; // change mode
 
-        /*if (!visuals_ptr[number])
-        {
-            draw_rect(s,0,0,SCREEN_WIDTH,SCREEN_HEIGHT,0); // clear backbuffer
-            visuals_ptr[number] = newvisual(number);
-        }*/
+        int num_of_visuals = 0; // number of visuals we are showing
 
-        if ((get_tick_count() - vt) > 15000)
+        if (mode == 1)
         {
-            r1 = V_FIRE;
-            while((r2 = rand() % MAX_VISUALS) != V_FIRE);
-            vt = get_tick_count();
+            num_of_visuals = 2;
+            if ((get_tick_count() - vt) > 15000)
+            {
+                r1 = rand() % MAX_VISUALS;//V_FIRE ? r1 = V_TUNNEL : r1 = V_FIRE;
+
+                while(1)
+                {
+                    r2 = (rand() % MAX_VISUALS);
+                    if( r2 == V_PLASMA || r2 == V_FIRE || (r2 == r1)) continue;
+
+                    break;
+                }
+                vt = get_tick_count();
+            }
+        }else{
+            draw_rect(vis_surface,0,0,SCREEN_WIDTH,SCREEN_HEIGHT,0); // clear backbuffer
+            num_of_visuals = 1;
+            r1 = number;
         }
 
-        loopj(2)
+        void* user_data = 0;
+        loopj(num_of_visuals)
         {
             int v =0;
             j==0?v=r1:v=r2;
 
             loopi(MAX_FFT_RES)  visuals_ptr[v]->fft_results[i] =  fft_results[i];
 
-            visuals_ptr[v]->render(vis_surface);
+            if (j > 0) SDL_BlitSurface(s,0,vis_surface,0);
 
-            if (visuals_ptr[v]->DRAW_WIDTH != SCREEN_WIDTH)
+            if (j > 0 && v == V_TUNNEL) user_data = (void*)vis_surface->pixels;
+
+            visuals_ptr[v]->render(vis_surface,user_data);
+
+            if (visuals_ptr[v]->DRAW_WIDTH != s->w)
             {
                 SDL_Rect sr = {0,0,visuals_ptr[v]->DRAW_WIDTH,visuals_ptr[v]->DRAW_HEIGHT};
-                SDL_SoftStretch(vis_surface,&sr,s,0);
-
-            }else SDL_BlitSurface(vis_surface,0,s,0);
+                SDL_Rect dr = {0,0,s->w,s->h};
+                SDL_SoftStretch(vis_surface,&sr,s,&dr);
+            }else{
+                 SDL_BlitSurface(vis_surface,0,s,0);
+            }
         }
     };
 
