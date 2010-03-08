@@ -228,7 +228,7 @@ class network : public dns
 
         client_connected = false;
         connection_socket = net_socket(AF_INET, protocol == TCP ? SOCK_STREAM : SOCK_DGRAM,IPPROTO_IP);
-        if (connection_socket == 0) return 0;
+        if (connection_socket < 0) return 0;
 
         memset(&client,0, sizeof(client));
 
@@ -313,11 +313,12 @@ class network : public dns
                                (struct sockaddr*)&client,&clen);
         // If select() returned >0 but recv() returned 0, we got EOF
         // and the socket has to be regarded as closed from now on
-        if (ret == 0)
+  /*      if (ret == 0)
         {
             client_close();
             client_connected = 0;
         }
+	*/
         return ret;
     }
 

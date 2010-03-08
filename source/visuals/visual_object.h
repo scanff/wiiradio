@@ -15,7 +15,8 @@ class visual_object {
     int             peakResults[MAX_FFT_RES];
     int             fft_results[MAX_FFT_RES];
 
-    visual_object(){};
+    int             layer;
+    visual_object(){ layer = 0; };
     ~visual_object(){};
 
     virtual void load() {};

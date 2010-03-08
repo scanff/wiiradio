@@ -7,15 +7,16 @@ class vis_fire : public visual_object
 {
     public:
 
-    unsigned int fire[SCREEN_WIDTH / 2][SCREEN_HEIGHT / 2];  //this buffer will contain the fire
+    unsigned int fire[SCREEN_WIDTH / 4][SCREEN_HEIGHT / 4];  //this buffer will contain the fire
     unsigned int palette[256]; //this will contain the color palette
 
     vis_fire(fft* _f)
     {
         f = _f;
         loaded = false;
-        DRAW_WIDTH = SCREEN_WIDTH / 2;
-        DRAW_HEIGHT = SCREEN_HEIGHT / 2;
+        DRAW_WIDTH = SCREEN_WIDTH / 4;
+        DRAW_HEIGHT = SCREEN_HEIGHT / 4;
+        layer = 1;
     };
 
     ~vis_fire()
@@ -32,7 +33,7 @@ class vis_fire : public visual_object
         for(int x = 0; x < 256; x++)
         {
            // palette[x] = hsl_rgba(x / 3, 255, lmin(255, x * 2));
-           palette[x] = hsl_rgba((int)(x / 1.5), 255, lmin(255,(int)(peak * 1.1)));
+           palette[x] = hsl_rgba((int)(x / 1.5), 255, lmin(100,(int)(peak)));
         }
 
         if (loaded) return;

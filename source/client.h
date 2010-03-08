@@ -264,6 +264,7 @@ class network : public dns
 
         if(protocol == TCP)
         {
+#ifndef _WIN32
             unsigned long start_time = get_tick_count();
 
             while(1)
@@ -293,10 +294,19 @@ class network : public dns
                 }else break;
 
             }
-        }
 
+#else
 
+    if ((net_connect(connection_socket,(struct sockaddr*)&client,sizeof(client)) < 0))
+    {
+        net_close(connection_socket);
+        connection_socket = 0;
+        return 0;
+    }
 
+#endif
+
+    }
         client_connected = true;
 
         return 1;

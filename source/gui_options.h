@@ -77,7 +77,7 @@ class gui_options
         // next skin
         b_next_skin = new gui_button(_d,_f,420,254,0,0,false);
         b_next_skin->set_images((char*)"imgs/button_out.png",(char*)"imgs/button_out.png",0,0);
-        b_next_skin->set_text(vars.search_var("$LANG_TXT_NEXT_SKIN"));
+        b_next_skin->set_text(vars.search_var("$LANG_TXT_NEXT"));
         b_next_skin->pad_y = 5;
         b_next_skin->text_color = 0x000000;
         b_next_skin->text_color_over = 0xff0044;
@@ -88,7 +88,7 @@ class gui_options
 
         b_next_lang = new gui_button(_d,_f,420,314,0,0,false);
         b_next_lang->set_images((char*)"imgs/button_out.png",(char*)"imgs/button_out.png",0,0);
-        b_next_lang->set_text(vars.search_var("$LANG_TXT_NEXT_LANG"));
+        b_next_lang->set_text(vars.search_var("$LANG_TXT_NEXT"));
         b_next_lang->pad_y = 5;
         b_next_lang->text_color = 0x000000;
         b_next_lang->text_color_over = 0xff0044;
@@ -182,7 +182,7 @@ class gui_options
         // -- about
         fnts->change_color(100,100,100);
         fnts->text(dest,vars.search_var("$LANG_ABOUT"),200,350,0,1);
-        fnts->text(dest,"v0.5. - Scanff & TiMeBoMb",220,350,0);
+        fnts->text(dest,"v0.5. by Scanff, TiMeBoMb and Knarrff",220,350,0);
 
 
         // -- draw the butons ect...

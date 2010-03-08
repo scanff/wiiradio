@@ -1,13 +1,12 @@
 #ifndef VISUAL_EXPLODE_H_INCLUDED
 #define VISUAL_EXPLODE_H_INCLUDED
 
-class vis_explode {
+#include "visual_object.h"
+
+class vis_explode : public visual_object
+{
     public:
 
-    fft*            f;
-    bool            loaded;
-    int             DRAW_WIDTH;
-    int             DRAW_HEIGHT;
 
     #define NUMBER_OF_PARTICLES 500
 
@@ -24,8 +23,10 @@ class vis_explode {
 
     PARTICLE particles[NUMBER_OF_PARTICLES];
 
-    vis_explode(fft* _f) : f(_f), loaded(false), fire(0)
+    vis_explode(fft* _f) : fire(0)
     {
+        loaded = false;
+        f = _f;
         DRAW_WIDTH = SCREEN_WIDTH / 2;
         DRAW_HEIGHT = SCREEN_HEIGHT / 2;
 
@@ -60,7 +61,9 @@ class vis_explode {
         memset(fire, 0, DRAW_WIDTH * DRAW_HEIGHT * sizeof(unsigned int));
 
         for(int x = 0; x < 256; x++)
-            colors[x] = hsl_rgba(x / 3, 255, lmin(255, x * 2));
+            colors[x] = hsl_rgba(x, 255, x);
+
+
 
         loopi(NUMBER_OF_PARTICLES)
             init_particle(particles + i);
@@ -154,7 +157,9 @@ class vis_explode {
                 temp = y * DRAW_WIDTH;
 
                 *image = fire[temp + x];
-                image += 3;
+                *image++ = fire[temp + x];
+                *image++ = fire[temp + x];
+                //image += 3;
             }
         }
 

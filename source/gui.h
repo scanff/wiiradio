@@ -688,7 +688,7 @@ class gui {
         if (g_screen_status == S_SEARCHING) return 0; // no hit test
 
         // -- cancel buffering
-        if (status == BUFFERING || status == CONNECTING)
+        if (status == BUFFERING)
         {
             if(buttons[BTN_CANCEL]->hit_test(events,1)==B_CLICK)
             {

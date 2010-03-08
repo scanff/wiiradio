@@ -74,7 +74,7 @@ class icy {
             last_chunk(0),
             buffers_recvd(0),
             buffers_sent(0)
-            
+
     {
         memset(track_title,0,SMALL_MEM);
         strcpy(last_track_title,"last");
