@@ -248,7 +248,7 @@ class network : public dns
         client.sin_port = htons(port);
 
         // set this before so net_connect does not block
-        if (!block)
+        //if (!block) -- don't bother .. never want blocking anyway!
         {
 #ifdef _WII_
 
@@ -256,10 +256,7 @@ class network : public dns
             res = net_fcntl (connection_socket, F_SETFL, res | 4);
 
 #endif
-#ifdef _WIN32
-            unsigned long flag = O_NONBLOCK;
-            net_ioctl(connection_socket, FIONBIO, &flag); // does not work on WII
-#endif
+
         }
 
         if(protocol == TCP)
@@ -303,6 +300,9 @@ class network : public dns
         connection_socket = 0;
         return 0;
     }
+
+    unsigned long flag = O_NONBLOCK;
+    net_ioctl(connection_socket, FIONBIO, &flag); // does not work on WII
 
 #endif
 
@@ -369,11 +369,13 @@ class network : public dns
                                (struct sockaddr*)&client,&clen);
         // If select() returned >0 but recv() returned 0, we got EOF
         // and the socket has to be regarded as closed from now on
+#ifndef _WIN32
         if (ret == 0)
         {
             client_close();
             client_connected = 0;
         }
+#endif
         return ret;
     }
 

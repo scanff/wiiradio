@@ -147,10 +147,10 @@ int lmin(int a, int b)
 #include "visuals/visual_osc.h"
 #include "visuals/visual_bars.h"
 #include "visuals/visual_explode.h"
-#include "visuals/visual_game1.h"
 #include "visuals/visual_mist.h"
 #include "visuals/visual_circles.h"
 #include "visuals/visual_plasma.h"
+#include "visuals/visual_sintext.h"
 
 #include <SDL/SDL_imageFilter.h>
 
@@ -164,6 +164,8 @@ class visualizer
     int             fft_results[MAX_FFT_RES];
     SDL_Surface*    vis_surface;
     visual_object*  visuals_ptr[MAX_VISUALS];
+
+    void*           user_data;
     bool            remap_keys;
     double          angle;
     int             r1, r2;
@@ -207,13 +209,15 @@ class visualizer
         visuals_ptr[V_MIST] =  new vis_mist(f);
         visuals_ptr[V_CIRCLES] = new vis_circles(f);
         visuals_ptr[V_PLASMA] = new vis_plasma(f);
-
+        visuals_ptr[V_SINTEXT] = new vis_sintext(f);
 
     };
 
     ~visualizer()
     {
         SDL_FreeSurface(vis_surface);
+
+
         loopi(MAX_VISUALS)
         {
             if (visuals_ptr[i])
@@ -254,19 +258,23 @@ class visualizer
             r1 = number;
         }
 
-        void* user_data = 0;
+
         loopj(num_of_visuals)
         {
+            void* udata = 0;
             int v =0;
+
             j==0?v=r1:v=r2;
 
             loopi(MAX_FFT_RES)  visuals_ptr[v]->fft_results[i] =  fft_results[i];
 
             if (j > 0) SDL_BlitSurface(s,0,vis_surface,0);
 
-            if (j > 0 && v == V_TUNNEL) user_data = (void*)vis_surface->pixels;
+            if (j > 0 && v == V_TUNNEL) udata = (void*)vis_surface->pixels;
+            if(v == V_SINTEXT) udata = user_data;
 
-            visuals_ptr[v]->render(vis_surface,user_data);
+
+            visuals_ptr[v]->render(vis_surface,udata);
 
             if (visuals_ptr[v]->DRAW_WIDTH != s->w)
             {
@@ -277,6 +285,7 @@ class visualizer
                  SDL_BlitSurface(vis_surface,0,s,0);
             }
         }
+
     };
 
 };

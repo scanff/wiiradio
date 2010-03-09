@@ -235,6 +235,11 @@ int connect_thread(void* arg)
 
         int len_req = strlen(request);
         len_req = net->client_send(request,len_req);
+        if (len_req < 0)
+        {
+            status = FAILED;
+            return 0;
+        }
 
         connected = connect_try;
 

@@ -12,15 +12,15 @@ class vis_tunnel : public visual_object
 
     unsigned int* texture;
     int* distanceTable;
-    int angleTable[(SCREEN_WIDTH/4)*2][(SCREEN_HEIGHT/4)*2];
+    int angleTable[(SCREEN_WIDTH/2)*2][(SCREEN_HEIGHT/2)*2];
 
     vis_tunnel(fft* _f) : texture(0), distanceTable(0)
     {
         loaded = false;
         f = _f;
 
-        DRAW_WIDTH = SCREEN_WIDTH / 4;
-        DRAW_HEIGHT = SCREEN_HEIGHT / 4;
+        DRAW_WIDTH = SCREEN_WIDTH / 2;
+        DRAW_HEIGHT = SCREEN_HEIGHT / 2;
 
         texture = new unsigned int[texWidth*texHeight];
         if (!texture) exit(0);
@@ -69,8 +69,12 @@ class vis_tunnel : public visual_object
                  if (user_data) color = *(pixels+=3);
                  else color = hsl_rgba((x / 3), lmin(255,(int)(peak * 1.8)), lmin(100, x * 2));
 
-                 if (rand()% 255 > 245 && !user_data) texture[x+(y*texWidth)] = color;
-                 else if (rand()% 255 > 10) texture[x+(y*texWidth)] = color;
+
+                 if (!user_data)
+                 {
+                    if (rand()% 255 > 245) texture[x+(y*texWidth)] = color;
+                 }
+                 else texture[x+(y*texWidth)] = color;
             }
 
         }
@@ -80,7 +84,7 @@ class vis_tunnel : public visual_object
             for(y = 0; y < DRAW_HEIGHT*2; y++)
             {
                 int angle, distance;
-                float ratio = 1.0;
+                float ratio = 2.0;
 
                 distance = int(ratio * texHeight / sqrt(float((x - DRAW_WIDTH) * (x - DRAW_WIDTH) + (y - DRAW_HEIGHT) * (y - DRAW_HEIGHT)))) % texHeight;
                 angle = (unsigned int)(0.5 * texWidth * atan2(float(y - DRAW_HEIGHT), float(x - DRAW_WIDTH)) / 3.1416);
