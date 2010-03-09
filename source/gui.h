@@ -102,6 +102,7 @@ class gui {
         buttons_playlists(0), buttons_delete(0), genre_selected(0),
         vis_on_screen(0), dialog_text_color(0)
     {
+
         gl.load_file();
 
         loopi(TXT_MAX) text_areas[i] = 0; // clear
@@ -967,7 +968,7 @@ class gui {
             // TO DO ... add more
             black_screen_saver();
             if (visualize_number < MAX_VISUALS) {
-
+                vis->user_data = ic->track_title;
                 vis->draw_visuals(guibuffer,visualize_number);
 
                 if(get_tick_count() - visual_show_title < 60000) // -- hide after 1 min

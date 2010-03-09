@@ -2,8 +2,10 @@
 // a playlist can contain several streams.  Store these incase a stream is full
 struct station_playlist {
     station_playlist() { reset(); };
+
     void reset()
     {
+        port = 0;
         nextnode = 0;
         memset(url,0,1024);
         memset(path,0,SMALL_MEM);

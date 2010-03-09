@@ -7,8 +7,6 @@ class vis_plasma : public visual_object
 {
     public:
 
-    int             shifter;
-    int             direction;
     SDL_Color       colors[256];
     int             aSin[512];
     Uint16          pos1, pos2, pos3, pos4, tpos1, tpos2, tpos3, tpos4;
@@ -23,7 +21,6 @@ class vis_plasma : public visual_object
 
         DRAW_WIDTH = SCREEN_WIDTH  ;
         DRAW_HEIGHT = SCREEN_HEIGHT  ;
-        direction = shifter = 0;
 
     };
 
@@ -39,7 +36,6 @@ class vis_plasma : public visual_object
         if (loaded) return;
 
         // init plasma
-        int i;
         float rad;
 
         /*create sin lookup table */
@@ -61,8 +57,6 @@ class vis_plasma : public visual_object
           colors[i+192].g = (i << 2) + 1;
         }
 
-  //SDL_SetPalette(screen, SDL_LOGPAL | SDL_PHYSPAL, colors, 0, 256);
-
         loaded = true;
 
     };
@@ -73,20 +67,24 @@ class vis_plasma : public visual_object
         load(userdata);
 
         unsigned char* image;
-        unsigned int i,j;
+        unsigned int j;
         unsigned char index;
         int x;
+        int rd,gn,bl;
+        int peak = 0;
 
-        /*this is where it all happens */
+        double percent = ((double)200 / (double)32767);
+        // peak beat
+        peak = (int)(percent * (double)fft_results[2]);
 
-      /* draw plasma */
+        /* draw plasma */
 
         tpos4 = pos4;
         tpos3 = pos3;
 
         image = (unsigned char*)s->pixels;
 
-        for (i = 0; i < screen->h; ++i)
+        loopi(screen->h)
         {
             tpos1 = pos1 + 5;
             tpos2 = pos2 + 3;
@@ -103,10 +101,27 @@ class vis_plasma : public visual_object
 
               index = 128 + (x >> 4); /*fixed point multiplication but optimized so basically it says (x * (64 * 1024) / (1024 * 1024)), x is already multiplied by 1024*/
 
-              //*image++ = index;
-              *image++ = colors[index].r;
-              *image++ = colors[index].g;
-              *image++ = colors[index].b;
+
+
+#ifdef _WII_
+              rd = colors[index].r + peak;
+              bl = colors[index].b + peak;
+#else
+              rd = colors[index].b + peak;
+              bl = colors[index].r + peak;
+#endif
+              gn = colors[index].g + peak;
+
+ /*
+
+              *image = hsl_rgba(rd, gn, bl);
+
+              image+= 3;
+*/
+              *image++ = rd;
+              *image++ = gn;
+              *image++ = bl;
+
 
               tpos1 += 5;
               tpos2 += 3;
@@ -120,12 +135,6 @@ class vis_plasma : public visual_object
 
         pos1 +=9;
         pos3 +=8;
-
-
-
-
-        if (!direction) shifter < 150 ? shifter++ : direction = 1;
-        else shifter > 0 ? shifter-- : direction = 0;
 
 
     };

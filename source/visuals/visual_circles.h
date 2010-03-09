@@ -42,7 +42,7 @@ class vis_circles : public visual_object
         float divisor = 0.0008;
 
         int y = 0;
-        int len = (MAX_FFT_SAMPLE) - 1;
+        int len = (MAX_FFT_SAMPLE/2) - 1;
         int padding = 70;
         double ts = static_cast<double>(DRAW_WIDTH)/static_cast<double>(len-(padding*2));
         long color;
@@ -68,11 +68,9 @@ class vis_circles : public visual_object
                     int r = d / 2;
 
                     if (d > 255) d = 255;
-                    color = hsl_rgba(255, d, d);
-                    circleColor(s,x,y3,r+1,color);
-                    circleColor(s,x,DRAW_HEIGHT-y3,r+1,color);
-                    //pixelColor(s,x,y3, color);
-                    //pixelColor(s,x,DRAW_HEIGHT-y3, color);
+                    color = hsl_rgba(rand() % 255, d, d);
+                    circleColor(s,x,y3,3,color);
+                    circleColor(s,x,DRAW_HEIGHT-y3,3,color);
 
                 }
 

@@ -39,6 +39,7 @@ class vis_bars : public visual_object
         if (!loaded) load(user_data);
 
         //draw_rect(s,0,0,SCREEN_WIDTH,SCREEN_HEIGHT,0); // clear backbuffer
+        fade(s,SDL_MapRGB(s->format,0,0,0),40);
 
         int x = 0;
         int y = DRAW_HEIGHT;
