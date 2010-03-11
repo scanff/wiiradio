@@ -118,6 +118,7 @@ enum
   V_CIRCLES,
   V_PLASMA,
   V_SINTEXT,
+  V_ROTZOOM,
   MAX_VISUALS
 };
 

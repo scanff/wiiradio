@@ -261,7 +261,7 @@ class network : public dns
 
         if(protocol == TCP)
         {
-#ifndef _WIN32
+#ifdef _WII_
             unsigned long start_time = get_tick_count();
 
             while(1)
