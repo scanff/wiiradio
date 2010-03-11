@@ -40,8 +40,8 @@ class gui_options
         b_quit->set_images((char*)"imgs/button_out.png",(char*)"imgs/button_out.png",0,0);
         b_quit->set_text(vars.search_var("$LANG_TXT_QUIT_LOADER"));
         b_quit->pad_y = 5;
-        b_quit->text_color = 0x000044;
-        b_quit->text_color_over = 0xff0000;
+        b_quit->text_color = 0x000000;
+        b_quit->text_color_over = 0xff0044;
         b_quit->font_sz = FS_SYSTEM;
         b_quit->center_text = true;
         b_quit->bind_screen = S_OPTIONS;
@@ -51,8 +51,8 @@ class gui_options
         b_return->set_images((char*)"imgs/button_out.png",(char*)"imgs/button_out.png",0,0);
         b_return->set_text(vars.search_var("$LANG_TXT_OK"));
         b_return->pad_y = 5;
-        b_return->text_color = 0x000044;
-        b_return->text_color_over = 0xff0000;
+        b_return->text_color = 0x000000;
+        b_return->text_color_over = 0xff0044;
         b_return->font_sz = FS_SYSTEM;
         b_return->center_text = true;
         b_return->bind_screen = S_OPTIONS;
