@@ -26,9 +26,10 @@ class vis_bobs : public visual_object
         DRAW_WIDTH = SCREEN_WIDTH ;
         DRAW_HEIGHT = SCREEN_HEIGHT;
 
-        loopi(MAX_FFT_RES) {
-            peakResults[i] = 0;
-            fft_results[i] = 0;
+        for(int x=0;x<MAX_FFT_RES;x++)
+        {
+            peakResults[x] = 0;
+            fft_results[x] = 0;
         }
 
         i = 0;
@@ -55,25 +56,25 @@ class vis_bobs : public visual_object
         hh = (DRAW_HEIGHT - 60) >> 1;
 
 
-        loopi(512)
+        for(i=0;i<512;i++)
         {
-            double rad = ((float)i * 0.703125) * 0.0174532; /* spread 360 degrees over 512 values and convert to rad */
+            double rad = ((float)i * 0.703125) * 0.0174532;
             xpath[i] = sin(rad) * hw + hw;
             ypath[i] = cos(rad) * hh + hh;
         }
 
-      l = i;
-  m = j;
+        l = i;
+        m = j;
 
-  for (k = 0; k < NUMBER_OF_BOBS; ++k)
-    {
-      rects[k].w = oldrects[k].w = eye_surface->w;
-      rects[k].h = oldrects[k].h = eye_surface->h;
-      rects[k].x = xpath[l & 511];
-      rects[k].y = ypath[m & 511];
-      l += 20;
-      m += 20;
-    }
+        for (k = 0; k < NUMBER_OF_BOBS; ++k)
+        {
+            rects[k].w = oldrects[k].w = eye_surface->w;
+            rects[k].h = oldrects[k].h = eye_surface->h;
+            rects[k].x = xpath[l & 511];
+            rects[k].y = ypath[m & 511];
+            l += 20;
+            m += 20;
+        }
 
         loaded = true;
     };
@@ -83,25 +84,11 @@ class vis_bobs : public visual_object
         if (!loaded) load(user_data);
         if(!eye_surface) return;
 
-        unsigned char* texture = (Uint8 *)eye_surface->pixels;
-
         fade(s,SDL_MapRGB(s->format,0,0,0),60);
 
         l = i;
         m = j;
 
-        // peak beat
-        /*double percent = ((double)200 / (double)32767);
-        int peak = (int)(percent * (double)fft_results[3]);
-
-
-        loopi((eye_surface->pitch*eye_surface->h)-3)
-        {
-            texture[i] += peak;
-            texture[i+1] += peak;
-            texture[i+2] += peak;
-
-        }*/
 
         for (k = 0; k < NUMBER_OF_BOBS; ++k)
         {
@@ -122,4 +109,4 @@ class vis_bobs : public visual_object
         j &= 511;
     };
 };
-#endif // VISUAL_BARS_H_INCLUDED
+#endif

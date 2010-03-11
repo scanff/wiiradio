@@ -1221,10 +1221,14 @@ class gui {
     void draw_cursor(int x,int y, float angle)
     {
         SDL_Rect r = { x,y,cursor->w,cursor->h };
+      /*
+         -- need to also adjust hotspot angle as the hit tests are off when rotated
         SDL_Surface *rot = rotozoomSurface (cursor, angle, 1, 0);
         if(!rot) return; // don't count on rotozoomSurface to always allocate surface
         SDL_BlitSurface(rot,0, guibuffer, &r);
         SDL_FreeSurface(rot); // free
+        */
+        SDL_BlitSurface(cursor,0, guibuffer, &r);
     };
 
     char* gui_gettext(char* t)

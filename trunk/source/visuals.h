@@ -236,8 +236,8 @@ class visualizer
 
     void draw_visuals(SDL_Surface* s,int number)
     {
-       if (g_real_keys[SDLK_1] && !g_keys_last_state[SDLK_1])
-       mode = !mode;//1;// -- random mode !mode; // change mode
+       //if (g_real_keys[SDLK_1] && !g_keys_last_state[SDLK_1])
+       mode = 1;// MUCH BETTER ! !mode;//1;
 
         int num_of_visuals = 0; // number of visuals we are showing
 
