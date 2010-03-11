@@ -20,11 +20,11 @@ class gui_search {
         keyboard = new gui_keyboard(_ui->fnts,_ui->guibuffer,50,50,&gui_search_ok,&gui_search_cancel,vars.search_var("$LANG_SEARCH"),vars.search_var("$LANG_CLOSE"));
 
         // button to add typed text to genre list
-        add_genre = new gui_button(_ui->guibuffer,_ui->fnts,300,350,0,0,false);
+        add_genre = new gui_button(_ui->guibuffer,_ui->fnts,280,350,0,0,false);
         add_genre->set_images((char*)"imgs/button_out.png",(char*)"imgs/button_out.png",0,0);
         add_genre->set_text(vars.search_var("$LANG_ADDGENRE"));
         add_genre->pad_y = 5;
-        add_genre->text_color = 0x000044;
+        add_genre->text_color = 0x000000;
         add_genre->text_color_over = 0xff0000;
         add_genre->font_sz = FS_SYSTEM;
         add_genre->center_text = true;

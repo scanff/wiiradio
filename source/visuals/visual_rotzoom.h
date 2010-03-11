@@ -12,28 +12,35 @@ class vis_rotzoom : public visual_object
     unsigned int path, zpath;
     SDL_Surface* tex;
 
-    vis_rotzoom(fft* _f)
+    vis_rotzoom(fft* _f) : tex(0)
     {
         loaded = false;
         f = _f;
         layer = 0;
         path = zpath = 0;
-        DRAW_WIDTH = SCREEN_WIDTH  ;
-        DRAW_HEIGHT = SCREEN_HEIGHT  ;
+        DRAW_WIDTH = SCREEN_WIDTH;
+        DRAW_HEIGHT = SCREEN_HEIGHT;
+
+
 
     };
 
     ~vis_rotzoom()
     {
+        if (tex)
+        {
+            SDL_FreeSurface(tex);
+            tex = 0;
+        }
     };
 
 
     void load(void* userdata)
     {
+        if (!tex) tex = IMG_Load(make_path("visdata/2.png"));
 
         if (loaded) return;
 
-        tex = tx->texture_lookup("visdata/2.png");
 
         loopi(256)
         {
@@ -63,8 +70,10 @@ class vis_rotzoom : public visual_object
 
     void draw_tile(SDL_Surface* s, int stepx, int stepy, int zoom)
     {
-        unsigned char* image = (Uint8 *)s->pixels;
-        unsigned char* texture = (Uint8 *)tex->pixels;
+        unsigned char* image = (unsigned char*)s->pixels;
+        unsigned char* texture = (unsigned char*)tex->pixels;
+        if (!texture) return;
+
         int x, y, i, j, xd, yd, a, b, sx, sy;
 
         // peak beat

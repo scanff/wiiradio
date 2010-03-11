@@ -65,7 +65,7 @@ class vis_circles : public visual_object
                     int d = y2;
                     d = d / 2;
                     d+=shifter;
-                    int r = d / 2;
+
 
                     if (d > 255) d = 255;
                     color = hsl_rgba(rand() % 255, d, d);

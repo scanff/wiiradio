@@ -118,8 +118,8 @@ class gui_keyboard
                     key_buttons[i][j]->set_images((char*)"imgs/keyboard_key.png",(char*)"imgs/keyboard_key_over.png",0,0);
                     key_buttons[i][j]->set_text(txt);
                     key_buttons[i][j]->pad_y = 5;
-                    key_buttons[i][j]->text_color = 0x000044;
-                    key_buttons[i][j]->text_color_over = 0xff0000;
+                    key_buttons[i][j]->text_color = 0x000000;
+                    key_buttons[i][j]->text_color_over = 0xff0044;
                     key_buttons[i][j]->font_sz = FS_SYSTEM;
                     key_buttons[i][j]->center_text = true;
                     key_buttons[i][j]->bind_screen = S_ALL;
@@ -133,8 +133,8 @@ class gui_keyboard
         key_space->set_images((char*)"imgs/space_out.png",(char*)"imgs/space_out.png",0,0);
         key_space->pad_y = 0;
         key_space->s_x = (SCREEN_WIDTH/2)-(key_space->s_w/2);
-        key_space->text_color = 0x000044;
-        key_space->text_color_over = 0xff0000;
+        key_space->text_color = 0x000000;
+        key_space->text_color_over = 0xff0044;
         key_space->font_sz = FS_SYSTEM;
         key_space->center_text = true;
         key_space->bind_screen = S_ALL;
@@ -145,8 +145,8 @@ class gui_keyboard
         key_backspace->set_images((char*)"imgs/keyboard_mediumkey_over.png",(char*)"imgs/keyboard_mediumkey.png",0,0);
         key_backspace->pad_y = 5;
         key_backspace->set_text("Back");
-        key_backspace->text_color = 0x000044;
-        key_backspace->text_color_over = 0xff0000;
+        key_backspace->text_color = 0x000000;
+        key_backspace->text_color_over = 0xff0044;
         key_backspace->font_sz = FS_SYSTEM;
         key_backspace->center_text = true;
         key_backspace->bind_screen = S_ALL;
@@ -156,8 +156,8 @@ class gui_keyboard
         key_caps->set_images((char*)"imgs/keyboard_mediumkey_over.png",(char*)"imgs/keyboard_mediumkey.png",0,0);
         key_caps->pad_y = 5;
         key_caps->set_text("Caps");
-        key_caps->text_color = 0x000044;
-        key_caps->text_color_over = 0xff0000;
+        key_caps->text_color = 0x000000;
+        key_caps->text_color_over = 0xff0044;
         key_caps->font_sz = FS_SYSTEM;
         key_caps->center_text = true;
         key_caps->bind_screen = S_ALL;
@@ -168,8 +168,8 @@ class gui_keyboard
         key_shift->set_images((char*)"imgs/keyboard_mediumkey_over.png",(char*)"imgs/keyboard_mediumkey.png",0,0);
         key_shift->pad_y = 5;
         key_shift->set_text("Shift");
-        key_shift->text_color = 0x000044;
-        key_shift->text_color_over = 0xff0000;
+        key_shift->text_color = 0x000000;
+        key_shift->text_color_over = 0xff0044;
         key_shift->font_sz = FS_SYSTEM;
         key_shift->center_text = true;
         key_shift->bind_screen = S_ALL;
@@ -181,8 +181,8 @@ class gui_keyboard
         text_out->set_images((char*)"imgs/space_out.png",(char*)"imgs/space_out.png",0,0);
         text_out->pad_y = 5;
         text_out->s_x = (SCREEN_WIDTH/2)-(key_space->s_w/2);
-        text_out->text_color = 0x000044;
-        text_out->text_color_over = 0xff0000;
+        text_out->text_color = 0x000000;
+        text_out->text_color_over = 0xff0044;
         text_out->font_sz = FS_SYSTEM;
         //text_out->center_text = true;
         text_out->bind_screen = S_ALL;
@@ -194,20 +194,20 @@ class gui_keyboard
         ok->set_images((char*)"imgs/button_out.png",(char*)"imgs/button_out.png",0,0);
         ok->set_text((char*)_ok_text);
         ok->pad_y = 5;
-        ok->text_color = 0x000044;
-        ok->text_color_over = 0xff0000;
+        ok->text_color = 0x000000;
+        ok->text_color_over = 0xff0044;
         ok->font_sz = FS_SYSTEM;
         ok->center_text = true;
         ok->bind_screen = S_ALL;
 
 
         cancel = 0;
-        cancel = new gui_button(_d,_f,pos_x+(100),pos_y+(300),0,0,false);
+        cancel = new gui_button(_d,_f,pos_x+(70),pos_y+(300),0,0,false);
         cancel->set_images((char*)"imgs/button_out.png",(char*)"imgs/button_out.png",0,0);
         cancel->set_text((char*)_close_text);
         cancel->pad_y = 5;
-        cancel->text_color = 0x000044;
-        cancel->text_color_over = 0xff0000;
+        cancel->text_color = 0x000000;
+        cancel->text_color_over = 0xff0044;
         cancel->font_sz = FS_SYSTEM;
         cancel->center_text = true;
         cancel->bind_screen = S_ALL;
@@ -231,7 +231,6 @@ class gui_keyboard
                 {
                     delete key_buttons[i][j];
                     key_buttons[i][j] = 0;
-
                 }
             }
         }

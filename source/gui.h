@@ -1183,7 +1183,7 @@ class gui {
         char* lang = vars.search_var("$LANG_TXT_STATION");
         if (lang) fnts->text(guibuffer,make_string((char*)"%s: %s", lang,trim_string(ic->icy_name,50)),t.x + 35,t.y + 38,0);
         lang = vars.search_var("$LANG_TXT_URL");
-        if (lang) fnts->text(guibuffer,make_string((char*)"%s: %s",lang,trim_string(ic->icy_pls_url,50)),t.x + 35,t.y + 58,0);
+        if (lang) fnts->text(guibuffer,make_string((char*)"%s: %s",lang,trim_string(ic->icy_url,50)),t.x + 35,t.y + 58,0);
         lang = vars.search_var("$LANG_TXT_BR");
         if (lang) fnts->text(guibuffer,make_string((char*)"%s: %dKbps",lang,ic->icy_br),t.x + 35,t.y + 78,0);
         lang = vars.search_var("$LANG_TXT_TITLE");
