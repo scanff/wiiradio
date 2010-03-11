@@ -67,7 +67,6 @@ class vis_plasma : public visual_object
         load(userdata);
 
         unsigned char* image;
-        unsigned int j;
         unsigned char index;
         int x;
         int rd,gn,bl;
@@ -92,7 +91,7 @@ class vis_plasma : public visual_object
             tpos3 &= 511;
             tpos4 &= 511;
 
-            for (j = 0; j < screen->w; ++j)
+            loopj(screen->w)
             {
               tpos1 &= 511;
               tpos2 &= 511;

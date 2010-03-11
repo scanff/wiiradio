@@ -119,6 +119,7 @@ enum
   V_PLASMA,
   V_SINTEXT,
   V_ROTZOOM,
+  V_BOBS,
   MAX_VISUALS
 };
 

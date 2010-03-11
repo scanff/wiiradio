@@ -152,6 +152,8 @@ int lmin(int a, int b)
 #include "visuals/visual_plasma.h"
 #include "visuals/visual_sintext.h"
 #include "visuals/visual_rotzoom.h"
+#include "visuals/visual_bobs.h"
+
 #include <SDL/SDL_imageFilter.h>
 
 #include "visuals/visual_object.h"
@@ -164,7 +166,6 @@ class visualizer
     int             fft_results[MAX_FFT_RES];
     SDL_Surface*    vis_surface;
     visual_object*  visuals_ptr[MAX_VISUALS];
-visual_object*      rotzoom;
     void*           user_data;
     bool            remap_keys;
     double          angle;
@@ -211,6 +212,10 @@ visual_object*      rotzoom;
         visuals_ptr[V_PLASMA] = new vis_plasma(f);
         visuals_ptr[V_SINTEXT] = new vis_sintext(f);
         visuals_ptr[V_ROTZOOM] = new vis_rotzoom(f);
+        visuals_ptr[V_BOBS] = new vis_bobs(f);
+
+        srand ( get_tick_count() );
+
 
     };
 
@@ -231,8 +236,8 @@ visual_object*      rotzoom;
 
     void draw_visuals(SDL_Surface* s,int number)
     {
-        if (g_real_keys[SDLK_1] && !g_keys_last_state[SDLK_1])
-            mode = !mode; // change mode
+       if (g_real_keys[SDLK_1] && !g_keys_last_state[SDLK_1])
+       mode = !mode;//1;// -- random mode !mode; // change mode
 
         int num_of_visuals = 0; // number of visuals we are showing
 

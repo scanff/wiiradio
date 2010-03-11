@@ -1,14 +1,6 @@
 #ifndef GENRE_LIST_H_INCLUDED
 #define GENRE_LIST_H_INCLUDED
 
-
-/*#define MAX_GENRE (19)
-const char* genres[] = {
-  "all","ambient","country","classical",
-  "dance","indie","jazz","metal","pop","rave",
-  "rap","rock","techno","trance","90s","80s","70s","60s",
-  "50s"
-};*/
 class genre_list{
     public:
 

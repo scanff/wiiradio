@@ -71,7 +71,7 @@ class vis_fire : public visual_object
         {
             for(int y = 0; y < DRAW_HEIGHT; y++)
             {
-               pixelColor(s,x,y,palette[fire[x][y]]);
+                pixelColor(s,x,y,palette[fire[x][y]]);
             }
         }
 
