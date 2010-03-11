@@ -12,6 +12,7 @@ class vis_osc : public visual_object
     {
         f = _f;
         loaded = false;
+        layer = 1;
 
         DRAW_WIDTH = SCREEN_WIDTH ;
         DRAW_HEIGHT = SCREEN_HEIGHT;

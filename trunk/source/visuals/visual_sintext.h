@@ -17,6 +17,7 @@ class vis_sintext : public visual_object
         loaded = false;
         f = _f;
         p = pos_x = 0;
+        layer = 1;
 
         DRAW_WIDTH = SCREEN_WIDTH;
         DRAW_HEIGHT = SCREEN_HEIGHT;

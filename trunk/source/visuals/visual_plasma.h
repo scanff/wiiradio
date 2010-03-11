@@ -15,7 +15,7 @@ class vis_plasma : public visual_object
     {
         loaded = false;
         f = _f;
-        layer = 3;
+        layer = 0;
 
         pos1 = pos2 = pos3 = pos4 =  tpos1 = tpos2 = tpos3 =  tpos4 = 0;
 
@@ -112,12 +112,7 @@ class vis_plasma : public visual_object
 #endif
               gn = colors[index].g + peak;
 
- /*
 
-              *image = hsl_rgba(rd, gn, bl);
-
-              image+= 3;
-*/
               *image++ = rd;
               *image++ = gn;
               *image++ = bl;
