@@ -14,7 +14,7 @@ class vis_mist : public visual_object
     {
         loaded = false;
         f = _f;
-        layer = 3;
+        layer = 1;
 
         DRAW_WIDTH = SCREEN_WIDTH  ;
         DRAW_HEIGHT = SCREEN_HEIGHT  ;

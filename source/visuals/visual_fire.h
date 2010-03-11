@@ -16,7 +16,7 @@ class vis_fire : public visual_object
         loaded = false;
         DRAW_WIDTH = SCREEN_WIDTH / 4;
         DRAW_HEIGHT = SCREEN_HEIGHT / 4;
-        layer = 1;
+        layer = 0;
     };
 
     ~vis_fire()

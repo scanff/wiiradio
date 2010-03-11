@@ -7,20 +7,22 @@ class vis_tunnel : public visual_object
 {
     public:
 
-    #define texWidth 256
-    #define texHeight 256
+    #define TDIVIDER    (2)
+    #define texWidth    (256)
+    #define texHeight   (256)
 
     unsigned int* texture;
     int* distanceTable;
-    int angleTable[(SCREEN_WIDTH/2)*2][(SCREEN_HEIGHT/2)*2];
+    int angleTable[(SCREEN_WIDTH/TDIVIDER)*2][(SCREEN_HEIGHT/TDIVIDER)*2];
 
     vis_tunnel(fft* _f) : texture(0), distanceTable(0)
     {
         loaded = false;
         f = _f;
+        layer = 1;
 
-        DRAW_WIDTH = SCREEN_WIDTH / 2;
-        DRAW_HEIGHT = SCREEN_HEIGHT / 2;
+        DRAW_WIDTH = SCREEN_WIDTH / TDIVIDER;
+        DRAW_HEIGHT = SCREEN_HEIGHT / TDIVIDER;
 
         texture = new unsigned int[texWidth*texHeight];
         if (!texture) exit(0);
@@ -120,9 +122,12 @@ class vis_tunnel : public visual_object
             for(int y = 0; y < DRAW_HEIGHT; y++)
             {
 
-                color = texture[((unsigned int)(distanceTable[(x + shiftLookX)+((y + shiftLookY)*(2*DRAW_WIDTH))] + shiftX)  % texWidth)+
-                               (((unsigned int)(angleTable[x + shiftLookX][y + shiftLookY]+ shiftY) % texHeight)*texWidth)];
+                long p = ((unsigned int)(distanceTable[(x + shiftLookX)+((y + shiftLookY)*(2*DRAW_WIDTH))] + shiftX)  % texWidth)+
+                               (((unsigned int)(angleTable[x + shiftLookX][y + shiftLookY]+ shiftY) % texHeight)*texWidth);
 
+                if (p < 0 || p >= (((SCREEN_WIDTH/TDIVIDER)*2)*((SCREEN_WIDTH/TDIVIDER)*2))) continue;
+
+                color = texture[p];
 
                 pixelColor(s,x,y,color);
             }

@@ -151,7 +151,7 @@ int lmin(int a, int b)
 #include "visuals/visual_circles.h"
 #include "visuals/visual_plasma.h"
 #include "visuals/visual_sintext.h"
-
+#include "visuals/visual_rotzoom.h"
 #include <SDL/SDL_imageFilter.h>
 
 #include "visuals/visual_object.h"
@@ -164,7 +164,7 @@ class visualizer
     int             fft_results[MAX_FFT_RES];
     SDL_Surface*    vis_surface;
     visual_object*  visuals_ptr[MAX_VISUALS];
-
+visual_object*      rotzoom;
     void*           user_data;
     bool            remap_keys;
     double          angle;
@@ -210,13 +210,13 @@ class visualizer
         visuals_ptr[V_CIRCLES] = new vis_circles(f);
         visuals_ptr[V_PLASMA] = new vis_plasma(f);
         visuals_ptr[V_SINTEXT] = new vis_sintext(f);
+        visuals_ptr[V_ROTZOOM] = new vis_rotzoom(f);
 
     };
 
     ~visualizer()
     {
         SDL_FreeSurface(vis_surface);
-
 
         loopi(MAX_VISUALS)
         {
@@ -241,12 +241,13 @@ class visualizer
             num_of_visuals = 2;
             if ((get_tick_count() - vt) > 15000)
             {
-                r1 = rand() % MAX_VISUALS;//V_FIRE ? r1 = V_TUNNEL : r1 = V_FIRE;
+                r1 = rand() % MAX_VISUALS;
 
                 while(1)
                 {
                     r2 = (rand() % MAX_VISUALS);
-                    if( r2 == V_PLASMA || r2 == V_FIRE || (r2 == r1)) continue;
+                    // only some effects on top and not the same effect as r1
+                    if( !visuals_ptr[r2]->layer || (r2 == r1)) continue;
 
                     break;
                 }
@@ -273,7 +274,6 @@ class visualizer
             if (j > 0 && v == V_TUNNEL) udata = (void*)vis_surface->pixels;
             if(v == V_SINTEXT) udata = user_data;
 
-
             visuals_ptr[v]->render(vis_surface,udata);
 
             if (visuals_ptr[v]->DRAW_WIDTH != s->w)
@@ -284,7 +284,10 @@ class visualizer
             }else{
                  SDL_BlitSurface(vis_surface,0,s,0);
             }
+
         }
+
+
 
     };
 
