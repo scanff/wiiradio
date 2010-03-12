@@ -22,7 +22,7 @@
     #include <unistd.h>
     #include <fcntl.h>
     #include <asndlib.h>
-    #include <mp3player_wiiradio.h>
+    #include "../libmp3player_wiiradio/mp3player_wiiradio.h"
 
     #define Sleep(x) usleep(x*1000);//1000?
     //#include <errno.h>
