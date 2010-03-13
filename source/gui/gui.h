@@ -13,6 +13,8 @@ class gui {
     #include "gui_options.h"
     #include "gui_search.h"
     #include "gui_log.h"
+    #include "gui_info.h"
+
 
     public:
 
@@ -24,7 +26,7 @@ class gui {
         BTN_GENRES_SELECT,
         BTN_PLAYING,
         BTN_LOGO,
-        BTN_CANCEL, // cancel buffering or connecting !
+//        BTN_CANCEL, // cancel buffering or connecting !
         // -- OPTIONAL BUTTONS
         BTN_ADD, // -- optional button
         BTN_STOP, // -- optional stop button
@@ -56,6 +58,7 @@ class gui {
         GUI_OPTIONS = 0,
         GUI_LOG,
         GUI_SEARCH,
+        GUI_INFO,
         GUI_MAX
     };
 
@@ -186,6 +189,7 @@ class gui {
         guis[GUI_OPTIONS]   = new gui_options(this);
         guis[GUI_LOG]       = new gui_log(this);
         guis[GUI_SEARCH]    = new gui_search(this);
+        guis[GUI_INFO]      = new gui_info(this);
 
 
         loopi(BTN_MAX) buttons[i] = 0; // NULL
@@ -415,15 +419,15 @@ class gui {
         // cancel
         if (!sk->get_value_file("info_cancel_out",s_value1,dir)) exit(0);
         if (!sk->get_value_file("info_cancel_over",s_value2,dir)) exit(0);
-        buttons[BTN_CANCEL] = new gui_button(guibuffer,f,0,25,NULL,0,false);
-        buttons[BTN_CANCEL]->set_images(s_value1,s_value2,0,0);
-        buttons[BTN_CANCEL]->center_text = true;
-        buttons[BTN_CANCEL]->z_order =  1;
-        if (sk->get_value_string("info_cancel_text",s_value1)) buttons[BTN_CANCEL]->set_text(gui_gettext(s_value1));
-        buttons[BTN_CANCEL]->text_color = sk->get_value_color("info_cancel_text_color");
-        buttons[BTN_CANCEL]->text_color_over = sk->get_value_color("info_cancel_text_color_over");
-        buttons[BTN_CANCEL]->font_sz = sk->get_value_int("info_cancel_text_size");
-        buttons[BTN_CANCEL]->pad_y = sk->get_value_int("info_cancel_text_pad_y");
+        guis[GUI_INFO]->cancel = new gui_button(guibuffer,f,0,25,NULL,0,false);
+        guis[GUI_INFO]->cancel->set_images(s_value1,s_value2,0,0);
+        guis[GUI_INFO]->cancel->center_text = true;
+        guis[GUI_INFO]->cancel->z_order =  1;
+        if (sk->get_value_string("info_cancel_text",s_value1)) guis[GUI_INFO]->cancel->set_text(gui_gettext(s_value1));
+        guis[GUI_INFO]->cancel->text_color = sk->get_value_color("info_cancel_text_color");
+        guis[GUI_INFO]->cancel->text_color_over = sk->get_value_color("info_cancel_text_color_over");
+        guis[GUI_INFO]->cancel->font_sz = sk->get_value_int("info_cancel_text_size");
+        guis[GUI_INFO]->cancel->pad_y = sk->get_value_int("info_cancel_text_pad_y");
 
         // --- optional skin buttons
         // add to pls
@@ -708,7 +712,7 @@ class gui {
         // -- cancel buffering
         if (status == BUFFERING)
         {
-            if(buttons[BTN_CANCEL]->hit_test(events,1)==B_CLICK)
+            if(guis[GUI_INFO]->cancel->hit_test(events,1)==B_CLICK)
             {
                 status = STOPPED;
             }
@@ -1145,24 +1149,9 @@ class gui {
 
     void draw_info(char* txt)
     {
-        if (!txt) return;
-
-        fnts->set_size(info_text_size);
-        fnts->change_color((dialog_text_color >> 16), ((dialog_text_color >> 8) & 0xff),(dialog_text_color & 0xff));
-        fade(guibuffer,SDL_MapRGB(guibuffer->format,0,0,0),100);
-        SDL_Rect t = {(SCREEN_WIDTH/2)-(info_dlg->w / 2),(440 / 2) - (info_dlg->h / 2),info_dlg->w,info_dlg->h};
-        SDL_BlitSurface(info_dlg,0, guibuffer,&t);
-        fnts->text(guibuffer,txt,t.x + info_text_x,t.y + info_text_y,0);
-
-        if (status == BUFFERING || status == CONNECTING)
-        {
-            fnts->set_size(FS_MED);
-            buttons[BTN_CANCEL]->s_x = t.x + info_cancel_x;
-            buttons[BTN_CANCEL]->s_y = t.y + info_cancel_y;
-            buttons[BTN_CANCEL]->draw();
-        }
-
+        guis[GUI_INFO]->draw(txt);
     };
+
     void draw_sc_error()
     {
         fnts->change_color((dialog_text_color >> 16), ((dialog_text_color >> 8) & 0xff),(dialog_text_color & 0xff));
