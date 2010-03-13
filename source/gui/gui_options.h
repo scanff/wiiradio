@@ -5,7 +5,7 @@
 #include "gui_toggle.h"
 #include "gui_group.h"
 
-class gui_options
+class gui_options : public gui_dlg
 {
     public:
 
@@ -21,16 +21,15 @@ class gui_options
     gui_button*     b_next_skin;
     gui_button*     b_next_lang;
 
-    fonts*          fnts;
-
-    SDL_Surface*    dest;
     SDL_Surface*    logo;
     gui_toggle*     b_option_item[O_MAX];
 
     gui_group*      saver_group;
 
-    gui_options(fonts* _f, SDL_Surface* _d) : fnts(_f), dest(_d), logo(0)
+    gui_options(fonts* _f, SDL_Surface* _d) : logo(0)
     {
+        gui_dlg::fnts = _f;
+        gui_dlg::dest = _d;
 
         logo = IMG_Load(make_path("imgs/def_logo.png"));
 
