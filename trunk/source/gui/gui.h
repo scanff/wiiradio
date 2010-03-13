@@ -7,6 +7,7 @@ class gui {
 
 
     // -- everyone knows who gui is :)
+    #include "gui_dlg.h"
     #include "gui_button.h"
     #include "gui_textbox.h"
     #include "gui_options.h"
@@ -50,6 +51,14 @@ class gui {
         TXT_MAX
     };
 
+    enum // gui's
+    {
+        GUI_OPTIONS = 0,
+        GUI_LOG,
+        GUI_MAX
+    };
+
+
     fonts*          fnts;
     visualizer*     vis;
 
@@ -81,10 +90,8 @@ class gui {
     unsigned long   vis_color_peak;
     int             peakResults[MAX_FFT_RES];
 
-
-    gui_options*    g_options;
-
-    gui_log*        g_log;
+    // gui's and pop-ups
+    gui_dlg*    guis[GUI_MAX];
 
     unsigned long   dialog_text_color;
 
@@ -172,10 +179,12 @@ class gui {
         }
 
 
+        // gui's
+        loopi(GUI_MAX) guis[GUI_MAX] = 0;
 
-        g_options = new gui_options(f,guibuffer);
+        guis[GUI_OPTIONS]   = new gui_options(f,guibuffer);
+        guis[GUI_LOG]       = new gui_log(f,guibuffer);
 
-        g_log = new gui_log(f,guibuffer);
 
         loopi(BTN_MAX) buttons[i] = 0; // NULL
 
@@ -626,8 +635,16 @@ class gui {
 
         if(visbuffer) SDL_FreeSurface(visbuffer);
 
-        delete g_options;
-        delete g_log;
+
+        loopi(GUI_MAX)
+        {
+            if (guis[i])
+            {
+                delete guis[i];
+                guis[i] = 0;
+            }
+        }
+
         delete search_gui;
     };
 
@@ -671,12 +688,12 @@ class gui {
 
         if(g_screen_status == S_OPTIONS)
         {
-             g_options->handle_events(events);
+             guis[GUI_OPTIONS]->handle_events(events);
              return 0;
         }
         if(g_screen_status == S_LOG)
         {
-             return g_log->handle_events(events);
+             return guis[GUI_LOG]->handle_events(events);
         }
 
         if (S_SEARCHGENRE == g_screen_status)
@@ -1158,17 +1175,17 @@ class gui {
 
     void draw_about()
     {
-        g_options->draw();
+        guis[GUI_OPTIONS]->draw();
     };
 
     void draw_log()
     {
-        g_log->draw();
+        guis[GUI_LOG]->draw();
     };
 
     char *logtext()
     {
-        return g_log->text;
+        return guis[GUI_LOG]->text;
     };
 
     void draw_stream_details(icy* ic)

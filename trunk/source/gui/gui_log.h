@@ -4,20 +4,20 @@
 #include "gui_button.h"
 #include "gui_group.h"
 
-class gui_log
+class gui_log : public gui_dlg
 {
     public:
 
     gui_button*     b_return;
 
-    fonts*          fnts;
 
-    SDL_Surface*    dest;
 
-    char            text[1025];
-
-    gui_log(fonts* _f, SDL_Surface* _d) : fnts(_f), dest(_d)
+    gui_log(fonts* _f, SDL_Surface* _d)
     {
+
+        gui_dlg::fnts = _f;
+        gui_dlg::dest = _d;
+
         strcpy(text, "");
 
         //return
