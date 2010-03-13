@@ -19,7 +19,7 @@
 #include <malloc.h>
 
 #include "asndlib.h"
-#include "mp3player.h"
+#include "mp3player_wiiradio.h"
 
 static s32 have_samples = 0;
 static u32 mp3_volume = 255;
