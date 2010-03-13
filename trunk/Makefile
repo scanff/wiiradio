@@ -18,7 +18,7 @@ include $(DEVKITPPC)/wii_rules
 
 TARGET		:=	$(notdir $(CURDIR))
 BUILD		:=	build
-SOURCES		:=	source source/lib/libpng/pngu
+SOURCES		:=	source libmp3player_wiiradio source/lib/libpng/pngu
 DATA		:=	data  
 INCLUDES	:=
 
@@ -26,8 +26,8 @@ INCLUDES	:=
 # options for code generation
 #---------------------------------------------------------------------------------
 
+#CFLAGS	= -Wno-write-strings -g -D_WII_ -O3 -Wall -fsigned-char $(MACHDEP) $(INCLUDE) -DLOG_ENABLED
 CFLAGS	= -Wno-write-strings -g -D_WII_ -O3 -Wall -fsigned-char $(MACHDEP) $(INCLUDE)
-#CFLAGS	= -D_WII_ -DSTD_MAD -g -O3 -Wall $(MACHDEP) $(INCLUDE)
 CXXFLAGS	=	$(CFLAGS)
 
 LDFLAGS	=	-g $(MACHDEP) -Wl,-Map,$(notdir $@).map
@@ -35,7 +35,7 @@ LDFLAGS	=	-g $(MACHDEP) -Wl,-Map,$(notdir $@).map
 #---------------------------------------------------------------------------------
 # any extra libraries we wish to link with the project
 #---------------------------------------------------------------------------------
-LIBS	:=	 -lSDL_gfx -lSDL_ttf -lSDL_image -lfreetype -ljpeg -lpng -lz -lSDL -lfat -lwiiuse -lmadwiiradio -lasnd -lbte -logc -lm -lwiikeyboard
+LIBS	:=	 -lSDL_gfx -lSDL_ttf -lSDL_image -lfreetype -ljpeg -lpng -lz -lSDL -lfat -lwiiuse -lasnd -lbte -logc -lm -lwiikeyboard -lmad
 
 #--------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
@@ -86,7 +86,8 @@ export OFILES	:=	$(addsuffix .o,$(BINFILES)) \
 export INCLUDE	:=	$(foreach dir,$(INCLUDES), -iquote $(CURDIR)/$(dir)) \
 					$(foreach dir,$(LIBDIRS),-I$(dir)/include) \
 					-I$(CURDIR)/$(BUILD) \
-					-I$(LIBOGC_INC)
+					-I$(LIBOGC_INC) \
+          -I$(LIBOGC_INC)/ogc -I$(LIBOGC_INC)/ogc/machine
 
 #---------------------------------------------------------------------------------
 # build a list of library paths
