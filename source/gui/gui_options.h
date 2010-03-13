@@ -26,16 +26,17 @@ class gui_options : public gui_dlg
 
     gui_group*      saver_group;
 
-    gui_options(fonts* _f, SDL_Surface* _d) : logo(0)
+    gui_options(gui* g_) : logo(0)
     {
-        gui_dlg::fnts = _f;
-        gui_dlg::dest = _d;
+
+        gui_dlg::fnts = g_->fnts;
+        gui_dlg::dest = g_->guibuffer;
 
         logo = IMG_Load(make_path("imgs/def_logo.png"));
 
         loopi(O_MAX) b_option_item[i] = 0;
         //quit
-        b_quit = new gui_button(_d,_f,270,410,0,0,false);
+        b_quit = new gui_button(gui_dlg::dest,gui_dlg::fnts,270,410,0,0,false);
         b_quit->set_images((char*)"imgs/button_out.png",(char*)"imgs/button_out.png",0,0);
         b_quit->set_text(vars.search_var("$LANG_TXT_QUIT_LOADER"));
         b_quit->pad_y = 5;
@@ -46,7 +47,7 @@ class gui_options : public gui_dlg
         b_quit->bind_screen = S_OPTIONS;
 
         //return
-        b_return = new gui_button(_d,_f,400,410,0,0,false);
+        b_return = new gui_button(gui_dlg::dest,gui_dlg::fnts,400,410,0,0,false);
         b_return->set_images((char*)"imgs/button_out.png",(char*)"imgs/button_out.png",0,0);
         b_return->set_text(vars.search_var("$LANG_TXT_OK"));
         b_return->pad_y = 5;
@@ -59,14 +60,14 @@ class gui_options : public gui_dlg
 
 
         //restart network
-        b_restart_net = new gui_button(_d,_f,220,240,0,0,false);
+        b_restart_net = new gui_button(gui_dlg::dest,gui_dlg::fnts,220,240,0,0,false);
         b_restart_net->set_images((char*)"imgs/toggle_out.png",(char*)"imgs/toggle_out.png",0,0);
         b_restart_net->bind_screen = S_OPTIONS;
 
         int offset_y = 0;
         loopi(O_MAX)
         {
-            b_option_item[i] = new gui_toggle(_d,_f,220,150 + offset_y,41,26,0,0);
+            b_option_item[i] = new gui_toggle(gui_dlg::dest,gui_dlg::fnts,220,150 + offset_y,41,26,0,0);
             b_option_item[i]->set_images(0,0,(char*)"imgs/toggle_out.png",(char*)"imgs/toggle_on.png");
             b_option_item[i]->bind_screen = S_OPTIONS;
 
@@ -74,7 +75,7 @@ class gui_options : public gui_dlg
         }
 
         // next skin
-        b_next_skin = new gui_button(_d,_f,420,254,0,0,false);
+        b_next_skin = new gui_button(gui_dlg::dest,gui_dlg::fnts,420,254,0,0,false);
         b_next_skin->set_images((char*)"imgs/button_out.png",(char*)"imgs/button_out.png",0,0);
         b_next_skin->set_text(vars.search_var("$LANG_TXT_NEXT"));
         b_next_skin->pad_y = 5;
@@ -85,7 +86,7 @@ class gui_options : public gui_dlg
         b_next_skin->bind_screen = S_OPTIONS;
 
 
-        b_next_lang = new gui_button(_d,_f,420,314,0,0,false);
+        b_next_lang = new gui_button(gui_dlg::dest,gui_dlg::fnts,420,314,0,0,false);
         b_next_lang->set_images((char*)"imgs/button_out.png",(char*)"imgs/button_out.png",0,0);
         b_next_lang->set_text(vars.search_var("$LANG_TXT_NEXT"));
         b_next_lang->pad_y = 5;
@@ -96,7 +97,7 @@ class gui_options : public gui_dlg
         b_next_lang->bind_screen = S_OPTIONS;
 
 
-        saver_group = new gui_group(4,220,210,41,26,20,_d,_f);
+        saver_group = new gui_group(4,220,210,41,26,20,gui_dlg::dest,gui_dlg::fnts);
         saver_group->set_on(g_screensavetime);
 
         // set options

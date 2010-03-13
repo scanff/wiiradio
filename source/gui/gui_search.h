@@ -8,7 +8,9 @@
 #include "gui.h"
 #include "gui_keyboard.h"
 #include "gui_button.h"
-class gui_search {
+
+class gui_search : public gui_dlg
+{
     public:
 
     gui*            parent;
@@ -47,7 +49,7 @@ class gui_search {
         g_screen_status = S_BROWSER;
     };
 
-    void handle_events(SDL_Event* events)
+    int handle_events(SDL_Event* events)
     {
         keyboard->handle_events(events);
         bloopj(MAX_Z_ORDERS)
@@ -57,6 +59,7 @@ class gui_search {
                 parent->gl.add_genre(keyboard->dest_buffer);
         }
 
+        return 0;
     };
 
     void draw()
