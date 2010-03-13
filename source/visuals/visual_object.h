@@ -17,7 +17,7 @@ class visual_object {
 
     int             layer;
     visual_object(){ layer = 0; };
-    ~visual_object(){};
+    virtual ~visual_object(){};
 
     virtual void load(void*) {};
     virtual void render(SDL_Surface*,void*) {};

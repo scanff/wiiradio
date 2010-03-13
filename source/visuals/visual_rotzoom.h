@@ -46,8 +46,8 @@ class vis_rotzoom : public visual_object
         {
             float rad =  (float)i * 1.41176 * 0.0174532;
             float c = sin(rad);
-            roto[i] = (c + 0.8) * 4096.0;
-            roto2[i] = (2.0 * c) * 4096.0;
+            roto[i] = (int)((c + 0.8) * 4096.0);
+            roto2[i] = (int)((2.0 * c) * 4096.0);
         }
 
         loaded = true;

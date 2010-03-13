@@ -42,7 +42,7 @@ class vis_plasma : public visual_object
         loopi(512)
         {
           rad =  ((float)i * 0.703125) * 0.0174532; /* 360 / 512 * degree to rad, 360 degrees spread over 512 values to be able to use AND 512-1 instead of using modulo 360*/
-          aSin[i] = sin(rad) * 1024; /*using fixed point math with 1024 as base*/
+          aSin[i] = (int)(sin(rad) * 1024); /*using fixed point math with 1024 as base*/
         }
 
         /* create palette */

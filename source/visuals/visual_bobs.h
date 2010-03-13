@@ -59,8 +59,8 @@ class vis_bobs : public visual_object
         for(i=0;i<512;i++)
         {
             double rad = ((float)i * 0.703125) * 0.0174532;
-            xpath[i] = sin(rad) * hw + hw;
-            ypath[i] = cos(rad) * hh + hh;
+            xpath[i] = (int)(sin(rad) * hw + hw);
+            ypath[i] = (int)(cos(rad) * hh + hh);
         }
 
         l = i;
