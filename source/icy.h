@@ -213,8 +213,7 @@ class icy {
     {
         DEB("parse_header\n");
 
-        // using ICY 200 OK to ensure we've got the start of the data
-        char* found = strstr(buf,/*icy-metaint:*/"ICY 200 OK"); // expect this response from the server !
+        char* found = strstr(buf,"icy-metaint:"); // expect this response from the server !
         if (!found)
         {
           // This does not look like a icy stream, but it still could be
