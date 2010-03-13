@@ -1,7 +1,7 @@
 #ifndef _GUI_H_
 #define _GUI_H_
 
-#include "genre_list.h"
+#include "../genre_list.h"
 
 class gui {
 

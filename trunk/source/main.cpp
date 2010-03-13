@@ -8,7 +8,7 @@
 #include "fft.h"
 #include "icy.h"
 #include "visuals.h"
-#include "gui.h"
+#include "gui/gui.h"
 
 // ---------------------
 // Variables:
