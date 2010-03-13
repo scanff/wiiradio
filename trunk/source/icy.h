@@ -290,7 +290,10 @@ class icy {
                 {
 #ifdef ICY_DEBUG
                     if (net_buffer[i] != '\0')
+                    {
                       DEB("Error in metaint section: no padding at end");
+                      exit(1);
+                    }
 #endif
                     // Parse the metaint section
                     parse_meta_data(metaint_buffer); // parse the data
@@ -383,7 +386,7 @@ class icy {
             if (remove)
             {
                 // memmove instead of memcpy because of overlapping memory
-                memmove(buffer, buffer+remove, buffered+remove);
+                memmove(buffer, buffer+remove, buffered-remove);
                 buffered -= remove;
                 metaint_pos -= remove;
 
