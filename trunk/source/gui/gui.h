@@ -55,6 +55,7 @@ class gui {
     {
         GUI_OPTIONS = 0,
         GUI_LOG,
+        GUI_SEARCH,
         GUI_MAX
     };
 
@@ -79,7 +80,7 @@ class gui {
     SDL_Surface*    dialog;
     SDL_Surface*    mute_img;
 
-    gui_search*     search_gui;
+   // gui_search*     search_gui;
 
     int             genre_selected;
 
@@ -141,7 +142,7 @@ class gui {
 
 
         // search genre screen
-        search_gui = new gui_search(this);
+      //  search_gui = new gui_search(this);
 
 
         char s_value1[SMALL_MEM];
@@ -182,8 +183,9 @@ class gui {
         // gui's
         loopi(GUI_MAX) guis[GUI_MAX] = 0;
 
-        guis[GUI_OPTIONS]   = new gui_options(f,guibuffer);
-        guis[GUI_LOG]       = new gui_log(f,guibuffer);
+        guis[GUI_OPTIONS]   = new gui_options(this);
+        guis[GUI_LOG]       = new gui_log(this);
+        guis[GUI_SEARCH]    = new gui_search(this);
 
 
         loopi(BTN_MAX) buttons[i] = 0; // NULL
@@ -645,7 +647,6 @@ class gui {
             }
         }
 
-        delete search_gui;
     };
 
     void reset_scrollings()
@@ -698,8 +699,7 @@ class gui {
 
         if (S_SEARCHGENRE == g_screen_status)
         {
-            search_gui->handle_events(events);
-            return 0;
+            return guis[GUI_SEARCH]->handle_events(events);
         }
 
 
@@ -1115,7 +1115,7 @@ class gui {
             }
         }
 
-        if (g_screen_status == S_SEARCHGENRE) search_gui->draw();
+        if (g_screen_status == S_SEARCHGENRE) guis[GUI_SEARCH]->draw();
         if (g_screen_status == S_OPTIONS) draw_about();
         if (g_screen_status == S_LOG) draw_log();
 
