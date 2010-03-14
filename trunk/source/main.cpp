@@ -391,162 +391,160 @@ void screen_timeout()
 
 void check_keys()
 {
-    // -- send the keys to the ui (mainly the visuals) and see if they peform a fifferent action!
-    if (!ui->override_keys())
+
+    // -- keys that always perform the same action go first!!!
+    if (g_real_keys[SDLK_2] && ! g_keys_last_state[SDLK_2])
+        visualize ? visualize = false : visualize = true;
+
+
+    if (g_real_keys[SDLK_MINUS] && !g_keys_last_state[SDLK_MINUS])
     {
-        // -- keys that always perform the same action go first!!!
-        if (g_real_keys[SDLK_2] && ! g_keys_last_state[SDLK_2])
-            visualize ? visualize = false : visualize = true;
+        mute ? mute = false : mute = true;
 
-
-        if (g_real_keys[SDLK_MINUS] && !g_keys_last_state[SDLK_MINUS])
+        if (mute)
         {
-            mute ? mute = false : mute = true;
-
-            if (mute)
-            {
 #ifdef _WII_
-                MP3Player_Volume(0);
+            MP3Player_Volume(0);
 #else
-                FMOD_Channel_SetVolume(channel1, 0.);
+            FMOD_Channel_SetVolume(channel1, 0.);
 #endif
-            }else{
-#ifdef _WII_
-                MP3Player_Volume(mp3_volume);
-#else
-                FMOD_Channel_SetVolume(channel1, mp3_volume/255.);
-#endif
-            }
-
-        }
-
-
-        if (g_real_keys[SDLK_DOWN]) {
-
-            mute = false;
-
-            mp3_volume-=4;
-            mp3_volume <= 0 ? mp3_volume = 0 : 0;
+        }else{
 #ifdef _WII_
             MP3Player_Volume(mp3_volume);
 #else
             FMOD_Channel_SetVolume(channel1, mp3_volume/255.);
 #endif
-            g_vol_lasttime = get_tick_count();
         }
 
-        if (g_real_keys[SDLK_UP]) {
+    }
 
-            mute = false;
 
-            mp3_volume+=4;
-            mp3_volume >= 255 ? mp3_volume = 255 : 0;
+    if (g_real_keys[SDLK_DOWN]) {
+
+        mute = false;
+
+        mp3_volume-=4;
+        mp3_volume <= 0 ? mp3_volume = 0 : 0;
 #ifdef _WII_
-            MP3Player_Volume(mp3_volume);
+        MP3Player_Volume(mp3_volume);
 #else
-            FMOD_Channel_SetVolume(channel1, mp3_volume/255.);
+        FMOD_Channel_SetVolume(channel1, mp3_volume/255.);
+#endif
+        g_vol_lasttime = get_tick_count();
+    }
+
+    if (g_real_keys[SDLK_UP]) {
+
+        mute = false;
+
+        mp3_volume+=4;
+        mp3_volume >= 255 ? mp3_volume = 255 : 0;
+#ifdef _WII_
+        MP3Player_Volume(mp3_volume);
+#else
+        FMOD_Channel_SetVolume(channel1, mp3_volume/255.);
 #endif
 
-            g_vol_lasttime = get_tick_count();
-        }
+        g_vol_lasttime = get_tick_count();
+    }
 
 
-        if (g_real_keys[SDLK_1] && !g_keys_last_state[SDLK_1])
+    if (g_real_keys[SDLK_1] && !g_keys_last_state[SDLK_1])
+    {
+
+        if (g_screen_status != S_STREAM_INFO) {
+            if (!visualize) g_screen_status = S_STREAM_INFO;
+        }else if (g_screen_status == S_STREAM_INFO)  { g_screen_status = S_BROWSER; }
+
+
+    }
+
+    if (g_real_keys[SDLK_ESCAPE] && !g_keys_last_state[SDLK_ESCAPE] && !visualize)
+    {
+        if (g_screen_status != S_OPTIONS)
+            g_screen_status = S_OPTIONS;
+        else g_screen_status = S_BROWSER;
+    }
+
+    if (g_real_keys[SDLK_b] && g_screen_status != S_BROWSER) g_screen_status = S_BROWSER;
+    if (g_real_keys[SDLK_PLUS] && status == PLAYING)
+        request_save_fav(); // save playlist
+
+
+    if (g_real_keys[SDLK_RIGHT] && !g_keys_last_state[SDLK_RIGHT])
+    {
+        if (visualize)
         {
+            if (visualize_number < MAX_VISUALS)
+                visualize_number++;
 
-            if (g_screen_status != S_STREAM_INFO) {
-                if (!visualize) g_screen_status = S_STREAM_INFO;
-            }else if (g_screen_status == S_STREAM_INFO)  { g_screen_status = S_BROWSER; }
-
-
+            return;
         }
 
-        if (g_real_keys[SDLK_ESCAPE] && !g_keys_last_state[SDLK_ESCAPE] && !visualize)
+        if (g_screen_status == S_BROWSER)
         {
-            if (g_screen_status != S_OPTIONS)
-                g_screen_status = S_OPTIONS;
-            else g_screen_status = S_BROWSER;
+            if (display_idx > MAX_STATION_CACHE) return;
+            else display_idx += max_listings;
+
+            ui->reset_scrollings();
+
         }
 
-        if (g_real_keys[SDLK_b] && g_screen_status != S_BROWSER) g_screen_status = S_BROWSER;
-        if (g_real_keys[SDLK_PLUS] && status == PLAYING)
-            request_save_fav(); // save playlist
-
-
-        if (g_real_keys[SDLK_RIGHT] && !g_keys_last_state[SDLK_RIGHT])
+        if (g_screen_status == S_PLAYLISTS)
         {
-            if (visualize)
-            {
-                if (visualize_number < MAX_VISUALS)
-                    visualize_number++;
+             if (pls_display + max_listings  >= total_num_playlists) return;
+             else pls_display += max_listings;
 
-                return;
-            }
-
-            if (g_screen_status == S_BROWSER)
-            {
-                if (display_idx > MAX_STATION_CACHE) return;
-                else display_idx += max_listings;
-
-                ui->reset_scrollings();
-
-            }
-
-            if (g_screen_status == S_PLAYLISTS)
-            {
-                 if (pls_display + max_listings  >= total_num_playlists) return;
-                 else pls_display += max_listings;
-
-                 ui->reset_scrollings();
-            }
-
-            if (g_screen_status == S_GENRES)
-            {
-                //if (genre_display + max_listings  >= MAX_GENRE) return;
-                if (genre_display + max_listings  >= ui->gl.total) return;
-                else genre_display += max_listings;
-
-                ui->reset_scrollings();
-            }
-
-
+             ui->reset_scrollings();
         }
 
-        if (g_real_keys[SDLK_LEFT] && !g_keys_last_state[SDLK_LEFT])
+        if (g_screen_status == S_GENRES)
         {
-            if (visualize)
-            {
-                if (visualize_number > 0)
-                    visualize_number--;
+            //if (genre_display + max_listings  >= MAX_GENRE) return;
+            if (genre_display + max_listings  >= ui->gl.total) return;
+            else genre_display += max_listings;
 
-                return;
-            }
-
-            if (g_screen_status == S_BROWSER)
-            {
-                if (display_idx < 0) display_idx = 0;
-                else display_idx -= max_listings;
-
-                ui->reset_scrollings();
-            }
-
-            if (g_screen_status == S_PLAYLISTS)
-            {
-                pls_display -= max_listings;
-                if (pls_display < 0) pls_display = 0;
-
-                ui->reset_scrollings();
-            }
-
-            if (g_screen_status == S_GENRES)
-            {
-                genre_display -= max_listings;
-                if (genre_display < 0) genre_display = 0;
-
-                ui->reset_scrollings();
-            }
+            ui->reset_scrollings();
         }
-    } // ui over ride keys ?
+
+
+    }
+
+    if (g_real_keys[SDLK_LEFT] && !g_keys_last_state[SDLK_LEFT])
+    {
+        if (visualize)
+        {
+            if (visualize_number > 0)
+                visualize_number--;
+
+            return;
+        }
+
+        if (g_screen_status == S_BROWSER)
+        {
+            if (display_idx < 0) display_idx = 0;
+            else display_idx -= max_listings;
+
+            ui->reset_scrollings();
+        }
+
+        if (g_screen_status == S_PLAYLISTS)
+        {
+            pls_display -= max_listings;
+            if (pls_display < 0) pls_display = 0;
+
+            ui->reset_scrollings();
+        }
+
+        if (g_screen_status == S_GENRES)
+        {
+            genre_display -= max_listings;
+            if (genre_display < 0) genre_display = 0;
+
+            ui->reset_scrollings();
+        }
+    }
+
 
     screen_timeout();
 }
