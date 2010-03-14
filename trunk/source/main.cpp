@@ -638,7 +638,8 @@ int critical_thread(void *arg)
                 errors = 0;
 
                 // metaint handler
-                len = icy_info->parse_metaint(net_buffer,len);
+                //if (!icy_info->looking_for_header)
+                    len = icy_info->parse_metaint(net_buffer,len);
 
                 // data handler
                 icy_info->buffer_data(net_buffer,len);

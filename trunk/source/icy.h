@@ -291,7 +291,8 @@ class icy {
 #ifdef ICY_DEBUG
                     if (net_buffer[i] != '\0')
                     {
-                      DEB("Error in metaint section: no padding at end");
+                      printf("Error in metaint section: no padding at end, metaint; %d\n",
+                             icy_metaint);
                       exit(1);
                     }
 #endif
@@ -337,7 +338,7 @@ class icy {
             }
         }
 #ifdef ICY_DEBUG
-        printf("parse_metaint len, new_len: %d %d (%d)\n", len, new_len, len-new_len);
+        printf("parse_metaint len, new_len (diff), metaint: %d %d (%d) %d\n", len, new_len, len-new_len, icy_metaint);
 #endif
 
         return new_len;
