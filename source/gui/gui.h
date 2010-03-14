@@ -184,7 +184,7 @@ class gui {
 
 
         // gui's
-        loopi(GUI_MAX) guis[GUI_MAX] = 0;
+        loopi(GUI_MAX) guis[i] = 0;
 
         guis[GUI_OPTIONS]   = new gui_options(this);
         guis[GUI_LOG]       = new gui_log(this);
