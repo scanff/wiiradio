@@ -1139,14 +1139,6 @@ class gui {
 
     };
 
-    // -- different mapping ?
-    bool override_keys()
-    {
-        if (visualize) return vis->remap_keys;
-
-        return false;
-    };
-
     void draw_info(char* txt)
     {
         guis[GUI_INFO]->draw(txt);

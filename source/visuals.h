@@ -167,13 +167,12 @@ class visualizer
     SDL_Surface*    vis_surface;
     visual_object*  visuals_ptr[MAX_VISUALS];
     void*           user_data;
-    bool            remap_keys;
     double          angle;
     int             r1, r2;
     unsigned long   vt;
     int             mode;
 
-    visualizer(fft* p_f) : f(p_f), remap_keys(false), angle(0.0), mode(0)
+    visualizer(fft* p_f) : f(p_f), angle(0.0), mode(0)
     {
         r1 = r2 = vt = 0;
         loopi(MAX_FFT_RES)
