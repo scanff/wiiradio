@@ -60,11 +60,12 @@ Uint64 get_tick_count()
     return SDL_GetTicks();
 }
 
+char g_storage_media[8]; // extern'd
 char* make_path(const char* path_rel)
 {
 #ifdef _WII_
     static char abs_path[SMALL_MEM] = {0};
-    sprintf(abs_path,"sd:/apps/radiow/%s",path_rel);
+    sprintf(abs_path,"%s:/apps/radiow/%s",g_storage_media,path_rel);
 
     return abs_path;
 #else
