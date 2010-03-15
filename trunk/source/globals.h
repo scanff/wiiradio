@@ -104,6 +104,7 @@ enum
   S_CANCEL_CON_BUF,
   S_SEARCHING,
   S_SEARCHGENRE,
+  S_USERCONNECT,
   S_MAX,
   S_LOG
 };
@@ -127,6 +128,7 @@ enum connect_info
 {
   I_STATION = 0,
   I_PLAYLIST,
+  I_DIRECT, // User has typed IP or address
   I_HASBEENSET
 };
 
@@ -146,6 +148,7 @@ extern Uint64       g_vol_lasttime;
 extern bool         mute;
 extern bool         screen_sleeping;
 extern int          g_reloading_skin;
+extern char         g_storage_media[8];
 
 extern Uint64 get_tick_count();
 extern char* make_path(const char*);

@@ -58,6 +58,43 @@ SDL_Thread* connectthread = 0;
 int search_thread (void *arg); // -- thread for genre searches
 SDL_Thread* searchthread = 0;
 
+#ifdef _WII_
+
+// check to see where Wiiradio is, sd or usb
+void prob_media(char* p)
+{
+    memset(g_storage_media,0,8);
+
+    // this is here for wiiload
+    if (!p)
+    {
+        strcpy(g_storage_media,"sd");
+        return;
+    }
+
+    if (strstr(p,"usb:/"))
+    {
+        strcpy(g_storage_media,"usb");
+        return;
+    }
+
+    if (strstr(p,"sd:/"))
+    {
+        strcpy(g_storage_media,"sd");
+        return;
+    }
+
+    // older HBC versions !!!
+    if (strstr(p,"fat:/"))
+    {
+        strcpy(g_storage_media,"sd");
+        return;
+    }
+
+    // last chance .. default
+    strcpy(g_storage_media,"sd");
+}
+#endif
 
 void translate_keys()
 {
@@ -251,6 +288,57 @@ int connect_thread(void* arg)
 }
 
 
+void split_url(char* o_url, char* o_path, int* o_port, char* url)
+{
+    int part = 0;
+    char* split = url;
+     // ignore http://
+    char* search = strstr(url,"http://");
+    if(!search) return;
+
+    // Clear data
+    strcpy(o_url,  "");
+    strcpy(o_path, "");
+    o_port = 0;
+
+    search += strlen("http://");
+
+    split = strtok(search,":/");
+    while(split) {
+
+        if(!part) {
+            strcpy(o_url,split);
+        }else if(part==1) {
+            *o_port = atoi(split);
+            if (*o_port == 0) {
+                strcat(o_path,"/");
+                strcat(o_path,split);
+            }
+        }else{
+            strcat(o_path,"/");
+            strcat(o_path,split);
+        }
+
+        split = strtok(0,":/");
+        part++;
+    }
+}
+
+void connect_direct(char* typed);
+void connect_direct(char* typed)
+{
+    char url[255] = {0};
+    char path[255] = {0};
+    int port = 80;
+
+    split_url(url,path,&port,typed);
+
+    if (port == 0) port = 80;
+
+    connect_to_stream(0,I_DIRECT);
+
+};
+
 void connect_to_stream(int,connect_info); //extern'd
 void connect_to_stream(int value, connect_info info)
 {
@@ -333,6 +421,10 @@ void connect_to_stream(int value, connect_info info)
         strcpy(playing->station_name,csl->station_name);
         break;
       }
+      case I_DIRECT:
+        // do nothing
+      break;
+
       case I_HASBEENSET: break;
     }
 
@@ -394,7 +486,9 @@ void check_keys()
 
     // -- keys that always perform the same action go first!!!
     if (g_real_keys[SDLK_2] && ! g_keys_last_state[SDLK_2])
-        visualize ? visualize = false : visualize = true;
+       visualize ? visualize = false : visualize = true;
+       // g_screen_status = S_USERCONNECT;
+
 
 
     if (g_real_keys[SDLK_MINUS] && !g_keys_last_state[SDLK_MINUS])
@@ -774,6 +868,11 @@ int main(int argc, char **argv)
     WPAD_SetPowerButtonCallback((WPADShutdownCallback)ShutdownCB);
     SYS_SetPowerCallback(ShutdownCB);
     //SYS_SetResetCallback(ResetCB);
+
+
+    // where is wiiradio ?
+    prob_media(argv[0]);
+
 
 #endif
 
