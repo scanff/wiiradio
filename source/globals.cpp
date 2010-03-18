@@ -115,6 +115,23 @@ void draw_rect(SDL_Surface* s,int x,int y, int w, int h,unsigned long color)
     SDL_FillRect(s, &r, color);
 };
 
+#ifdef _WII_
+// Will need latest SVN version of SDL as of 3/18/10
+extern "C" { extern void WII_SetWidescreen(int wide); }
+#endif
+
+// Widescreen option
+void SetWidescreen();
+void SetWidescreen()
+{
+#ifdef _WII_
+
+	// Will need latest SVN version of SDL as of 3/16/10
+
+    WII_SetWidescreen(g_owidescreen);
+
+#endif
+};
 
 // extern functions / vars
 char* make_path(const char*);

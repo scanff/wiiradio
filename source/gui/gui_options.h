@@ -11,13 +11,13 @@ class gui_options : public gui_dlg
 
     enum _option_buttons {
         O_SCROLL_TEXT = 0,
+        O_WIDESCREEN,
         O_MAX
     };
 
 
     gui_button*     b_quit;
     gui_button*     b_return;
-    gui_button*     b_restart_net;
     gui_button*     b_next_skin;
     gui_button*     b_next_lang;
 
@@ -59,20 +59,16 @@ class gui_options : public gui_dlg
 
 
 
-        //restart network
-        b_restart_net = new gui_button(gui_dlg::dest,gui_dlg::fnts,220,240,0,0,false);
-        b_restart_net->set_images((char*)"imgs/toggle_out.png",(char*)"imgs/toggle_out.png",0,0);
-        b_restart_net->bind_screen = S_OPTIONS;
+        b_option_item[O_SCROLL_TEXT] = new gui_toggle(gui_dlg::dest,gui_dlg::fnts,220,150,41,26,0,0);
+        b_option_item[O_SCROLL_TEXT]->set_images(0,0,(char*)"imgs/toggle_out.png",(char*)"imgs/toggle_on.png");
+        b_option_item[O_SCROLL_TEXT]->bind_screen = S_OPTIONS;
 
-        int offset_y = 0;
-        loopi(O_MAX)
-        {
-            b_option_item[i] = new gui_toggle(gui_dlg::dest,gui_dlg::fnts,220,150 + offset_y,41,26,0,0);
-            b_option_item[i]->set_images(0,0,(char*)"imgs/toggle_out.png",(char*)"imgs/toggle_on.png");
-            b_option_item[i]->bind_screen = S_OPTIONS;
+        b_option_item[O_WIDESCREEN] = new gui_toggle(gui_dlg::dest,gui_dlg::fnts,480,150,41,26,0,0);
+        b_option_item[O_WIDESCREEN]->set_images(0,0,(char*)"imgs/toggle_out.png",(char*)"imgs/toggle_on.png");
+        b_option_item[O_WIDESCREEN]->bind_screen = S_OPTIONS;
 
-            offset_y += 30;
-        }
+
+
 
         // next skin
         b_next_skin = new gui_button(gui_dlg::dest,gui_dlg::fnts,420,254,0,0,false);
@@ -119,7 +115,6 @@ class gui_options : public gui_dlg
 
         delete b_next_skin;
         delete b_next_lang;
-        delete b_restart_net;
         delete b_quit;
         delete b_return;
 
@@ -141,6 +136,18 @@ class gui_options : public gui_dlg
             g_screensavetime = saver_group->hit_test(events,j);
             b_option_item[O_SCROLL_TEXT]->obj_state == B_OFF ? g_oscrolltext = 0 : g_oscrolltext = 1;
 
+
+            if (b_option_item[O_WIDESCREEN]->obj_state == B_OFF && g_owidescreen)
+            {
+                g_owidescreen = 0;
+                SetWidescreen();
+            }
+            else if (b_option_item[O_WIDESCREEN]->obj_state == B_ON && !g_owidescreen)
+            {
+                g_owidescreen = 1;
+                SetWidescreen();
+            }
+
         }
 
         return 0;
@@ -157,6 +164,8 @@ class gui_options : public gui_dlg
         fnts->set_size(FS_SYSTEM);
 
         fnts->text(dest,vars.search_var("$LANG_SCROLL_STATIONTEXT"),200,150,0,1);
+        fnts->text(dest,"Widescreen :",470,150,0,1); // -- TO DO Variable this
+
 
         fnts->text(dest,"1min       5min     10min     Off",220,180,0,0);
         fnts->text(dest,vars.search_var("$LANG_SCREEN_SAVE"),200,210,0,1);

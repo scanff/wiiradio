@@ -335,6 +335,10 @@ void connect_direct(char* typed)
 
     if (port == 0) port = 80;
 
+    strcpy(playing->station_url, url);
+    playing->port = port;
+    strcpy(playing->station_path, path);
+
     connect_to_stream(0,I_DIRECT);
 
 };
@@ -486,7 +490,7 @@ void check_keys()
 
     // -- keys that always perform the same action go first!!!
     if (g_real_keys[SDLK_2] && ! g_keys_last_state[SDLK_2])
-       visualize ? visualize = false : visualize = true;
+		visualize ? visualize = false : visualize = true;
        // g_screen_status = S_USERCONNECT;
 
 
@@ -890,6 +894,8 @@ int main(int argc, char **argv)
         exit(1);
     }
 
+    SetWidescreen(); // adjust the screen depending on the widescreen option
+
     last_button_time = get_tick_count();
     SDL_ShowCursor(0);
 
@@ -1001,6 +1007,7 @@ _reload:
 
 
 #ifdef _WII_
+
         WPAD_ScanPads();
 
         u32 type;
@@ -1011,6 +1018,8 @@ _reload:
         wd_one = WPAD_Data(0);
 
         translate_keys();
+
+
 #else
         SDL_PumpEvents();
         g_nKetStatus = SDL_GetKeyState(NULL);

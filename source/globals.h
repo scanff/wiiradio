@@ -159,6 +159,7 @@ extern char* make_string(char*,...);
 extern char* trim_string(char*, int);
 extern void next_skin();
 extern void next_lang();
+extern void SetWidescreen();
 
 extern SDL_Surface*        screen;
 #define K_UP_1      SDLK_UP
