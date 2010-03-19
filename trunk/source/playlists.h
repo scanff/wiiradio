@@ -166,6 +166,7 @@ class playlists
         return ret;
     };
 
+
     void split_url(char* url)
     {
         first_entry->reset();

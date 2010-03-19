@@ -6,10 +6,11 @@ int g_oscrolltext;
 int g_screensavetime;
 char g_currentskin[SMALL_MEM];
 char g_currentlang[SMALL_MEM];
+int g_servicetype;
 
 void parse_options(char* buf)
 {
-    sscanf(buf,"ws %d\nst %d\nss %d\nskin %s\nlang %s\n",&g_owidescreen,&g_oscrolltext,&g_screensavetime,g_currentskin,g_currentlang);
+    sscanf(buf,"ws %d\nst %d\nss %d\nskin %s\nlang %s\nservice %d\n",&g_owidescreen,&g_oscrolltext,&g_screensavetime,g_currentskin,g_currentlang,&g_servicetype);
 }
 
 void set_defaults()
@@ -17,6 +18,7 @@ void set_defaults()
     g_owidescreen = 0;
     g_oscrolltext = 0;
     g_screensavetime = 0;
+    g_servicetype = SERVICE_SHOUTCAST;
 }
 
 bool load_options()
@@ -64,7 +66,7 @@ void save_options()
     f = fopen(make_path("options.dat"),"w");
     if (!f) return;
 
-    fprintf(f,"ws %d\nst %d\nss %d\nskin %s\nlang %s\n",g_owidescreen,g_oscrolltext,g_screensavetime,g_currentskin,g_currentlang);
+    fprintf(f,"ws %d\nst %d\nss %d\nskin %s\nlang %s\nservice %d\n",g_owidescreen,g_oscrolltext,g_screensavetime,g_currentskin,g_currentlang,g_servicetype);
 
     fclose(f);
 }

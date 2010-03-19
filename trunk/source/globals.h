@@ -132,6 +132,13 @@ enum connect_info
   I_HASBEENSET
 };
 
+enum
+{
+    SERVICE_SHOUTCAST = 0,
+    SERVICE_ICECAST,
+    SERVICE_UNKNOWN
+};
+
 extern Uint8 *        g_nKetStatus;
 extern Uint8        g_real_keys[MAX_KEYS];
 extern Uint8        g_keys_last_state[MAX_KEYS];

@@ -25,6 +25,7 @@ class gui_options : public gui_dlg
     gui_toggle*     b_option_item[O_MAX];
 
     gui_group*      saver_group;
+    gui_group*      service_group;
 
     gui_options(gui* g_) : logo(0)
     {
@@ -96,6 +97,10 @@ class gui_options : public gui_dlg
         saver_group = new gui_group(4,220,210,41,26,20,gui_dlg::dest,gui_dlg::fnts);
         saver_group->set_on(g_screensavetime);
 
+        service_group = new gui_group(2,220,110,41,26,120,gui_dlg::dest,gui_dlg::fnts);
+        service_group->set_on(g_screensavetime);
+
+
         // set options
         g_oscrolltext ? b_option_item[O_SCROLL_TEXT]->obj_state = B_ON : b_option_item[O_SCROLL_TEXT]->obj_state = B_OFF;
 
@@ -104,6 +109,9 @@ class gui_options : public gui_dlg
 
     ~gui_options()
     {
+        delete service_group;
+        service_group = 0;
+
         delete saver_group;
         saver_group = 0;
 
@@ -134,6 +142,8 @@ class gui_options : public gui_dlg
             loopi(O_MAX) b_option_item[i]->hit_test(events,j);
 
             g_screensavetime = saver_group->hit_test(events,j);
+            g_servicetype = service_group->hit_test(events,j);
+
             b_option_item[O_SCROLL_TEXT]->obj_state == B_OFF ? g_oscrolltext = 0 : g_oscrolltext = 1;
 
 
@@ -166,7 +176,11 @@ class gui_options : public gui_dlg
         fnts->text(dest,vars.search_var("$LANG_SCROLL_STATIONTEXT"),200,150,0,1);
         fnts->text(dest,"Widescreen :",470,150,0,1); // -- TO DO Variable this
 
+        // for service type
+        fnts->text(dest,"SHOUTcast :",200,110,0,1);
+        fnts->text(dest,"Icecast :",370,110,0,1);
 
+        // screen save
         fnts->text(dest,"1min       5min     10min     Off",220,180,0,0);
         fnts->text(dest,vars.search_var("$LANG_SCREEN_SAVE"),200,210,0,1);
 
@@ -202,7 +216,7 @@ class gui_options : public gui_dlg
         b_next_lang->draw();
         b_next_skin->draw();
         saver_group->draw();
-
+        service_group->draw();
     };
 
     void draw()
