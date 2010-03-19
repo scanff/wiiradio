@@ -169,8 +169,8 @@ void station_lister(const char* path,char* gen)
     //ui->select_pos = 0;
 
     // connect and get the web page
-    if(!scb->connect(path,gen))    // parse the html and grab what we need
-        scb->connect(path,gen); // try again
+    if(!scb->connect(path,gen,g_servicetype))    // parse the html and grab what we need
+        scb->connect(path,gen,g_servicetype); // try again
 
 }
 
@@ -380,7 +380,13 @@ void connect_to_stream(int value, connect_info info)
         }
 
         // get playlists
-        playlst->get_playlist(csl->station_id);
+        if (csl->service_type == SERVICE_SHOUTCAST)
+        {
+            playlst->get_playlist(csl->station_id);
+        }else if (csl->service_type == SERVICE_ICECAST){
+            // no pls for ICEcast
+            playlst->split_url(csl->station_id);
+        }
 
         strcpy(playing->station_url, playlst->first_entry->url);
         playing->port = playlst->first_entry->port;
