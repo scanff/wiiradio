@@ -232,19 +232,21 @@ class shoutcast_browser
         }
 
         unsigned long page_size = 0;
-        unsigned long header_size = 0;
+        unsigned long size = MAX_PAGE_SIZE;
         if (refresh_genre_cache)
         {
-
-            if ((header_size=get_header(connect_url,lpath)) > 0)
+            // don't bother SHOUTcast does not return content-len in HEAD
+            if (SERVICE_SHOUTCAST != type)
             {
-                delete [] current_page;
-                current_page = 0;
+                if ((size=get_header(connect_url,lpath)) > 0)
+                {
+                    delete [] current_page;
+                    current_page = 0;
 
-                current_page = new char[header_size+10]; // guard
-                if(!current_page) return 0;
+                    current_page = new char[size+10]; // guard
+                    if(!current_page) return 0;
+                }
             }
-
 
             if (net->client_connect(connect_url,80,TCP)) {
 
@@ -252,13 +254,29 @@ class shoutcast_browser
                 {
                     int len = 1;
                     unsigned long start_time = get_tick_count();
+                    int tmp_size = 3000;
+                    char* tmp_buffer = 0;
+                    tmp_buffer = new char[tmp_size];
+                    if (!tmp_buffer)
+                    {
+                        delete [] current_page;
+                        return 0;
+                    }
                     //ok ... lets real in the web page.
                     while (len > 0)
                     {
                         if ((get_tick_count() - start_time) > TIME_OUT_MS) break; //timeout
 
-                        len = net->client_recv(current_page+page_size,MAX_NET_BUFFER);
-                        if (len > 0) page_size += len;
+                        len = net->client_recv(tmp_buffer,tmp_size);
+
+                        if (len > 0)
+                        {
+                            if (page_size+len >= size) break;
+
+                            memcpy(current_page+page_size,tmp_buffer,len);
+                            page_size += len;
+
+                        }
     #ifdef _WII_
                         if(len==(-EAGAIN)) len = 1;//WOULDBLOCK
     #endif
@@ -271,8 +289,10 @@ class shoutcast_browser
 
                     }
 
-
+                    // temp buf
+                    delete [] tmp_buffer;
                 }
+
                 // close the connection
                 net->client_close();
 
