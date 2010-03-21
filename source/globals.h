@@ -104,7 +104,7 @@ enum
   S_CANCEL_CON_BUF,
   S_SEARCHING,
   S_SEARCHGENRE,
-  S_USERCONNECT,
+//  S_USERCONNECT,
   S_MAX,
   S_LOG
 };
@@ -137,6 +137,14 @@ enum
     SERVICE_SHOUTCAST = 0,
     SERVICE_ICECAST,
     SERVICE_UNKNOWN
+};
+
+enum
+{
+    SEARCH_GENRE = 0,
+    SEARCH_STATIONS,
+    SEARCH_CONNECT,
+    SEARCH_MAX
 };
 
 extern Uint8 *        g_nKetStatus;
@@ -198,7 +206,7 @@ extern SDL_Surface*        screen;
 #define MED_MEM         (1024)
 #define TINY_MEM        (50)
 #define MAX_FFT_SAMPLE  (8192/4)
-#define MAX_NET_BUFFER  (25000)
+#define MAX_NET_BUFFER  (10000)
 #define STD_STREAM_PORT (80)
 
 #define MAX_STATION_CACHE (1000)
@@ -217,7 +225,7 @@ extern int Y_OFFSET;
 extern int max_listings;
 
 extern void connect_to_stream(int,connect_info);
-extern void search_genre(char*);
+extern void search_function(char*,int);
 extern void genre_nex_prev(bool,char*);
 extern void request_save_fav();
 extern void screen_saver();

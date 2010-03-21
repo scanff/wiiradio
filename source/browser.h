@@ -28,7 +28,7 @@ class shoutcast_browser
 
     #define SHOUTCAST_DB_URL    ("www.shoutcast.com")
     #define ICECAST_DB_URL      ("dir.xiph.org")
-    #define MAX_PAGE_SIZE   (500000) // 1.5MB .. Icecast is massive
+    #define MAX_PAGE_SIZE   (1500000) // 1.5MB .. Icecast is massive
 
     station_list*   sl_first;
     station_list*   sl;
@@ -241,7 +241,7 @@ class shoutcast_browser
                 delete [] current_page;
                 current_page = 0;
 
-                current_page = new char[header_size];
+                current_page = new char[header_size+10]; // guard
                 if(!current_page) return 0;
             }
 
