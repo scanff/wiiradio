@@ -691,8 +691,11 @@ void search_function(char* value,int search_type)
         return;
     }
 
-    // no way to search Icecast via their backend db .. switch to SHOUTCast
-    g_servicetype = SERVICE_SHOUTCAST;
+    if (search_type == SEARCH_STATIONS)
+    { // can't do this yet with icecast
+        g_servicetype = SERVICE_SHOUTCAST;
+    }
+
     if (searchthread)
     {
         SDL_WaitThread(searchthread, NULL); // wait for it to stop
