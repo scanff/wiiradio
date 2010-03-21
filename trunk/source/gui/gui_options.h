@@ -98,7 +98,7 @@ class gui_options : public gui_dlg
         saver_group->set_on(g_screensavetime);
 
         service_group = new gui_group(2,220,110,41,26,120,gui_dlg::dest,gui_dlg::fnts);
-        service_group->set_on(g_screensavetime);
+        service_group->set_on(g_servicetype);
 
 
         // set options
