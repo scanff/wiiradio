@@ -14,7 +14,7 @@ class gui {
     #include "gui_search.h"
     #include "gui_log.h"
     #include "gui_info.h"
-    #include "gui_connect.h"
+   // #include "gui_connect.h"
 
     public:
 
@@ -59,7 +59,7 @@ class gui {
         GUI_LOG,
         GUI_SEARCH,
         GUI_INFO,
-        GUI_CONNECT,
+        //GUI_CONNECT,
         GUI_MAX
     };
 
@@ -192,7 +192,7 @@ class gui {
         guis[GUI_SEARCH]    = new gui_search(this);
         guis[GUI_INFO]      = new gui_info(this);
 //        guis[GUI_SC_ERROR]  = new gui_sc_error(this); -- TODO
-        guis[GUI_CONNECT]   = new gui_connect(this);
+//        guis[GUI_CONNECT]   = new gui_connect(this);
 
         loopi(BTN_MAX) buttons[i] = 0; // NULL
 
@@ -708,11 +708,11 @@ class gui {
             return guis[GUI_SEARCH]->handle_events(events);
         }
 
-        if (S_USERCONNECT == g_screen_status)
+ /*       if (S_USERCONNECT == g_screen_status)
         {
             return guis[GUI_CONNECT]->handle_events(events);
         }
-
+*/
         if (g_screen_status == S_SEARCHING) return 0; // no hit test
 
         // -- cancel buffering
@@ -819,7 +819,7 @@ class gui {
                         if (!g) return 0;
 
 
-                        search_genre(g); // do the search .. switch to browser
+                        search_function(g,SEARCH_GENRE); // do the search .. switch to browser
                         reset_scrollings();
                         return 0;
                     }
@@ -1128,7 +1128,7 @@ class gui {
         if (g_screen_status == S_SEARCHGENRE) guis[GUI_SEARCH]->draw();
         if (g_screen_status == S_OPTIONS) draw_about();
         if (g_screen_status == S_LOG) draw_log();
-        if (g_screen_status == S_USERCONNECT) guis[GUI_CONNECT]->draw();
+//        if (g_screen_status == S_USERCONNECT) guis[GUI_CONNECT]->draw();
 
         // always inform user if buffering
         if (status == BUFFERING) draw_info(vars.search_var("$LANG_TXT_BUFFERING"));

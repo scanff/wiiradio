@@ -13,6 +13,8 @@ class gui_keyboard
 
     public:
 
+    void*           userdata;
+
     Key             keys[4][11];
     gui_button*     key_buttons[4][11];
     gui_button*     key_space;
@@ -31,12 +33,14 @@ class gui_keyboard
 
     int             caps;
     int             shift;
+
+
     // -- callbacks
-    void (*ok_click)(char*);
+    void (*ok_click)(void*,char*);
     void (*cancel_click)();
 
-    gui_keyboard(fonts* _f, SDL_Surface* _d, int _ix, int _iy,void (*_ok_click)(char*),void (*_cancel_click)(),char* _ok_text, char* _close_text) :
-        dest(_d), pos_x(_ix), pos_y(_iy), caps(0), shift(0)
+    gui_keyboard(void* _u,fonts* _f, SDL_Surface* _d, int _ix, int _iy,void (*_ok_click)(void*,char*),void (*_cancel_click)(),char* _ok_text, char* _close_text) :
+        userdata(_u), dest(_d), pos_x(_ix), pos_y(_iy), caps(0), shift(0)
     {
         ok_click = _ok_click;
         cancel_click = _cancel_click;
@@ -177,7 +181,7 @@ class gui_keyboard
 
 
         text_out = 0;
-        text_out = new gui_textbox(_d,_f,pos_x+(0), pos_y+(20),0,0,false);
+        text_out = new gui_textbox(_d,_f,pos_x+(0), pos_y+(35),0,0,false);
         text_out->set_images((char*)"imgs/space_out.png",(char*)"imgs/space_out.png",0,0);
         text_out->pad_y = 5;
         text_out->s_x = (SCREEN_WIDTH/2)-(key_space->s_w/2);
@@ -303,7 +307,7 @@ class gui_keyboard
                 update_keys();
             }
 
-            if(ok->hit_test(event,z)==B_CLICK) ok_click(dest_buffer);//( //
+            if(ok->hit_test(event,z)==B_CLICK) ok_click(userdata,dest_buffer);//( //
             if(cancel->hit_test(event,z)==B_CLICK) cancel_click();
         }
 

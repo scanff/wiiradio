@@ -58,6 +58,15 @@ SDL_Thread* connectthread = 0;
 int search_thread (void *arg); // -- thread for genre searches
 SDL_Thread* searchthread = 0;
 
+// search options
+struct _so
+{
+    char*   buf;
+    int     search_type;
+};
+
+_so search_options;
+
 #ifdef _WII_
 
 // check to see where Wiiradio is, sd or usb
@@ -213,7 +222,7 @@ void delete_playlist(int value)
 // -- genere search thread
 int search_thread(void* arg)
 {
-    char* selected = (char*)arg;
+    _so* s = (_so*)arg;
     char path[512] = {0};
 
     // flag as searching so we don't try and draw the current station text ... the pointers will be deleted !!!
@@ -221,9 +230,21 @@ int search_thread(void* arg)
 
     Sleep(200); // give the ui time to finish what it's doing before requesting a new list!
 
+
+    switch(s->search_type)
+    {
+        case SEARCH_GENRE:
+        sprintf(path,"/sbin/newxml.phtml?service=winamp2&no_compress=1&genre=%s&limit=1000",s->buf);
+        break;
+        case SEARCH_STATIONS:
+        sprintf(path,"/sbin/newxml.phtml?service=winamp2&no_compress=1&search=%s&limit=1000",s->buf);
+        break;
+        default:
+        return 0;
+    }
     // bring down upto 1k of stations per genre.  We will then cache them incase of shoutcast DB problems
-    sprintf(path,"/sbin/newxml.phtml?service=winamp2&no_compress=1&genre=%s&limit=1000",selected);
-    station_lister(path,selected);
+   // sprintf(path,"/sbin/newxml.phtml?service=winamp2&no_compress=1&genre=%s&limit=1000",selected);
+    station_lister(path,s->buf);
 
     g_screen_status = S_BROWSER;
 
@@ -299,7 +320,7 @@ void split_url(char* o_url, char* o_path, int* o_port, char* url)
     // Clear data
     strcpy(o_url,  "");
     strcpy(o_path, "");
-    o_port = 0;
+    *o_port = 0;
 
     search += strlen("http://");
 
@@ -329,7 +350,7 @@ void connect_direct(char* typed)
 {
     char url[255] = {0};
     char path[255] = {0};
-    int port = 80;
+    int port;
 
     split_url(url,path,&port,typed);
 
@@ -654,12 +675,24 @@ void check_keys()
 }
 
 
-void search_genre(char*); //global extern
-void search_genre(char* selected)
+void search_function(char*,int); //global extern
+void search_function(char* value,int search_type)
 {
     refresh_genre_cache = true; // everytime we search for a new genre let's refresh the cache
     display_idx = 0;
 
+    search_options.buf = value;
+    search_options.search_type = search_type;
+
+    if (search_type == SEARCH_CONNECT)
+    {
+        // TO do
+        connect_direct(value);
+        return;
+    }
+
+    // no way to search Icecast via their backend db .. switch to SHOUTCast
+    g_servicetype = SERVICE_SHOUTCAST;
     if (searchthread)
     {
         SDL_WaitThread(searchthread, NULL); // wait for it to stop
@@ -668,7 +701,7 @@ void search_genre(char* selected)
 
 
     // start a new connection thread
-    searchthread = SDL_CreateThread(search_thread,(void*)selected);
+    searchthread = SDL_CreateThread(search_thread,(void*)&search_options);
 
 }
 
@@ -998,7 +1031,7 @@ _reload:
     ui              = new gui(fnts,visuals,g_currentskin);
 
 
-    if (!g_reloading_skin) search_genre((char*)"dance"); // first time so get list ...
+    if (!g_reloading_skin) search_function((char*)"dance",SEARCH_GENRE); // first time so get list ...
 
     g_running = true;
     g_reloading_skin = false;
