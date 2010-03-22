@@ -57,7 +57,7 @@ class gui_search : public gui_dlg
 
     static void gui_search_cancel()
     {
-        g_screen_status = S_BROWSER;
+        SetLastScreenStatus();
     };
 
     int handle_events(SDL_Event* events)

@@ -679,7 +679,7 @@ class gui {
     {
         handle_options();
 
-        if (visualize /*|| ((g_screen_status != S_OPTIONS))*/) return 0;
+        if (visualize) return 0;
 
         loopi(BTN_MAX) {
             if(buttons[i]) buttons[i]->obj_state = B_OUT; //reset
@@ -693,27 +693,26 @@ class gui {
 
         }
 
-        if(g_screen_status == S_OPTIONS)
+        switch(GetScreenStatus())
         {
-             guis[GUI_OPTIONS]->handle_events(events);
-             return 0;
-        }
-        if(g_screen_status == S_LOG)
-        {
-             return guis[GUI_LOG]->handle_events(events);
-        }
+            case S_OPTIONS:
+            guis[GUI_OPTIONS]->handle_events(events);
+            return 0;
 
-        if (S_SEARCHGENRE == g_screen_status)
-        {
+            case S_LOG:
+            return guis[GUI_LOG]->handle_events(events);
+
+            case S_SEARCHGENRE:
             return guis[GUI_SEARCH]->handle_events(events);
+
+            case S_SEARCHING:
+            return 0; // no hit test .. TODO
+
+            default:
+            break;
+
         }
 
- /*       if (S_USERCONNECT == g_screen_status)
-        {
-            return guis[GUI_CONNECT]->handle_events(events);
-        }
-*/
-        if (g_screen_status == S_SEARCHING) return 0; // no hit test
 
         // -- cancel buffering
         if (status == BUFFERING)
@@ -735,9 +734,9 @@ class gui {
             //logo
 
 #ifdef LOG_ENABLED
-            if (buttons[BTN_LOGO]->hit_test(events,j)==B_CLICK) g_screen_status = S_LOG;
+            if (buttons[BTN_LOGO]->hit_test(events,j)==B_CLICK) SetScreenStatus(S_LOG);
 #else
-            if (buttons[BTN_LOGO]->hit_test(events,j)==B_CLICK) g_screen_status = S_OPTIONS;
+            if (buttons[BTN_LOGO]->hit_test(events,j)==B_CLICK) SetScreenStatus(S_OPTIONS);
 #endif
 
             //playing area
@@ -747,20 +746,23 @@ class gui {
              }
             // genre select
             if( buttons[BTN_GENRES_SELECT]->hit_test(events,j)==B_CLICK) {
-                g_screen_status = S_GENRES;
+                SetScreenStatus(S_GENRES);
                 reset_scrollings();
                 return 0;
             }
             // playlist select
             if(buttons[BTN_PLAYLISTS]->hit_test(events,j)==B_CLICK) {
-                g_screen_status = S_PLAYLISTS;
+                SetScreenStatus(S_PLAYLISTS);
                 reset_scrollings();
                 return 0;
             }
 
             // screen buttons
-            loopi(max_listings) {
-                if (g_screen_status == S_BROWSER) {
+            loopi(max_listings)
+            {
+                switch(GetScreenStatus())
+                {
+                case S_BROWSER:
 
                     if ((obj_state = buttons_listing[i]->hit_test(events,j)))
                     {
@@ -772,10 +774,9 @@ class gui {
 
                         return 0;
                     }
-                }
+                break;
 
-                if (g_screen_status == S_PLAYLISTS)
-                {
+                case S_PLAYLISTS:
 
                     if ((obj_state = buttons_delete[i]->hit_test(events,j)))
                     {
@@ -805,9 +806,10 @@ class gui {
 
                         return 0;
                     }
-                }
+                break;
 
-                if (g_screen_status == S_GENRES) {
+                case S_GENRES:
+
                     if (buttons_genre[i]->hit_test(events,j)==B_CLICK) {
                         genre_selected = i;
                         genre_selected += genre_display;
@@ -823,7 +825,9 @@ class gui {
                         reset_scrollings();
                         return 0;
                     }
-                }
+                break;
+
+                }//switch
 
             }
 
@@ -858,7 +862,7 @@ class gui {
             {
                 if (buttons[BTN_BROWSER]->hit_test(events,j)==B_CLICK)
                 {
-                    g_screen_status = S_BROWSER;
+                    SetScreenStatus(S_BROWSER);
                     return 0;
                 }
             }
@@ -867,7 +871,7 @@ class gui {
             {
                 if (buttons[BTN_VISUALS]->hit_test(events,j)==B_CLICK)
                 {
-                    visualize ? visualize = false : visualize = true;
+                    visualize = !visualize;
                     return 0;
                 }
             }
@@ -876,7 +880,7 @@ class gui {
             {
                 if (buttons[BTN_SEARCH]->hit_test(events,j)==B_CLICK)
                 {
-                    g_screen_status = S_SEARCHGENRE;
+                    SetScreenStatus(S_SEARCHGENRE);
                     return 0;
                 }
             }
@@ -890,8 +894,9 @@ class gui {
                 }
             }
 
-             if (buttons[BTN_NEXT]->hit_test(events,j)==B_CLICK) {
-                if (g_screen_status == S_BROWSER) {
+             if (buttons[BTN_NEXT]->hit_test(events,j)==B_CLICK)
+             {
+                if (GetScreenStatus() == S_BROWSER) {
                     char* g = gl.get_genre(genre_selected);
                     genre_nex_prev(true,g);//(char*)genres[genre_selected]);
 
@@ -900,7 +905,7 @@ class gui {
                     return 0;
                 }
 
-                if (g_screen_status == S_GENRES) {
+                if (GetScreenStatus() == S_GENRES) {
 
                   //  if (genre_display + max_listings  >= MAX_GENRE) return 0;
                   //  else genre_display += max_listings;
@@ -911,7 +916,7 @@ class gui {
                     return 0;
                 }
 
-                if (g_screen_status == S_PLAYLISTS) {
+                if (GetScreenStatus() == S_PLAYLISTS) {
 
                     if (pls_display + max_listings  >= total_num_playlists) return 0;
                     else pls_display += max_listings;
@@ -922,35 +927,42 @@ class gui {
 
              }
 
-            if(buttons[BTN_PRIOR]->hit_test(events,j)==B_CLICK) {
-                if (g_screen_status == S_BROWSER) {
-                    char* g = gl.get_genre(genre_selected);
+            if(buttons[BTN_PRIOR]->hit_test(events,j)==B_CLICK)
+            {
+				char* g;
+                switch(GetScreenStatus())
+                {
+                case S_BROWSER:
+                    g = gl.get_genre(genre_selected);
                     if (display_idx>1) genre_nex_prev(false,g);
                     //if (display_idx>1) genre_nex_prev(false,(char*)genres[genre_selected]);
-
                     reset_scrollings();
-                }
+                break;
 
-                if (g_screen_status == S_PLAYLISTS) {
+                case S_PLAYLISTS:
                     pls_display -= max_listings;
                     if (pls_display < 0) {
                         pls_display = 0;
                     }
 
                     reset_scrollings();
+                break;
 
-                }
-
-                 if (g_screen_status == S_GENRES) {
+                 case S_GENRES:
                     genre_display -= max_listings;
-                    if (genre_display < 0) {
+                    if (genre_display < 0)
                         genre_display = 0;
-                    }
 
                     reset_scrollings();
-                 }
+                 break;
 
-                 return 0;
+                 default:
+                 break;
+				 
+				 
+                }
+				
+				return 0;
             }
         } //z-order loop
 
@@ -1013,14 +1025,14 @@ class gui {
 
             }
 
-        }else{ //if (g_screen_status != S_OPTIONS){
+        }else{
 
 
             SDL_BlitSurface(guibackground,0, guibuffer,0); //background
             buttons[BTN_LOGO]->draw(); // title
 
-            if (g_screen_status != S_OPTIONS && g_screen_status != S_SEARCHGENRE &&
-                g_screen_status != S_LOG)
+            if (GetScreenStatus() != S_OPTIONS && GetScreenStatus() != S_SEARCHGENRE &&
+                GetScreenStatus() != S_LOG)
             {
                 if(vis_on_screen)
                 {
@@ -1058,7 +1070,10 @@ class gui {
 
                 buttons[BTN_PLAYING]->draw();
 
-                if (g_screen_status == S_BROWSER) {
+                switch(GetScreenStatus())
+                {
+
+                    case S_BROWSER:
 
                     if (!sc_error)
                     {
@@ -1082,11 +1097,16 @@ class gui {
                         draw_sc_error();
                     }
 
-                }else if(g_screen_status == S_PLAYLISTS) {
-                    draw_favs(favs->first);
-                }else if (g_screen_status == S_GENRES) {
+                    break;
 
-                    loopi(max_listings) {
+                    case S_PLAYLISTS:
+                        draw_favs(favs->first);
+                    break;
+
+                    case S_GENRES:
+
+                    loopi(max_listings)
+                    {
 
                         //if (i+genre_display < MAX_GENRE) {
                         if (i+genre_display < gl.total)
@@ -1097,9 +1117,17 @@ class gui {
                         }
 
                     }
-                }
 
-                if (g_screen_status != S_STREAM_INFO) {
+                    break;
+
+                    case S_STREAM_INFO:
+                        draw_stream_details(ic);
+                    break;
+
+                } // switch
+
+                if (GetScreenStatus() != S_STREAM_INFO)
+                {
                     //more / prior ... used for browser, playlist and genre selection
                     buttons[BTN_NEXT]->draw();
                     buttons[BTN_PRIOR]->draw();
@@ -1117,23 +1145,18 @@ class gui {
                     buttons[BTN_PLAYLISTS]->draw();
                 }
 
-                if (g_screen_status == S_STREAM_INFO)
-                {
-                    draw_stream_details(ic);
-                }
 
             }
         }
 
-        if (g_screen_status == S_SEARCHGENRE) guis[GUI_SEARCH]->draw();
-        if (g_screen_status == S_OPTIONS) draw_about();
-        if (g_screen_status == S_LOG) draw_log();
-//        if (g_screen_status == S_USERCONNECT) guis[GUI_CONNECT]->draw();
+        if (GetScreenStatus() == S_SEARCHGENRE) guis[GUI_SEARCH]->draw();
+        if (GetScreenStatus() == S_OPTIONS) draw_about();
+        if (GetScreenStatus() == S_LOG) draw_log();
 
         // always inform user if buffering
         if (status == BUFFERING) draw_info(vars.search_var("$LANG_TXT_BUFFERING"));
         if (status == CONNECTING) draw_info(vars.search_var("$LANG_TXT_CONNECTING"));
-        if (g_screen_status == S_SEARCHING) draw_info(vars.search_var("$LANG_TXT_SEARCHING"));
+        if (GetScreenStatus() == S_SEARCHING) draw_info(vars.search_var("$LANG_TXT_SEARCHING"));
 
         if (!visualize) {
             visual_show_title = get_tick_count();

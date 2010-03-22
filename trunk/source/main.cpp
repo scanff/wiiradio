@@ -226,7 +226,7 @@ int search_thread(void* arg)
     char path[512] = {0};
 
     // flag as searching so we don't try and draw the current station text ... the pointers will be deleted !!!
-    g_screen_status = S_SEARCHING;
+    SetScreenStatus(S_SEARCHING);
 
     Sleep(200); // give the ui time to finish what it's doing before requesting a new list!
 
@@ -246,7 +246,7 @@ int search_thread(void* arg)
    // sprintf(path,"/sbin/newxml.phtml?service=winamp2&no_compress=1&genre=%s&limit=1000",selected);
     station_lister(path,s->buf);
 
-    g_screen_status = S_BROWSER;
+    SetScreenStatus(S_BROWSER); // default to browser as results will be here
 
     return 0;
 }
@@ -517,10 +517,7 @@ void check_keys()
 
     // -- keys that always perform the same action go first!!!
     if (g_real_keys[SDLK_2] && ! g_keys_last_state[SDLK_2])
-		visualize ? visualize = false : visualize = true;
-       // g_screen_status = S_USERCONNECT;
-
-
+		visualize = !visualize;
 
     if (g_real_keys[SDLK_MINUS] && !g_keys_last_state[SDLK_MINUS])
     {
@@ -577,21 +574,21 @@ void check_keys()
     if (g_real_keys[SDLK_1] && !g_keys_last_state[SDLK_1])
     {
 
-        if (g_screen_status != S_STREAM_INFO) {
-            if (!visualize) g_screen_status = S_STREAM_INFO;
-        }else if (g_screen_status == S_STREAM_INFO)  { g_screen_status = S_BROWSER; }
-
+        if (GetScreenStatus() != S_STREAM_INFO) {
+            if (!visualize) SetScreenStatus(S_STREAM_INFO);
+        }else if (GetScreenStatus() == S_STREAM_INFO)  { SetLastScreenStatus(); }
 
     }
 
     if (g_real_keys[SDLK_ESCAPE] && !g_keys_last_state[SDLK_ESCAPE] && !visualize)
     {
-        if (g_screen_status != S_OPTIONS)
-            g_screen_status = S_OPTIONS;
-        else g_screen_status = S_BROWSER;
+        if (GetScreenStatus() != S_OPTIONS)
+            SetScreenStatus(S_OPTIONS);
+        else SetLastScreenStatus();
     }
 
-    if (g_real_keys[SDLK_b] && g_screen_status != S_BROWSER) g_screen_status = S_BROWSER;
+    if (g_real_keys[SDLK_b] && GetScreenStatus() != S_BROWSER) SetScreenStatus(S_BROWSER);
+
     if (g_real_keys[SDLK_PLUS] && status == PLAYING)
         request_save_fav(); // save playlist
 
@@ -606,32 +603,39 @@ void check_keys()
             return;
         }
 
-        if (g_screen_status == S_BROWSER)
+        switch(GetScreenStatus())
         {
+            case S_BROWSER:
+
             if (display_idx > MAX_STATION_CACHE) return;
             else display_idx += max_listings;
 
             ui->reset_scrollings();
 
-        }
+            break;
 
-        if (g_screen_status == S_PLAYLISTS)
-        {
-             if (pls_display + max_listings  >= total_num_playlists) return;
-             else pls_display += max_listings;
+            case S_PLAYLISTS:
 
-             ui->reset_scrollings();
-        }
+            if (pls_display + max_listings  >= total_num_playlists) return;
+            else pls_display += max_listings;
 
-        if (g_screen_status == S_GENRES)
-        {
+            ui->reset_scrollings();
+            break;
+
+            case S_GENRES:
+
             //if (genre_display + max_listings  >= MAX_GENRE) return;
             if (genre_display + max_listings  >= ui->gl.total) return;
             else genre_display += max_listings;
 
             ui->reset_scrollings();
-        }
 
+            break;
+
+            default:
+            break;
+
+        }
 
     }
 
@@ -645,28 +649,34 @@ void check_keys()
             return;
         }
 
-        if (g_screen_status == S_BROWSER)
+        switch(GetScreenStatus())
         {
+            case S_BROWSER:
+
             if (display_idx < 0) display_idx = 0;
             else display_idx -= max_listings;
 
             ui->reset_scrollings();
-        }
+            break;
 
-        if (g_screen_status == S_PLAYLISTS)
-        {
+            case S_PLAYLISTS:
+
             pls_display -= max_listings;
             if (pls_display < 0) pls_display = 0;
 
             ui->reset_scrollings();
-        }
+            break;
 
-        if (g_screen_status == S_GENRES)
-        {
+            case S_GENRES:
+
             genre_display -= max_listings;
             if (genre_display < 0) genre_display = 0;
 
             ui->reset_scrollings();
+            break;
+
+            default:
+            break;
         }
     }
 
@@ -992,7 +1002,7 @@ int main(int argc, char **argv)
     mainthread = SDL_CreateThread(critical_thread,0);
     if (!mainthread) exit(0);
 
-    g_screen_status = S_BROWSER;
+    SetScreenStatus(S_BROWSER);
     status = STOPPED;
 
     Uint64 last_time, current_time;

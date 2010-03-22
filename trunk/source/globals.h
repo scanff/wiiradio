@@ -152,7 +152,6 @@ extern Uint8        g_real_keys[MAX_KEYS];
 extern Uint8        g_keys_last_state[MAX_KEYS];
 extern int            g_FPS;
 extern int             g_nGlobalStatus;
-extern int             g_screen_status;
 extern bool         g_running;
 extern enum_status  status;
 extern bool         visualize;
@@ -175,6 +174,10 @@ extern char* trim_string(char*, int);
 extern void next_skin();
 extern void next_lang();
 extern void SetWidescreen();
+// screen status
+extern int GetScreenStatus();
+extern void SetScreenStatus(int);
+extern void SetLastScreenStatus();
 
 extern SDL_Surface*        screen;
 #define K_UP_1      SDLK_UP

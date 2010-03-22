@@ -40,7 +40,7 @@ class gui_log : public gui_dlg
     {
         bloopj(MAX_Z_ORDERS)
         {
-            if(b_return->hit_test(events,j)==B_CLICK) g_screen_status = S_BROWSER;
+            if(b_return->hit_test(events,j)==B_CLICK) SetLastScreenStatus();
         }
         return 0;
     };

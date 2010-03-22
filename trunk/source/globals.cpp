@@ -17,7 +17,6 @@ Uint8 *        g_nKetStatus;
 Uint8       g_real_keys[MAX_KEYS];
 Uint8       g_keys_last_state[MAX_KEYS];
 bool        g_running;
-int         g_screen_status;
 Uint64      g_vol_lasttime;
 enum_status status;
 
@@ -131,6 +130,28 @@ void SetWidescreen()
     WII_SetWidescreen(g_owidescreen);
 
 #endif
+};
+
+/* Screen status access */
+int current_screen_status = 0;
+int last_screen_status = 0;
+void SetScreenStatus(int);
+void SetScreenStatus(int s)
+{
+    last_screen_status = current_screen_status;
+    current_screen_status = s;
+};
+
+int GetScreenStatus();
+int GetScreenStatus()
+{
+    return current_screen_status;
+};
+
+void SetLastScreenStatus();
+void SetLastScreenStatus()
+{
+    current_screen_status = last_screen_status;
 };
 
 // extern functions / vars
