@@ -135,7 +135,7 @@ class gui_options : public gui_dlg
         bloopj(MAX_Z_ORDERS)
         {
             if(b_quit->hit_test(events,j)==B_CLICK) g_running = false;
-            if(b_return->hit_test(events,j)==B_CLICK) g_screen_status = S_BROWSER;
+            if(b_return->hit_test(events,j)==B_CLICK) SetLastScreenStatus();
             if(b_next_skin->hit_test(events,j)==B_CLICK) next_skin();
             if(b_next_lang->hit_test(events,j)==B_CLICK) next_lang();
 
