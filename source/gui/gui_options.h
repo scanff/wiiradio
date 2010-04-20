@@ -74,7 +74,7 @@ class gui_options : public gui_dlg
         // next skin
         b_next_skin = new gui_button(gui_dlg::dest,gui_dlg::fnts,420,254,0,0,false);
         b_next_skin->set_images((char*)"imgs/button_out.png",(char*)"imgs/button_out.png",0,0);
-        b_next_skin->set_text(vars.search_var("$LANG_TXT_NEXT"));
+        b_next_skin->set_text(vars.search_var("$LANG_TXT_NEXT_SKIN"));
         b_next_skin->pad_y = 5;
         b_next_skin->text_color = 0x000000;
         b_next_skin->text_color_over = 0xff0044;
@@ -85,7 +85,7 @@ class gui_options : public gui_dlg
 
         b_next_lang = new gui_button(gui_dlg::dest,gui_dlg::fnts,420,314,0,0,false);
         b_next_lang->set_images((char*)"imgs/button_out.png",(char*)"imgs/button_out.png",0,0);
-        b_next_lang->set_text(vars.search_var("$LANG_TXT_NEXT"));
+        b_next_lang->set_text(vars.search_var("$LANG_TXT_NEXT_LANG"));
         b_next_lang->pad_y = 5;
         b_next_lang->text_color = 0x000000;
         b_next_lang->text_color_over = 0xff0044;
