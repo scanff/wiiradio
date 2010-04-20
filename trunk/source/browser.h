@@ -485,7 +485,8 @@ class shoutcast_browser
 
                             string_lower(genres_tmp); // format string from XML file
 
-                            if (strstr(genres_tmp,genre_filter))
+                            if (strstr(genres_tmp,genre_filter) ||
+                                strstr(genre_filter,"all")==genre_filter)
                             {
                                 // only add a good match to genre
 
