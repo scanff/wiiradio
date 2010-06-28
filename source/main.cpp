@@ -25,6 +25,7 @@ int         pls_display = 0;
 Uint64      last_button_time;
 bool        g_critical_running;
 
+
 texture_cache*      tx;
 SDL_Surface*        screen;
 fonts*              fnts; //extern this to use everywhere
@@ -733,11 +734,12 @@ void genre_nex_prev(bool n,char* genre)
 // callback called from mod of libmad
 void cb_fft(short* in, int max)
 {
+
     if (g_reloading_skin || !g_running) return; // -- bad ui is loading
 
     if (visualize || ui->vis_on_screen) // Only update if viewing
     {
-        fourier->setAudioData(in);
+        fourier->setAudioData(in,max);
         fourier->getFFT(visuals->fft_results);
     }
 }
@@ -770,11 +772,14 @@ int critical_thread(void *arg)
     int len = 0;
     char* net_buffer = 0;
 
-    net_buffer = new char[MAX_NET_BUFFER];
+    net_buffer = (char*)memalign(32,MAX_NET_BUFFER);
     if (!net_buffer) exit(0);
 
     g_critical_running = true;
+#ifndef _WII_
+    short test[8192*2];
 
+#endif
     while(g_critical_running)
     {
         // stream handler
@@ -787,14 +792,12 @@ int critical_thread(void *arg)
                 // reset errors
                 errors = 0;
 
-                // metaint handler
-                //if (!icy_info->looking_for_header)
-                    len = icy_info->parse_metaint(net_buffer,len);
-
                 // data handler
                 icy_info->buffer_data(net_buffer,len);
+
 #ifndef _WII_
-                cb_fft((short*)net_buffer,len/2);
+                loopi(8192*2) test[i] = rand() % 2000;
+                cb_fft((short*)test,8192*2);
 #endif
             } else if (len < 0)
             {
@@ -804,6 +807,7 @@ int critical_thread(void *arg)
                 if (errors > 300)
                 {   // -- too many errors let's reset
                     status = FAILED;
+                    continue;
                 }
             }
             if (!net->client_connected)
@@ -869,7 +873,7 @@ int critical_thread(void *arg)
         Sleep(15); // minimum delay
     }
 
-    delete [] net_buffer; net_buffer =0;
+    free(net_buffer); net_buffer =0;
     if (connected) net->client_close();
 
     return 0;
@@ -940,7 +944,7 @@ int main(int argc, char **argv)
         exit(1);
     }
 
-    if ( SDL_SetVideoMode( SCREEN_WIDTH, SCREEN_HEIGHT, SCREENDEPTH,
+    if ( SDL_SetVideoMode( SCREEN_WIDTH, SCREEN_HEIGHT, BITDEPTH,
              (fullscreen ? SDL_FULLSCREEN : 0) | SDL_HWSURFACE | SDL_DOUBLEBUF ) < 0 ) { //SDL_HWSURFACE
     printf("SDL_SetVideoMode() failed\n");
         exit(1);
@@ -1007,10 +1011,6 @@ int main(int argc, char **argv)
 
     Uint64 last_time, current_time;
     last_time = current_time = get_tick_count();
- //   int fps = 40; //attempt 60fps
-
-
-
 
 _reload:
 
@@ -1136,7 +1136,7 @@ _reload:
         }
 
 #ifdef _WII_
-        Sleep(2);
+        Sleep(5);
 #else
         Sleep(20);
 #endif
@@ -1176,6 +1176,6 @@ _reload:
 
     SDL_Quit();
 
-    return 0;
+    exit(0);
 
 }

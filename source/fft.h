@@ -2,10 +2,11 @@
 
 #include <malloc.h>
 class fft {
-    public:
+
+        public:
 
         float *real;
-        float *imaginary;
+        float *imaginary1;
         float *real2;
         float *imaginary2;
         int dataSize;
@@ -17,33 +18,26 @@ class fft {
         #define SCALE_VALUE_MUL 2500
         #define FINAL_SCALE 0.333
 
+        public:
 
         fft() : dataSize(MAX_FFT_SAMPLE)
         {
-        #ifdef _WII_
-            // Init buffers
-            real = (float *)memalign(32, dataSize * sizeof(float));
-            imaginary = (float *)memalign(32, dataSize * sizeof(float));
-            real2 = (float *)memalign(32, dataSize * sizeof(float));
-            imaginary2 = (float *)memalign(32, dataSize * sizeof(float));
 
-            memset(real,0,dataSize*sizeof(float));
+            real        = (float*)memalign(32,dataSize*sizeof(float));
+            imaginary1  = (float*)memalign(32,dataSize*sizeof(float));
+            real2       = (float*)memalign(32,dataSize*sizeof(float));
+            imaginary2  = (float*)memalign(32,dataSize*sizeof(float));
 
-        #else
-            real = (float *)malloc(dataSize * sizeof(float));
-            imaginary = (float *)malloc(dataSize * sizeof(float));
-            real2 = (float *)malloc(dataSize * sizeof(float));
-            imaginary2 = (float *)malloc(dataSize * sizeof(float));
 
-        #endif
         }
 
         ~fft()
         {
             free(real);
-            free(imaginary);
+            free(imaginary1);
             free(real2);
             free(imaginary2);
+
         }
 
 
@@ -81,7 +75,7 @@ class fft {
             return -(double)(NumSamples-Index) / (double)NumSamples;
         }
 
-    void fft_float (
+    void inline fft_float (
         unsigned  NumSamples,
         int       InverseTransform,
         float    *RealIn,
@@ -89,16 +83,16 @@ class fft {
         float    *RealOut,
         float    *ImagOut )
     {
-        unsigned NumBits;    /* Number of bits needed to store indices */
-        unsigned i, j, k, n;
-        unsigned BlockSize, BlockEnd;
+        int NumBits;    /* Number of bits needed to store indices */
+        int i, j, k, n;
+        int BlockSize, BlockEnd;
 
         double angle_numerator = 2.0 * (3.14159265359);
         double tr, ti;     /* temp real, temp imaginary */
 
-        if ( InverseTransform )
+     /*   if ( InverseTransform )
             angle_numerator = -angle_numerator;
-
+*/
         NumBits = NumberOfBitsNeeded ( NumSamples );
 
         /*
@@ -146,6 +140,13 @@ class fft {
                     ai[1] = ai[0];
 
                     k = j + BlockEnd;
+
+                    if (k >= dataSize || k < 0 || j < 0 || j >= dataSize)
+                    {
+                        break;
+                    }
+
+
                     tr = ar[0]*RealOut[k] - ai[0]*ImagOut[k];
                     ti = ar[0]*ImagOut[k] + ai[0]*RealOut[k];
 
@@ -164,7 +165,7 @@ class fft {
         **   Need to normalize if inverse transform...
         */
 
-        if ( InverseTransform )
+    /*    if ( InverseTransform )
         {
             double denom = (double)NumSamples;
 
@@ -173,28 +174,73 @@ class fft {
                 RealOut[i] /= denom;
                 ImagOut[i] /= denom;
             }
-        }
+        }*/
     }
 
-
-    void setAudioData(short *data)
+    float getPosition(int pos)
     {
+        float fft_item;
+
+        if (pos >= dataSize) return 0;
+
+       // SDL_LockMutex(fft_lock);
+
+        fft_item = real[pos];
+
+        //SDL_UnlockMutex(fft_lock);
+
+        return fft_item;
+
+    }
+
+    int getPeak()
+    {
+        int fft_peak;
+
+        fft_peak = 0;
+
+//        SDL_LockMutex(fft_lock);
+
+        loopi(MAX_FFT_SAMPLE) if (real[i] > fft_peak) fft_peak = (int)real[i];
+
+//        SDL_UnlockMutex(fft_lock);
+
+        return fft_peak;
+    }
+
+    void setAudioData(short *data,int max)
+    {
+
+//        SDL_LockMutex(fft_lock);
+
         // Convert from stereo to mono and set to real, setting imaginary to blank
         for(int i = 0; i < dataSize; i++)
         {
+            if ((i<<1) >= max-1) continue;
+
             // Average and normalized
-            real[i] = ((float)(data[i << 1]) + (float)(data[(i << 1) + 1])) / (float)(32767 * 2);
-            imaginary[i] = 0.0;
+            real[i] = (float)((float)(data[i << 1]) + (float)(data[(i << 1) + 1])) / (float)(32767 * 2);
+            imaginary1[i] = 0.0;
         }
+
+//        SDL_UnlockMutex(fft_lock);
     }
 
     void getFFT(int *out)
     {
+        //SDL_LockMutex(fft_lock);
 
-        fft_float(dataSize, 0, real, imaginary, real2, imaginary2);
+        fft_float(dataSize, 0, real, imaginary1, real2, imaginary2);
 
-        memcpy(real,real2,dataSize * sizeof(float));
-        memcpy(imaginary,imaginary2,dataSize * sizeof(float));
+        float* tmp;
+
+        tmp = real;
+        real = real2;
+        real2 = tmp;
+
+        tmp = imaginary1;
+        imaginary1 = imaginary2;
+        imaginary2 = tmp;
 
         // Ensure we have the right count
         int index = 0;
@@ -202,6 +248,8 @@ class fft {
         // Combine into 16 groups
         for(int j = 0; j < DIVISIONS; j++)
         {
+            if (index >= dataSize) break;
+
             // Smoothing
             int numSamples = ((2 * VARIANCE * index) / dataSize) + (dataSize / (DIVISIONS * 2)) - (VARIANCE / 2);
 
@@ -211,7 +259,7 @@ class fft {
             for(int i = 0; i < numSamples; i++)
             {
                 // z = sqrt(real² + imaginary²)
-                sampleTotal += (int)(sqrt((real[index] * real[index]) + (imaginary[index] * imaginary[index])) * FINAL_SCALE * (float)(SCALE_VALUE_BASE + (j * SCALE_VALUE_MUL)));
+                sampleTotal += (int)(sqrt((real[index] * real[index]) + (imaginary1[index] * imaginary1[index])) * FINAL_SCALE * (float)(SCALE_VALUE_BASE + (j * SCALE_VALUE_MUL)));
 
                 // Move to next index
                 index++;
@@ -229,5 +277,7 @@ class fft {
                 if(out[k] > 32767) { out[k] = 32767; }
             }
         }
+
+        //SDL_UnlockMutex(fft_lock);
     };
 };
