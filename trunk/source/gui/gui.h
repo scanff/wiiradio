@@ -692,6 +692,8 @@ class gui {
             buttons_listing[i]->obj_state = B_OUT; //reset
 
         }
+        // reset the "Canceled" state
+        guis[GUI_INFO]->cancel->obj_state = B_OUT;
 
         switch(GetScreenStatus())
         {
@@ -715,7 +717,7 @@ class gui {
 
 
         // -- cancel buffering
-        if (status == BUFFERING)
+        if (status == BUFFERING || status == CONNECTING)
         {
             if(guis[GUI_INFO]->cancel->hit_test(events,1)==B_CLICK)
             {
@@ -958,10 +960,10 @@ class gui {
 
                  default:
                  break;
-				 
-				 
+
+
                 }
-				
+
 				return 0;
             }
         } //z-order loop
@@ -1153,12 +1155,15 @@ class gui {
         if (GetScreenStatus() == S_OPTIONS) draw_about();
         if (GetScreenStatus() == S_LOG) draw_log();
 
-        // always inform user if buffering
-        if (status == BUFFERING) draw_info(vars.search_var("$LANG_TXT_BUFFERING"));
-        if (status == CONNECTING) draw_info(vars.search_var("$LANG_TXT_CONNECTING"));
-        if (GetScreenStatus() == S_SEARCHING) draw_info(vars.search_var("$LANG_TXT_SEARCHING"));
 
-        if (!visualize) {
+
+        if (!visualize)
+        {
+            // always inform user if buffering
+            if (status == BUFFERING) draw_info(vars.search_var("$LANG_TXT_BUFFERING"));
+            if (status == CONNECTING) draw_info(vars.search_var("$LANG_TXT_CONNECTING"));
+            if (GetScreenStatus() == S_SEARCHING) draw_info(vars.search_var("$LANG_TXT_SEARCHING"));
+
             visual_show_title = get_tick_count();
             strcpy(visual_last_track_title, ic->track_title);
         }

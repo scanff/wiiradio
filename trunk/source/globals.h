@@ -8,6 +8,7 @@
 #ifdef _WII_
     #define MAX_PATH 255
     #define ENDIAN B_ENDIAN
+    #define EAGAIN (-11)
     #include <wiiuse/wpad.h>
     #include <ogc/lwp_watchdog.h>
     #include <fat.h>
@@ -30,6 +31,7 @@
 #else
 
     #ifdef _WIN32
+
         //#define WIN32
         #define ENDIAN L_ENDIAN
         #include <winsock2.h>
@@ -37,7 +39,12 @@
 
         #include "fmod/inc/fmod.h"
         #include "fmod/inc/fmod_errors.h"
+        #include <malloc.h>
 
+        static inline void* memalign(int bits, unsigned int size)
+        {
+            return malloc(size);
+        }
 
         typedef SOCKET s32;
         typedef int u32;
@@ -112,6 +119,7 @@ enum
 enum
 {
   V_BARS = 0,
+  V_WATER,
   V_OSC,
   V_TUNNEL,
   V_FIRE,
@@ -121,6 +129,11 @@ enum
   V_SINTEXT,
   V_ROTZOOM,
   V_BOBS,
+  V_LASERS,
+  V_RAYCASTER,
+  V_MATRIX,
+  V_STARS,
+  V_EXPLODE,
   MAX_VISUALS
 };
 
@@ -198,10 +211,10 @@ extern SDL_Surface*        screen;
 #define SCREEN_WIDTH_BUFFER  (50)
 #define SCREEN_HEIGHT_BUFFER (50)
 #define FONT_SIZE       (40)
-#define VERSION_NUMBER  (0.5)
+#define VERSION_NUMBER  (0.6)
 #define VERSION_NAME    ("Version")
 #define BITDEPTH        (24)
-#define SCREENDEPTH     (16)
+
 #define TIME_OUT_MS     (8000) // eight second timeout
 #define SC_DOWN         ("503 Service Temporarily Unavailable")
 #define MAX_FFT_RES     (16)
@@ -252,5 +265,7 @@ extern skins* sk;
 #include "lang.h"
 extern langs* lang;
 #endif
+
+
 
 
