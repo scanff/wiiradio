@@ -48,7 +48,7 @@ class icy {
         bool            bufferring;
 
 
-        #define MAX_METADATA_SIZE   (4080) //16*255
+        #define MAX_METADATA_SIZE   (4080+100) //16*255 + padding
         #define BUFFER_CHUNK        (5000)
         char            metaint_buffer[MAX_METADATA_SIZE];
         int             metaint_size;
@@ -58,9 +58,11 @@ class icy {
         unsigned long   buffers_recvd;
         unsigned long   buffers_sent;
 
+        char*           temp_buffer;
+
     public:
 
-    icy() : icy_metaint(10000), // must not be zero on start, otherwise will never buffer
+    icy() : icy_metaint(0),
             metaint_pos(0),
             looking_for_header(true),
             redirect_detected(0),
@@ -79,19 +81,23 @@ class icy {
         memset(track_title,0,SMALL_MEM);
         strcpy(last_track_title,"last");
 
-        buffer = new char[buffer_size];
+        buffer = (char*)memalign(32,buffer_size);//new char[buffer_size];
         if(!buffer) exit(0);
+
+        temp_buffer = (char*)memalign(32,MAX_NET_BUFFER);
 
         memset(buffer,0,buffer_size);
         memset(metaint_buffer,0,MAX_METADATA_SIZE);
 
+
         clean_icy_data();
     };
 
+
     ~icy()
     {
-        delete [] buffer;
-        buffer = 0;
+        free(temp_buffer);
+        free(buffer);
     };
 
     // clean all the variables on new connect
@@ -255,11 +261,17 @@ class icy {
             title_start += strlen("StreamTitle='");
             title_end = strstr(title_start,"';");
             if (title_end) {
-                // If an empty title is send, use the station name as title
-                if (title_start == title_end) {
-                    strncpy(track_title, icy_name, SMALL_MEM);
-                } else {
-                    strncpy(track_title, title_start, title_end-title_start);
+                int sizeof_tile = title_end-title_start;
+                if (sizeof_tile >= SMALL_MEM) sizeof_tile = SMALL_MEM;
+
+                // If an empty title is sent, use the station name as title
+                memset(track_title,0,SMALL_MEM);
+
+                if (title_start == title_end)
+                {
+                    strcpy(track_title, "Unknown Track");
+                }else{
+                    strncpy(track_title, title_start, sizeof_tile);
                 }
                 // Make sure the title string is complete
                 track_title[SMALL_MEM-1] = '\0';
@@ -346,72 +358,102 @@ class icy {
 
     void buffer_data(char* net_buffer,int len)
     {
+        /*
+            Check for header first
+        */
+
+        memset(temp_buffer,0,MAX_NET_BUFFER); // clear the old data
+        memcpy(temp_buffer,net_buffer,len); // copy
+
+        if(looking_for_header)
+        {
+            loopi(len) buffer[buffered++] = net_buffer[i];
+
+            if (buffered > 20000) // We should have found the header by now!!!
+            {
+                status = FAILED;
+                return;
+            }
+
+            // overwrite last byte of buffer temporarily to protect strstr
+            char tmp = buffer[buffered-1];
+            buffer[buffered-1] = '\0';
+            if (strstr(buffer,"\r\n\r\n") || strstr(buffer,"\r\n\r\0"))
+            {
+                DEB("looking_for_header\n");
+                int remove = parse_header(buffer);
+
+                if (remove == 0) // stream not available! could be old link
+                {
+                    status = FAILED;
+                    return;
+                }
+
+                buffer[buffered-1] = tmp;
+                if (remove)
+                {
+                    memcpy(temp_buffer, buffer+remove, buffered-remove);
+                    buffered -= remove;
+                    metaint_pos -= remove;
+
+                    pre_buffer = ((icy_br * 8) * 1000) / 8;
+                    // Protect against too less or too high buffer values
+                    if (pre_buffer < 64000)
+                    {
+                        pre_buffer = 64000;
+                    }
+                    else if (pre_buffer > 512000)
+                    {
+                        pre_buffer = 512000;
+                    }
+#ifdef ICY_DEBUG
+                    printf("pre_buffer: %d\n", (int)pre_buffer);
+#endif
+                }
+
+                looking_for_header = false;
+
+                /*
+                    Reset lens .. we need tp parse out metaint data from this buffer
+                */
+                len = buffered;
+                metaint_pos = buffered = 0;
+
+            }
+        }
+
+        // Still looking for header ... return if we are
+        if (looking_for_header) return;
+
+        // Got header start looking for meta-int
+        len = parse_metaint(temp_buffer,len);
+
+        // Get the audio data
         unsigned long new_buffer_size = buffered + len;
 
         if (new_buffer_size > buffer_size)
         {
-            long remain = new_buffer_size - buffer_size;
             int end_bytes = buffer_size - buffered;
 
             // copy to the end of the buffer
-            if (end_bytes > 0) memcpy(buffer+buffered,net_buffer,end_bytes);
+            if (end_bytes > 0) memcpy(buffer+buffered,temp_buffer,end_bytes);
 
-            remain = len-end_bytes;
+            long remain = len-end_bytes;
 
             // copy to the start of the buffer
-            if (remain > 0 ) {
-                memcpy(buffer,net_buffer+end_bytes,remain);
+            if (remain > 0 )
+            {
+                memcpy(buffer,temp_buffer+end_bytes,remain);
                 buffered = remain;
+
             } else buffered = 0;
 
 
             buffers_recvd++; // total number of buffers we've gotten for this stream
         } else {
             // keep copying to the buffer
-            memcpy(buffer+buffered,net_buffer,len);
+            memcpy(buffer+buffered,temp_buffer,len);
             buffered += len;
-        }
-
-        /*  state on fist connected ... needed to parse out the header.
-        */
-        if (looking_for_header && buffered > 0)
-        {
-          // overwrite last byte of buffer temporarily to protect strstr
-          char tmp = buffer[buffered-1];
-          buffer[buffered-1] = '\0';
-          if (strstr(buffer,"\r\n\r\n") || strstr(buffer,"\r\n\r\0"))
-          {
-            DEB("looking_for_header\n");
-            int remove = parse_header(buffer);
-            buffer[buffered-1] = tmp;
-            if (remove)
-            {
-                // memmove instead of memcpy because of overlapping memory
-                memmove(buffer, buffer+remove, buffered-remove);
-                buffered -= remove;
-                metaint_pos -= remove;
-
-                pre_buffer = ((icy_br * 8) * 1000) / 8;
-                // Protect against too less or too high buffer values
-                if (pre_buffer < 64000)
-                {
-                  pre_buffer = 64000;
-                } else if (pre_buffer > 512000)
-                {
-                  pre_buffer = 512000;
-                }
-#ifdef ICY_DEBUG
-                printf("pre_buffer: %d\n", (int)pre_buffer);
-#endif
-
-                looking_for_header = false;
-
-            }
-          }
-          else
-          {
-            buffer[buffered-1] = tmp;
-          }
         }
 
         if (buffered >= pre_buffer) bufferring = false; // got enough data, change the state to allow playback
@@ -421,6 +463,7 @@ class icy {
     // return a chunk of data
     int get_buffer(void* cbuf,int len)
     {
+        if (len <= 0) return 0;
         if (len > BUFFER_CHUNK) len = BUFFER_CHUNK;
 
         //need to restart
