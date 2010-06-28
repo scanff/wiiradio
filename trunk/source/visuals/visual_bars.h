@@ -19,7 +19,6 @@ class vis_bars : public visual_object
 
         loopi(MAX_FFT_RES) {
             peakResults[i] = 0;
-            fft_results[i] = 0;
         }
     };
 

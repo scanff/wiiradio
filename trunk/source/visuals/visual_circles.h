@@ -54,7 +54,7 @@ class vis_circles : public visual_object
         for(int l=padding;l<(len-1-padding);l+=2)
         {
             x = (int)((double)(l-padding)*ts);
-            y = (int)(2 * (sqrt(abs((int)(f->real[l] / divisor)))));
+            y = (int)(2 * (sqrt(abs((int)(f->getPosition(l) / divisor)))));
             y = DRAW_HEIGHT - y;
 
             if (y >= 0) // filter bad reading

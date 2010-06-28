@@ -24,10 +24,10 @@ class vis_tunnel : public visual_object
         DRAW_WIDTH = SCREEN_WIDTH / TDIVIDER;
         DRAW_HEIGHT = SCREEN_HEIGHT / TDIVIDER;
 
-        texture = new unsigned int[texWidth*texHeight];
+        texture = (unsigned int*)memalign(32,texWidth*texHeight*sizeof(int));
         if (!texture) exit(0);
 
-        distanceTable = new int[(DRAW_WIDTH*2)*(DRAW_HEIGHT*2)];
+        distanceTable = (int*)memalign(32,((DRAW_WIDTH*2)*(DRAW_HEIGHT*2))*sizeof(int));
         if (!distanceTable) exit(0);
 
         srand(get_tick_count());
@@ -37,10 +37,10 @@ class vis_tunnel : public visual_object
 
     ~vis_tunnel()
     {
-        delete [] distanceTable;
+        free(distanceTable);
         distanceTable = 0;
 
-        delete [] texture;
+        free(texture);
         texture = 0;
 
     };
@@ -50,9 +50,7 @@ class vis_tunnel : public visual_object
     {
         int x,y;
 
-        //get peek
-        int peak = 0;
-        loopi((MAX_FFT_SAMPLE) - 1) f->real[i] > peak ? peak = (int)f->real[i] : 0;
+        int peak = f->getPeak();
 
         //clean
          for(x = 0; x < texWidth; x++)

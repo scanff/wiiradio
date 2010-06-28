@@ -21,7 +21,7 @@ class vis_bobs : public visual_object
     {
         f = _f;
         loaded = false;
-        layer = 1;
+        layer = 0;
 
         DRAW_WIDTH = SCREEN_WIDTH ;
         DRAW_HEIGHT = SCREEN_HEIGHT;
@@ -103,8 +103,11 @@ class vis_bobs : public visual_object
             SDL_BlitSurface(eye_surface, 0 , s, rects + k);
         }
 
-        i += 2;
-        j += 3;
+        double percent = ((double)20 / (double)32767);
+        int peak = (int)(percent * (double)fft_results[2]);
+
+        i += 2+ peak;
+        j += 3+ peak;
         i &= 511;
         j &= 511;
     };
