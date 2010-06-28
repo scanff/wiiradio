@@ -10,7 +10,7 @@
 #ifndef VISUALS_H_INCLUDED
 #define VISUALS_H_INCLUDED
 
- void bresenham_line(SDL_Surface* s, int x1, int y1, int x2, int y2,unsigned long color)
+static void bresenham_line(SDL_Surface* s, int x1, int y1, int x2, int y2,unsigned long color)
 {
     // clip
     x1 > SCREEN_WIDTH ? x1 = SCREEN_WIDTH : x1 < 0 ? x1 = 0 : 0;
@@ -80,7 +80,7 @@
 };
 
 
-unsigned int hsl_rgba(int ia, int ib, int ic)
+static unsigned int hsl_rgba(int ia, int ib, int ic)
 {
     float r, g, b, h, s, l;
     float temp1, temp2, tempr, tempg, tempb;
@@ -134,14 +134,15 @@ unsigned int hsl_rgba(int ia, int ib, int ic)
     return rgb;
 };
 
-int lmin(int a, int b)
+static int lmin(int a, int b)
 {
   if (a <= b) return a;
   else return b;
 
   return a;
 };
-//#include "visuals/visual_helli.h"
+
+#include "visuals/visual_water.h"
 #include "visuals/visual_tunnel.h"
 #include "visuals/visual_fire.h"
 #include "visuals/visual_osc.h"
@@ -153,8 +154,10 @@ int lmin(int a, int b)
 #include "visuals/visual_sintext.h"
 #include "visuals/visual_rotzoom.h"
 #include "visuals/visual_bobs.h"
-
-#include <SDL/SDL_imageFilter.h>
+#include "visuals/visual_lasers.h"
+#include "visuals/visual_raycaster.h"
+#include "visuals/visual_matrix.h"
+#include "visuals/visual_stars.h"
 
 #include "visuals/visual_object.h"
 
@@ -163,16 +166,15 @@ class visualizer
     public:
 
     fft*            f;
-    int             fft_results[MAX_FFT_RES];
+    int             fft_results[MAX_FFT_RES+1];
     SDL_Surface*    vis_surface;
     visual_object*  visuals_ptr[MAX_VISUALS];
     void*           user_data;
-    double          angle;
     int             r1, r2;
     unsigned long   vt;
     int             mode;
 
-    visualizer(fft* p_f) : f(p_f), angle(0.0), mode(0)
+    visualizer(fft* p_f) : f(p_f), mode(1)
     {
         r1 = r2 = vt = 0;
         loopi(MAX_FFT_RES)
@@ -183,7 +185,7 @@ class visualizer
         loopi(MAX_VISUALS) visuals_ptr[i] = 0;
 
         // surface for visuals
-        Uint32 rmask, gmask, bmask, amask;
+        unsigned long rmask, gmask, bmask, amask;
 
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
         rmask = 0x00ff0000;
@@ -202,16 +204,23 @@ class visualizer
 
 
         // create all visuals
-        visuals_ptr[V_BARS] = new vis_bars(f);
-        visuals_ptr[V_OSC] = new vis_osc(f);
-        visuals_ptr[V_TUNNEL]= new vis_tunnel(f);
-        visuals_ptr[V_FIRE] = new vis_fire(f);
-        visuals_ptr[V_MIST] =  new vis_mist(f);
-        visuals_ptr[V_CIRCLES] = new vis_circles(f);
-        visuals_ptr[V_PLASMA] = new vis_plasma(f);
-        visuals_ptr[V_SINTEXT] = new vis_sintext(f);
-        visuals_ptr[V_ROTZOOM] = new vis_rotzoom(f);
-        visuals_ptr[V_BOBS] = new vis_bobs(f);
+        visuals_ptr[V_BARS]     = new vis_bars(f);
+        visuals_ptr[V_OSC]      = new vis_osc(f);
+        visuals_ptr[V_TUNNEL]   = new vis_tunnel(f);
+        visuals_ptr[V_FIRE]     = new vis_fire(f);
+        visuals_ptr[V_MIST]     = new vis_mist(f);
+        visuals_ptr[V_CIRCLES]  = new vis_circles(f);
+        visuals_ptr[V_PLASMA]   = new vis_plasma(f);
+        visuals_ptr[V_SINTEXT]  = new vis_sintext(f);
+        visuals_ptr[V_ROTZOOM]  = new vis_rotzoom(f);
+        visuals_ptr[V_BOBS]     = new vis_bobs(f);
+        visuals_ptr[V_LASERS]   = new vis_lasers(f);
+        visuals_ptr[V_RAYCASTER]= new vis_raycaster(f);
+        visuals_ptr[V_MATRIX]   = new vis_matrix(f);
+        visuals_ptr[V_STARS]    = new vis_stars(f);
+        visuals_ptr[V_WATER]    = new vis_water(f);
+        visuals_ptr[V_EXPLODE]  = new vis_explode(f);
+
 
         srand ( get_tick_count() );
 
@@ -235,8 +244,8 @@ class visualizer
 
     void draw_visuals(SDL_Surface* s,int number)
     {
-       //if (g_real_keys[SDLK_1] && !g_keys_last_state[SDLK_1])
-       mode = 1;// MUCH BETTER ! !mode;//1;
+       if (g_real_keys[SDLK_1] && !g_keys_last_state[SDLK_1])
+       mode = !mode;//1;
 
         int num_of_visuals = 0; // number of visuals we are showing
 
@@ -286,12 +295,10 @@ class visualizer
                 SDL_Rect dr = {0,0,s->w,s->h};
                 SDL_SoftStretch(vis_surface,&sr,s,&dr);
             }else{
-                 SDL_BlitSurface(vis_surface,0,s,0);
+                SDL_BlitSurface(vis_surface,0,s,0);
             }
 
         }
-
-
 
     };
 

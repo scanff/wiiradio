@@ -56,8 +56,7 @@ class vis_sintext : public visual_object
 
         fade(s,SDL_MapRGB(s->format,0,0,0),40);
 
-        int peak = 0;
-        loopi((MAX_FFT_SAMPLE) - 1) f->real[i] > peak ? peak = (int)f->real[i] : 0;
+        int peak = f->getPeak();
 
         fnts->set_size(FS_LARGE);
         fnts->change_color(200,0,0);

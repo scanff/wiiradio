@@ -7,11 +7,16 @@ class vis_explode : public visual_object
 {
     public:
 
-
     #define NUMBER_OF_PARTICLES 500
+    struct ex_colors
+    {
+        unsigned char r;
+        unsigned char g;
+        unsigned char b;
+    };
 
     unsigned int*   fire;
-    int             colors[256];
+    ex_colors       colors[256];
 
     /*particle structure*/
     typedef struct
@@ -27,8 +32,8 @@ class vis_explode : public visual_object
     {
         loaded = false;
         f = _f;
-        DRAW_WIDTH = SCREEN_WIDTH / 2;
-        DRAW_HEIGHT = SCREEN_HEIGHT / 2;
+        DRAW_WIDTH = SCREEN_WIDTH / 4;
+        DRAW_HEIGHT = SCREEN_HEIGHT / 4;
 
         fire = new unsigned int[DRAW_WIDTH * DRAW_HEIGHT];
         if(!fire) exit(0);
@@ -60,10 +65,37 @@ class vis_explode : public visual_object
     {
         memset(fire, 0, DRAW_WIDTH * DRAW_HEIGHT * sizeof(unsigned int));
 
-        for(int x = 0; x < 256; x++)
-            colors[x] = hsl_rgba(x, 255, x);
+        for (int i = 0; i < 32; ++i)
+        {
+            /* black to blue, 32 values*/
+            colors[i].b = i << 1;
 
+            /* blue to red, 32 values*/
+            colors[i + 32].r = i << 3;
+            colors[i + 32].b =  64 - (i << 1);
 
+            /*red to yellow, 32 values*/
+            colors[i + 64].r = 255;
+            colors[i + 64].g = i << 3;
+
+            /* yellow to white, 162 */
+            colors[i + 96].r = 255;
+            colors[i + 96].g = 255;
+            colors[i + 96].b = i << 2;
+            colors[i + 128].r = 255;
+            colors[i + 128].g = 255;
+            colors[i + 128].b = 64 + (i << 2);
+            colors[i + 160].r = 255;
+            colors[i + 160].g = 255;
+            colors[i + 160].b = 128 + (i << 2);
+            colors[i + 192].r = 255;
+            colors[i + 192].g = 255;
+            colors[i + 192].b = 192 + i;
+            colors[i + 224].r = 255;
+            colors[i + 224].g = 255;
+            colors[i + 224].b = 224 + i;
+        }
+        colors[0].r = colors[0].g = colors[0].b = 0;
 
         loopi(NUMBER_OF_PARTICLES)
             init_particle(particles + i);
@@ -148,18 +180,18 @@ class vis_explode : public visual_object
 
         image = (unsigned char*)s->pixels;
 
-      /* draw fire array to screen from bottom to top*/
-
         for (int y = 0; y < DRAW_HEIGHT; y++)
         {
             for (int x = 0;x < DRAW_WIDTH; x++)
             {
-                temp = y * DRAW_WIDTH;
+                temp = (y * DRAW_WIDTH) + x;
 
-                *image = fire[temp + x];
-                *image++ = fire[temp + x];
-                *image++ = fire[temp + x];
-                //image += 3;
+                if (colors[fire[temp]].r == 0 && colors[fire[temp]].g == 0 && colors[fire[temp]].b == 0)
+                    continue;
+
+                image[(y * s->pitch)+ (x*3)+2]  = colors[fire[temp]].b;
+                image[(y * s->pitch)+ (x*3)+1]  = colors[fire[temp]].g;
+                image[(y * s->pitch)+ (x*3)]    = colors[fire[temp]].r;
             }
         }
 

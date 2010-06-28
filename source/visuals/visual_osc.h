@@ -51,7 +51,7 @@ class vis_osc : public visual_object
         for(int i = 8; i < (len-1); i+=8)
         {
             x = (int)((double)i*ts);
-            y = (int)((double)zerolevel - (short)(f->real[i])*timescale);
+            y = (int)((double)zerolevel - (short)(f->getPosition(i))*timescale);
 
             index = (int)y/8;
             index < 0 ? index = 0 : index > 255 ? index = 255 : 0;

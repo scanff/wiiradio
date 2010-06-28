@@ -27,8 +27,7 @@ class vis_fire : public visual_object
     void load(void* userdata)
     {
 
-        int peak = 0;
-        loopi((MAX_FFT_SAMPLE) - 1) f->real[i] > peak ? peak = (int)f->real[i] : 0;
+        int peak = f->getPeak();
 
         for(int x = 0; x < 256; x++)
         {
@@ -51,6 +50,7 @@ class vis_fire : public visual_object
     {
         load(userdata);
 
+        int x1,x2,x3,x4,y1,y2;
 
       //randomize the bottom row of the fire buffer
         for(int x = 0; x < DRAW_WIDTH; x++) fire[x][DRAW_HEIGHT - 1] = abs(32768 + rand()) % 256;
@@ -58,12 +58,29 @@ class vis_fire : public visual_object
         for(int y = 0; y < DRAW_HEIGHT - 1; y++)
         for(int x = 0; x < DRAW_WIDTH; x++)
         {
-          fire[x][y] =
-            ((fire[(x - 1 + DRAW_WIDTH) % DRAW_WIDTH][(y + 1) % DRAW_HEIGHT]
-            + fire[(x) % DRAW_WIDTH][(y + 1) % DRAW_HEIGHT]
-            + fire[(x + 1) % DRAW_WIDTH][(y + 1) % DRAW_HEIGHT]
-            + fire[(x) % DRAW_WIDTH][(y + 2) % DRAW_HEIGHT])
-            * 32) / 129;
+            x1 = (x - 1 + DRAW_WIDTH) % DRAW_WIDTH;
+            x2 = (x) % DRAW_WIDTH;
+            x3 = (x + 1) % DRAW_WIDTH;
+            x4 = (x) % DRAW_WIDTH;
+            y1 = (y + 1) % DRAW_HEIGHT;
+            y2 = (y + 2) % DRAW_HEIGHT;
+
+            if( x1 < DRAW_WIDTH &&
+                x2 < DRAW_WIDTH &&
+                x3 < DRAW_WIDTH &&
+                x4 < DRAW_WIDTH &&
+                y1 < DRAW_HEIGHT &&
+                y2 < DRAW_HEIGHT
+                )
+                {
+
+                    fire[x][y] =
+                    ((fire[x1][y1]
+                    + fire[x2][y1]
+                    + fire[x3][y1]
+                    + fire[x4][y2])
+                    * 32) / 129;
+                }else exit(0);
         }
 
         //set the drawing buffer to the fire buffer, using the palette colors
