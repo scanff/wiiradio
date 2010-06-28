@@ -135,11 +135,16 @@ class playlists
             if(net->send_http_request((char*)"GET",(char*)trailing_path,(char*)"yp.shoutcast.com"))
             {
                 len = 1;
-                while(len > 0) {
+                unsigned long start_time = get_tick_count();
+
+                while(len > 0 )
+                {
+                    if ((get_tick_count() - start_time) > (TIME_OUT_MS/4)/*shorter timeout, less data expected*/) break; //timeout
+
                     len = net->client_recv(current_page+page_size,MAX_NET_BUFFER);
                     if (len > 0) page_size += len;
 #ifdef _WII_
-                    if(len==-EAGAIN) len = 1;//WOULDBLOCK
+                    if(len==(-EAGAIN)) len = 1;//WOULDBLOCK
 #endif
 #ifdef _WIN32
                     if(WSAGetLastError()==WSAEWOULDBLOCK) len=1;
