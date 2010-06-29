@@ -59,13 +59,18 @@ SDL_Thread* connectthread = 0;
 int search_thread (void *arg); // -- thread for genre searches
 SDL_Thread* searchthread = 0;
 
+// local storage of audio data
+/*
+    Using callbacks to call a class function seem to create unusual problems??? BUG ??? WTF IDK?
+*/
+unsigned char audio_data[8192];
+
 // search options
 struct _so
 {
     char*   buf;
     int     search_type;
 };
-
 _so search_options;
 
 #ifdef _WII_
@@ -732,15 +737,17 @@ void genre_nex_prev(bool n,char* genre)
 
 
 // callback called from mod of libmad
-void cb_fft(short* in, int max)
+static void cb_fft(unsigned char* in, int max)
 {
 
     if (g_reloading_skin || !g_running) return; // -- bad ui is loading
 
     if (visualize || ui->vis_on_screen) // Only update if viewing
     {
-        fourier->setAudioData(in,max);
-        fourier->getFFT(visuals->fft_results);
+
+        loopi(max) audio_data[i] = in[i];
+       //fourier->setAudioData(in,max);
+       //fourier->getFFT(visuals->fft_results);
     }
 }
 
@@ -778,7 +785,6 @@ int critical_thread(void *arg)
     g_critical_running = true;
 #ifndef _WII_
     short test[8192*2];
-
 #endif
     while(g_critical_running)
     {
@@ -796,8 +802,12 @@ int critical_thread(void *arg)
                 icy_info->buffer_data(net_buffer,len);
 
 #ifndef _WII_
-                loopi(8192*2) test[i] = rand() % 2000;
-                cb_fft((short*)test,8192*2);
+                loopi(8192) test[i] = rand() % i + 8000;
+
+                fourier->setAudioData(test,8192);
+                fourier->getFFT(visuals->fft_results);
+
+                //cb_fft((short*)test,8192*2);
 #endif
             } else if (len < 0)
             {
@@ -1133,6 +1143,13 @@ _reload:
           // SDL_Rect ds = { 100,100,640,480};
           SDL_BlitSurface(ui->guibuffer,0,screen,0);
           SDL_Flip(screen);
+        }
+
+        // do the fft using the local
+        if(status == PLAYING)
+        {
+            fourier->setAudioData((short*)audio_data,8192);
+            fourier->getFFT(visuals->fft_results);
         }
 
 #ifdef _WII_

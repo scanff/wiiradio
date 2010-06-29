@@ -16,12 +16,12 @@ class vis_water : public visual_object
 
     private:
     // useful macros
-   void   SETBUFFER(char* xbuf,int x,int y,char vl)
+   void  inline SETBUFFER(char* xbuf,int x,int y,char vl)
    {
        xbuf[(y * WATER_SIZE) + x] = vl;
    }
 
-    char READBUFFER(char* xbuf,int x,int y)
+    char inline READBUFFER(char* xbuf,int x,int y)
     {
         return (xbuf[(y * WATER_SIZE) + x]);
     }
@@ -84,11 +84,11 @@ class vis_water : public visual_object
     void render(SDL_Surface* is,void* user_data)
     {
         //load(user_data);
-       // double percent = ((double)18 / (double)32767);
-       // int peak = (int)(percent * (double)fft_results[3]);
+        double percent = ((double)25 / (double)32767);
+        int peak = (int)(percent * (double)fft_results[3]);
 
         for(int d=0; d < 4;d++)
-            rain_drops((rand() % WATER_SIZE),(rand() % WATER_SIZE),16);
+            rain_drops((rand() % WATER_SIZE),(rand() % WATER_SIZE),peak+1);
 
         process_water();
 
@@ -160,7 +160,7 @@ class vis_water : public visual_object
 
     };
 
-    int sqrdt(int sx, int sy, int dx, int dy)
+    int inline sqrdt(int sx, int sy, int dx, int dy)
     {
         return ((dx - sx) * (dx - sx)) + ((dy - sy) * (dy - sy));
     }
