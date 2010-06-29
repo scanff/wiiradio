@@ -744,7 +744,6 @@ static void cb_fft(unsigned char* in, int max)
 
     if (visualize || ui->vis_on_screen) // Only update if viewing
     {
-
         loopi(max) audio_data[i] = in[i];
        //fourier->setAudioData(in,max);
        //fourier->getFFT(visuals->fft_results);
@@ -783,9 +782,7 @@ int critical_thread(void *arg)
     if (!net_buffer) exit(0);
 
     g_critical_running = true;
-#ifndef _WII_
-    short test[8192*2];
-#endif
+
     while(g_critical_running)
     {
         // stream handler
@@ -802,12 +799,8 @@ int critical_thread(void *arg)
                 icy_info->buffer_data(net_buffer,len);
 
 #ifndef _WII_
-                loopi(8192) test[i] = rand() % i + 8000;
-
-                fourier->setAudioData(test,8192);
-                fourier->getFFT(visuals->fft_results);
-
-                //cb_fft((short*)test,8192*2);
+                // just emulate the audio data on windows for now
+                loopi(8192) audio_data[i] = rand() % (i + 8000);
 #endif
             } else if (len < 0)
             {
@@ -1146,12 +1139,14 @@ _reload:
         }
 
         // do the fft using the local
-        if(status == PLAYING)
+        if (visualize || ui->vis_on_screen) // Only update if viewing
         {
-            fourier->setAudioData((short*)audio_data,8192);
-            fourier->getFFT(visuals->fft_results);
+            if(status == PLAYING)
+            {
+                fourier->setAudioData((short*)audio_data,8192);
+                fourier->getFFT(visuals->fft_results);
+            }
         }
-
 #ifdef _WII_
         Sleep(5);
 #else
