@@ -8,7 +8,9 @@
 #ifdef _WII_
     #define MAX_PATH 255
     #define ENDIAN B_ENDIAN
-    #define EAGAIN (-11)
+    #ifndef EAGAIN
+        #define EAGAIN (-11)
+    #endif
     #include <wiiuse/wpad.h>
     #include <ogc/lwp_watchdog.h>
     #include <fat.h>
