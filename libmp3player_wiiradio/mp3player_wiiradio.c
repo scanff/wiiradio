@@ -88,7 +88,7 @@ static void Init3BandState(EQState *es,s32 lowfreq,s32 highfreq,s32 mixfreq);
 static s16 Do3Band(EQState *es,s16 sample);
 static void Resample(struct mad_pcm *Pcm,EQState eqs[2],u32 stereo,u32 src_samplerate);
 
-static void (*fftfunction)(s16* data,int len); //added
+static void (*fftfunction)(u8* data,int len); //added
 
 struct _rambuffer
 {
@@ -229,7 +229,7 @@ void MP3Player_Init()
 }
 
 s32 MP3Player_PlayBuffer(const void *buffer,s32 len,void (*filterfunc)(struct mad_stream *,struct mad_frame *),
-void (*fftin)(s16* data,int len))
+void (*fftin)(u8* data,int len))
 {
 	if(thr_running==TRUE) return -1;
 
@@ -248,7 +248,7 @@ void (*fftin)(s16* data,int len))
 }
 
 s32 MP3Player_PlayFile(void *cb_data,s32 (*reader)(void *,void *,s32),void (*filterfunc)(struct mad_stream *,struct mad_frame *),
-void (*fftin)(s16* data,int len))
+void (*fftin)(u8* data,int len))
 {
 	if(thr_running==TRUE) return -1;
 
@@ -481,7 +481,7 @@ static void DataTransferCallback()
 	}
 #endif
 	//modified to send info back to my fft callback
-	fftfunction((s16*)OutputBuffer[CurrentBuffer],ADMA_BUFFERSIZE);
+	fftfunction((u8*)OutputBuffer[CurrentBuffer],ADMA_BUFFERSIZE);
 	//
 }
 
