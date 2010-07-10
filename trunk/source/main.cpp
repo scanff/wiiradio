@@ -735,7 +735,7 @@ void genre_nex_prev(bool n,char* genre)
     if (display_idx <= 0 ) display_idx = 0;
 }
 
-
+#ifndef STD_MAD
 // callback called from mod of libmad
 static void cb_fft(unsigned char* in, int max)
 {
@@ -749,6 +749,7 @@ static void cb_fft(unsigned char* in, int max)
        //fourier->getFFT(visuals->fft_results);
     }
 }
+#endif
 
 void get_favorites()
 {
