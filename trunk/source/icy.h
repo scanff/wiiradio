@@ -125,7 +125,7 @@ class icy {
         DEB("icy_reset\n");
         memset(buffer,0,buffer_size);
         icy_stream_reset();
-        icy_metaint=10000; // some default, hsa to be overwritten
+        icy_metaint=10000; // some default, has to be overwritten
         metaint_pos = 0;
         metaint_receive_pos = 0;
         pre_buffer = 200000;
