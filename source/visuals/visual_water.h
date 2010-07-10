@@ -30,9 +30,9 @@ class vis_water : public visual_object
 
     int             drip_radius;
     int             drip_radius_sqr;
+    float           damp_fact;
     char*           water_read_buf;
     char*           water_write_buf;
-    float           damp_fact;
 
 
     public:
