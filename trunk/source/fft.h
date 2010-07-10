@@ -9,7 +9,7 @@ class fft {
         float *imaginary1;
         float *real2;
         float *imaginary2;
-        int dataSize;
+        unsigned dataSize;
 
         #define START 5
         #define DIVISIONS 24
@@ -83,9 +83,9 @@ class fft {
         float    *RealOut,
         float    *ImagOut )
     {
-        int NumBits;    /* Number of bits needed to store indices */
-        int i, j, k, n;
-        int BlockSize, BlockEnd;
+        unsigned NumBits;    /* Number of bits needed to store indices */
+        unsigned i, j, k, n;
+        unsigned BlockSize, BlockEnd;
 
         double angle_numerator = 2.0 * (3.14159265359);
         double tr, ti;     /* temp real, temp imaginary */
@@ -177,7 +177,7 @@ class fft {
         }*/
     }
 
-    float getPosition(int pos)
+    float getPosition(unsigned pos)
     {
         float fft_item;
 
@@ -208,13 +208,13 @@ class fft {
         return fft_peak;
     }
 
-    void setAudioData(short *data,int max)
+    void setAudioData(short *data, unsigned max)
     {
 
 //        SDL_LockMutex(fft_lock);
 
         // Convert from stereo to mono and set to real, setting imaginary to blank
-        for(int i = 0; i < dataSize; i++)
+        for(unsigned i = 0; i < dataSize; i++)
         {
             if ((i<<1) >= max-1) continue;
 
@@ -243,10 +243,10 @@ class fft {
         imaginary2 = tmp;
 
         // Ensure we have the right count
-        int index = 0;
+        unsigned index = 0;
 
         // Combine into 16 groups
-        for(int j = 0; j < DIVISIONS; j++)
+        for(unsigned j = 0; j < DIVISIONS; j++)
         {
             if (index >= dataSize) break;
 
