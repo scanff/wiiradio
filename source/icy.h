@@ -381,18 +381,19 @@ class icy {
         {
             loopi(len) buffer[buffered++] = net_buffer[i];
 
+            // overwrite last byte of buffer temporarily to protect strstr
+            char tmp = buffer[buffered-1];
+            buffer[buffered-1] = '\0';
+
             if (buffered > 20000) // We should have found the header by now!!!
             {
 #ifdef ICY_DEBUG
-                printf("Header not found\n%s\n", buffer);
+                printf("Header not found, %lu %d\n%s\n", buffered, len, buffer);
 #endif
                 status = FAILED;
                 return;
             }
 
-            // overwrite last byte of buffer temporarily to protect strstr
-            char tmp = buffer[buffered-1];
-            buffer[buffered-1] = '\0';
             if (strstr(buffer,"\r\n\r\n") || strstr(buffer,"\r\n\r\0"))
             {
                 DEB("looking_for_header\n");
@@ -435,6 +436,8 @@ class icy {
                 metaint_pos = buffered = 0;
 
             }
+            else
+                buffer[buffered-1] = tmp;
         }
 
         // Still looking for header ... return if we are
