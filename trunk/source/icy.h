@@ -180,6 +180,9 @@ class icy {
                             memset(tmp,0,10);
                             memcpy(tmp,start,(end-start < 10 ? end-start : 9));
                             icy_metaint = atoi(tmp);
+#ifdef ICY_DEBUG
+                            printf("parsed icy-metaint: %d\n", icy_metaint);
+#endif
 
                         break;
                         case 8:
@@ -215,6 +218,7 @@ class icy {
 #endif
     }
 
+    // return value: number of char* to remove from buffer. negative: error
     int parse_header(char* buf)
     {
         DEB("parse_header\n");
@@ -231,7 +235,7 @@ class icy {
 #ifdef ICY_DEBUG
           printf("%s\n", buf);
 #endif
-          return 0;
+          return -1;
         }
         DEB("  found\n");
 
@@ -239,12 +243,20 @@ class icy {
 
         //find the end of the header then remove the header from the stream.
         char* end_header = strstr(buf,"\r\n\r\n");
+        if (!end_header)
+            end_header = strstr(buffer,"\r\n\r\0");
         if (end_header)
         {
             return (end_header + 4) - buf;
         }
-
-        return 0;
+#ifdef ICY_DEBUG
+        else
+        {
+            printf("End of header not found\n");
+            printf("%s\n", buf);
+        }
+#endif
+        return -1;
     };
 
     void parse_meta_data(char* data)
@@ -383,7 +395,7 @@ class icy {
                 DEB("looking_for_header\n");
                 int remove = parse_header(buffer);
 
-                if (remove == 0) // stream not available! could be old link
+                if (remove < 0) // stream not available! could be old link
                 {
                     status = FAILED;
                     return;
