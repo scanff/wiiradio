@@ -383,6 +383,9 @@ class icy {
 
             if (buffered > 20000) // We should have found the header by now!!!
             {
+#ifdef ICY_DEBUG
+                printf("Header not found\n%s\n", buffer);
+#endif
                 status = FAILED;
                 return;
             }
