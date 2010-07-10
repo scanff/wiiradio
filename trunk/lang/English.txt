@@ -38,7 +38,8 @@ $LANG_CHANGE_SKIN=Change Skin:
 $LANG_ABOUT=About:
 $LANG_VERSION=Version
 $LANG_CHANGE_LANG=Change Language:
-$LANG_AUTHOR=By - 
+$LANG_AUTHOR=By
+$LANG_AND=and
 
 // -- search screen
 $LANG_CLOSE=Close

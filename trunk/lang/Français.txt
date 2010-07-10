@@ -36,7 +36,8 @@ $LANG_CHANGE_SKIN=Changez la peau:
 $LANG_ABOUT=Au sujet de:
 $LANG_VERSION=Version
 $LANG_CHANGE_LANG=Changez la langue:
-$LANG_AUTHOR=Par - 
+$LANG_AUTHOR=Par
+$LANG_AND=et
 
 // -- search screen
 $LANG_CLOSE=Close

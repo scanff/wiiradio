@@ -191,6 +191,7 @@ class gui_options : public gui_dlg
 
         fnts->text(dest,vars.search_var("skinname"),220,260,0);
         x = fnts->text(dest,vars.search_var("$LANG_AUTHOR"),220,280,0);
+        x += fnts->text(dest,": ",220+x,280,0);
         fnts->text(dest,vars.search_var("skinauthor"),220+x,280,0);
 
         // -- language selection
@@ -205,7 +206,11 @@ class gui_options : public gui_dlg
         // -- about
         fnts->change_color(100,100,100);
         fnts->text(dest,vars.search_var("$LANG_ABOUT"),200,350,0,1);
-        fnts->text(dest,"v0.5. by Scanff, TiMeBoMb and Knarrff",220,350,0);
+        x =fnts->text(dest,"v0.6 - "                        ,220  ,350,0);
+        x+=fnts->text(dest,vars.search_var("$LANG_AUTHOR"),220+x,350,0);
+        x+=fnts->text(dest," Scanff, TiMeBoMb "           ,220+x,350,0);
+        x+=fnts->text(dest,vars.search_var("$LANG_AND")   ,220+x,350,0);
+        x+=fnts->text(dest," Knarrff"                     ,220+x,350,0);
 
 
         // -- draw the butons ect...

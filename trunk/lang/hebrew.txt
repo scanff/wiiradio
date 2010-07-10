@@ -36,7 +36,8 @@ $LANG_CHANGE_SKIN=שנה סקין:
 $LANG_ABOUT=אודות:
 $LANG_VERSION=גרסה
 $LANG_CHANGE_LANG=Change Language:
-$LANG_AUTHOR=By - 
+$LANG_AUTHOR=By
+$LANG_AND=and
 
 // -- search screen
 $LANG_CLOSE=Close
