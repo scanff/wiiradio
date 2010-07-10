@@ -186,7 +186,7 @@ class vis_raycaster : public visual_object
         }
 
         //use_texture = true;
-        double percent = ((double)200 / (double)32767);
+        //double percent = ((double)200 / (double)32767);
         int peak = f->getPeak();
 
 
@@ -351,7 +351,7 @@ class vis_raycaster : public visual_object
 
 
                 surface_pos = ((rc_surfaces[texture_id]->h*3) * texY) + (texX*3);
-                if (surface_pos+2 >= (rc_surfaces[texture_id]->h * rc_surfaces[texture_id]->pitch))
+                if ((signed)surface_pos+2 >= (rc_surfaces[texture_id]->h * rc_surfaces[texture_id]->pitch))
                     continue;
 
                 r = texture[surface_pos+2];
@@ -510,7 +510,7 @@ class vis_raycaster : public visual_object
         #endif
 
         int text_pos_floor = ((y*(s->w*3))+(x*3));
-        int text_pos_ceiling = (((DRAW_HEIGHT-y)*(s->w*3))+(x*3));
+        //int text_pos_ceiling = (((DRAW_HEIGHT-y)*(s->w*3))+(x*3));
 
         color = color >> 1 & 8355711; // darken
 
