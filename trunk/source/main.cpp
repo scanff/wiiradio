@@ -1048,7 +1048,17 @@ _reload:
     ui              = new gui(fnts,visuals,g_currentskin);
 
 
-    if (!g_reloading_skin) search_function((char*)"dance",SEARCH_GENRE); // first time so get list ...
+    if (!g_reloading_skin) {
+        // If there are playlists, show them first
+        if (total_num_playlists) {
+            SetScreenStatus(S_PLAYLISTS);
+        // If there are no playlists, show genre list
+        } else {
+            // first time so get list ...
+            //search_function((char*)"dance",SEARCH_GENRE);
+            SetScreenStatus(S_GENRES);
+        }
+    }
 
     g_running = true;
     g_reloading_skin = false;
