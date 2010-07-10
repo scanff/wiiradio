@@ -443,7 +443,6 @@ class favorites {
                 continue;
 
             load_file(ent->d_name);
-            total_num_playlists++;
           }
           closedir (dir);
 
