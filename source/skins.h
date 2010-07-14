@@ -131,9 +131,10 @@ class skins {
                     strncpy(value,start,end-start);
                 }
 
-                if (line[p] != ' ')
-                    non_ws++;
                 end++;
+
+                if (line[p] != ' ')
+                    non_ws = end;
             }
             if (*name && *value)
                 vars.add_var(name,value);
