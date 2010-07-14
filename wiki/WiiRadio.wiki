@@ -2,4 +2,4 @@
 
 = Introduction =
 
-A SHOUTCast player for Wii.
+A SHOUTCast and ICECast player for the Wii.
