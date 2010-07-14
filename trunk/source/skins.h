@@ -96,6 +96,7 @@ class skins {
 
         char* start = skin_data;
         char* end = 0;
+        char* non_ws = 0;
         char* ptr = skin_data;
 
         int i = 0;
@@ -107,7 +108,7 @@ class skins {
                 line[i++] = *ptr++;
 
             // -- parse the line
-            end = start = line;
+            end = non_ws = start = line;
             memset(name,0,SMALL_MEM);
             memset(value,0,SMALL_MEM);
 
@@ -121,7 +122,7 @@ class skins {
 
                 if (line[p] == '=')
                 {
-                    strncpy(name,start,end-start);
+                    strncpy(name,start,non_ws-start);
                     start=end+1;
                 }
 
@@ -130,6 +131,8 @@ class skins {
                     strncpy(value,start,end-start);
                 }
 
+                if (line[p] != ' ')
+                    non_ws++;
                 end++;
             }
             if (*name && *value)
