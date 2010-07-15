@@ -18,64 +18,69 @@ char icy_meta[ICY_META_MAX][20] = {     "icy-notice1:",
                                         "icy-pub:",
                                         "icy-metaint:",
                                         "icy-br:"
-                                    };
+                                  };
 
-class icy {
-    public:
+#include "ripper.h"
 
-        // icy header/metadata
-        char            icy_notice1[SMALL_MEM]; // notice 1
-        char            icy_notice2[SMALL_MEM]; // notice 2
-        char            icy_name[SMALL_MEM]; // station name
-        char            icy_genre[SMALL_MEM]; // station genre
-        char            icy_pls_url[SMALL_MEM]; // url in playlist
-        char            icy_url[SMALL_MEM]; // url of stream
-        char            content_type[SMALL_MEM]; // type
-        int             icy_pub; // public
-        unsigned int    icy_metaint; // metaint .. very important
-        int             icy_br; // bitrate
-        char            track_title[SMALL_MEM]; // track info
-        char            last_track_title[SMALL_MEM]; // track info - last
+class icy
+{
+public:
 
-        // vars
-        unsigned long   metaint_pos;
-        bool            looking_for_header;
-        int             redirect_detected;
-        unsigned long   buffered;
-        unsigned long   pre_buffer; // buffer before playback ...
-        unsigned long   buffer_size;
-        char*           buffer;
-        bool            bufferring;
+    // icy header/metadata
+    char            icy_notice1[SMALL_MEM]; // notice 1
+    char            icy_notice2[SMALL_MEM]; // notice 2
+    char            icy_name[SMALL_MEM]; // station name
+    char            icy_genre[SMALL_MEM]; // station genre
+    char            icy_pls_url[SMALL_MEM]; // url in playlist
+    char            icy_url[SMALL_MEM]; // url of stream
+    char            content_type[SMALL_MEM]; // type
+    int             icy_pub; // public
+    unsigned int    icy_metaint; // metaint .. very important
+    int             icy_br; // bitrate
+    char            track_title[SMALL_MEM]; // track info
+    char            last_track_title[SMALL_MEM]; // track info - last
+
+    // vars
+    unsigned long   metaint_pos;
+    bool            looking_for_header;
+    int             redirect_detected;
+    unsigned long   buffered;
+    unsigned long   pre_buffer; // buffer before playback ...
+    unsigned long   buffer_size;
+    char*           buffer;
+    bool            bufferring;
 
 
-        #define MAX_METADATA_SIZE   (4080+100) //16*255 + padding
-        #define BUFFER_CHUNK        (5000)
-        char            metaint_buffer[MAX_METADATA_SIZE];
-        int             metaint_size;
-        int             metaint_receive_pos;
+#define MAX_METADATA_SIZE   (4080+100) //16*255 + padding
+#define BUFFER_CHUNK        (5000)
+    char            metaint_buffer[MAX_METADATA_SIZE];
+    int             metaint_size;
+    int             metaint_receive_pos;
 
-        unsigned long   last_chunk;
-        unsigned long   buffers_recvd;
-        unsigned long   buffers_sent;
+    unsigned long   last_chunk;
+    unsigned long   buffers_recvd;
+    unsigned long   buffers_sent;
 
-        char*           temp_buffer;
+    char*           temp_buffer;
 
-    public:
+    stream_ripper*  ripper;
+
+public:
 
     icy() : icy_metaint(0),
-            metaint_pos(0),
-            looking_for_header(true),
-            redirect_detected(0),
-            buffered(0),
-            pre_buffer(200000),
-            buffer_size(2000000),
-            buffer(0),
-            bufferring(true),
-            metaint_size(0),
-            metaint_receive_pos(0),
-            last_chunk(0),
-            buffers_recvd(0),
-            buffers_sent(0)
+        metaint_pos(0),
+        looking_for_header(true),
+        redirect_detected(0),
+        buffered(0),
+        pre_buffer(200000),
+        buffer_size(2000000),
+        buffer(0),
+        bufferring(true),
+        metaint_size(0),
+        metaint_receive_pos(0),
+        last_chunk(0),
+        buffers_recvd(0),
+        buffers_sent(0)
 
     {
         memset(track_title,0,SMALL_MEM);
@@ -91,11 +96,15 @@ class icy {
 
 
         clean_icy_data();
+
+        ripper = new stream_ripper;
     };
 
 
     ~icy()
     {
+        delete ripper;
+
         free(temp_buffer);
         free(buffer);
     };
@@ -146,6 +155,16 @@ class icy {
     };
 
 
+    void icy_ripdata(char* data, int len)
+    {
+#ifdef ALLOW_RIPPING
+        // add option for this ... for now remove #ifdef to test rip
+        ripper->new_file(track_title);
+        ripper->save_data(data,len);
+
+#endif
+    }
+
     void parse_header_item(const char* obj)
     {
         DEB("parse_header_item\n");
@@ -158,37 +177,52 @@ class icy {
         loopi(ICY_META_MAX)
         {
             start =  strstr(obj,icy_meta[i]);
-            if (start) {
+            if (start)
+            {
                 // find the end of this meta data
                 end = strstr(start,"\r\n");
-                if (end) {
+                if (end)
+                {
                     start += strlen(icy_meta[i]);
-                    switch(i){
-                        case 0: memcpy(icy_notice1,start,(end-start < SMALL_MEM-1 ? end-start : SMALL_MEM-1)); break;
-                        case 1: memcpy(icy_notice2,start,(end-start < SMALL_MEM-1 ? end-start : SMALL_MEM-1)); break;
-                        case 2: memcpy(icy_name,start,(end-start < SMALL_MEM-1 ? end-start : SMALL_MEM-1)); break;
-                        case 3: memcpy(icy_genre,start,(end-start < SMALL_MEM-1 ? end-start : SMALL_MEM-1)); break;
-                        case 4: memcpy(icy_url,start,(end-start < SMALL_MEM-1 ? end-start : SMALL_MEM-1)); break;
-                        case 5: memcpy(content_type,start,(end-start < SMALL_MEM-1 ? end-start : SMALL_MEM-1)); break;
-                        case 6:
-                            memset(tmp,0,10);
-                            memcpy(tmp,start,(end-start < 10 ? end-start : 9));
-                            icy_pub = atoi(tmp);
+                    switch(i)
+                    {
+                    case 0:
+                        memcpy(icy_notice1,start,(end-start < SMALL_MEM-1 ? end-start : SMALL_MEM-1));
+                        break;
+                    case 1:
+                        memcpy(icy_notice2,start,(end-start < SMALL_MEM-1 ? end-start : SMALL_MEM-1));
+                        break;
+                    case 2:
+                        memcpy(icy_name,start,(end-start < SMALL_MEM-1 ? end-start : SMALL_MEM-1));
+                        break;
+                    case 3:
+                        memcpy(icy_genre,start,(end-start < SMALL_MEM-1 ? end-start : SMALL_MEM-1));
+                        break;
+                    case 4:
+                        memcpy(icy_url,start,(end-start < SMALL_MEM-1 ? end-start : SMALL_MEM-1));
+                        break;
+                    case 5:
+                        memcpy(content_type,start,(end-start < SMALL_MEM-1 ? end-start : SMALL_MEM-1));
+                        break;
+                    case 6:
+                        memset(tmp,0,10);
+                        memcpy(tmp,start,(end-start < 10 ? end-start : 9));
+                        icy_pub = atoi(tmp);
 
-                         break;
-                        case 7:
-                            memset(tmp,0,10);
-                            memcpy(tmp,start,(end-start < 10 ? end-start : 9));
-                            icy_metaint = atoi(tmp);
+                        break;
+                    case 7:
+                        memset(tmp,0,10);
+                        memcpy(tmp,start,(end-start < 10 ? end-start : 9));
+                        icy_metaint = atoi(tmp);
 #ifdef ICY_DEBUG
-                            printf("parsed icy-metaint: %d\n", icy_metaint);
+                        printf("parsed icy-metaint: %d\n", icy_metaint);
 #endif
 
                         break;
-                        case 8:
-                            memset(tmp,0,10);
-                            memcpy(tmp,start,(end-start < 10 ? end-start : 9));
-                            icy_br = atoi(tmp);
+                    case 8:
+                        memset(tmp,0,10);
+                        memcpy(tmp,start,(end-start < 10 ? end-start : 9));
+                        icy_br = atoi(tmp);
                         break;
 
 
@@ -226,16 +260,16 @@ class icy {
         char* found = strstr(buf,"icy-metaint:"); // expect this response from the server !
         if (!found)
         {
-          // This does not look like a icy stream, but it still could be
-          // something else we can handle, e.g. an html redirect
-          DEB("  icy header not found\n");
-          found = strstr(buf," 302 Moved Temporarily\r\n");
-          if (found)
-              parse_http_redirect(buf);
+            // This does not look like a icy stream, but it still could be
+            // something else we can handle, e.g. an html redirect
+            DEB("  icy header not found\n");
+            found = strstr(buf," 302 Moved Temporarily\r\n");
+            if (found)
+                parse_http_redirect(buf);
 #ifdef ICY_DEBUG
-          printf("%s\n", buf);
+            printf("%s\n", buf);
 #endif
-          return -1;
+            return -1;
         }
         DEB("  found\n");
 
@@ -269,10 +303,12 @@ class icy {
         printf("%s\n", data);
 #endif
         title_start = strstr(data,"StreamTitle='");
-        if (title_start) {
+        if (title_start)
+        {
             title_start += strlen("StreamTitle='");
             title_end = strstr(title_start,"';");
-            if (title_end) {
+            if (title_end)
+            {
                 int sizeof_tile = title_end-title_start;
                 if (sizeof_tile >= SMALL_MEM) sizeof_tile = SMALL_MEM;
 
@@ -282,7 +318,9 @@ class icy {
                 if (title_start == title_end)
                 {
                     strcpy(track_title, "Unknown Track");
-                }else{
+                }
+                else
+                {
                     strncpy(track_title, title_start, sizeof_tile);
                 }
                 // Make sure the title string is complete
@@ -291,7 +329,7 @@ class icy {
                 memset(metaint_buffer,0,MAX_METADATA_SIZE);
             }
         }
-     };
+    };
 
     // Parses received net-buffer for meta information and removes it from
     // stream, returning new buffer length
@@ -315,9 +353,9 @@ class icy {
 #ifdef ICY_DEBUG
                     if (net_buffer[i] != '\0')
                     {
-                      printf("Error in metaint section: no padding at end, metaint; %d\n",
-                             icy_metaint);
-                      exit(1);
+                        printf("Error in metaint section: no padding at end, metaint; %d\n",
+                               icy_metaint);
+                        exit(1);
                     }
 #endif
                     // Parse the metaint section
@@ -335,9 +373,9 @@ class icy {
                 // Check for end of data section
                 if (metaint_pos++ < icy_metaint)
                 {
-                     // Not yet reached: shift data in buffer if necessary
-                     // and go on
-                     net_buffer[netbuf_counter++] = net_buffer[i];
+                    // Not yet reached: shift data in buffer if necessary
+                    // and go on
+                    net_buffer[netbuf_counter++] = net_buffer[i];
                 }
                 else
                 {
@@ -449,6 +487,9 @@ class icy {
         // Get the audio data
         unsigned long new_buffer_size = buffered + len;
 
+        // rip the data if option is selected
+        icy_ripdata(temp_buffer,len);
+
         if (new_buffer_size > buffer_size)
         {
             int end_bytes = buffer_size - buffered;
@@ -464,11 +505,14 @@ class icy {
                 memcpy(buffer,temp_buffer+end_bytes,remain);
                 buffered = remain;
 
-            } else buffered = 0;
+            }
+            else buffered = 0;
 
 
             buffers_recvd++; // total number of buffers we've gotten for this stream
-        } else {
+        }
+        else
+        {
             // keep copying to the buffer
             memcpy(buffer+buffered,temp_buffer,len);
             buffered += len;
@@ -487,7 +531,7 @@ class icy {
         //need to restart
         if ((last_chunk + len) > buffer_size)
         {
-           len = (buffer_size - last_chunk); // send whats left
+            len = (buffer_size - last_chunk); // send whats left
 
             if (len <= 0)
             {
@@ -519,7 +563,8 @@ class icy {
 
         }
 
-        if (len > 0) {
+        if (len > 0)
+        {
             memcpy(cbuf,buffer+last_chunk,len);
             last_chunk += len;
         }
