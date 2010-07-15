@@ -116,52 +116,65 @@ void translate_keys()
 
 #ifdef _WII_
 
+    if (GetScreenStatus() == S_SEARCHING)
+        return;
 
-    if(WPAD_ButtonsHeld(0) & WPAD_BUTTON_HOME){
+    if(WPAD_ButtonsHeld(0) & WPAD_BUTTON_HOME)
+    {
         g_real_keys[SDLK_ESCAPE] = 1;
     }
 
-    if(WPAD_ButtonsHeld(0) & WPAD_BUTTON_LEFT){
+    if(WPAD_ButtonsHeld(0) & WPAD_BUTTON_LEFT)
+    {
         g_real_keys[SDLK_LEFT] = 1;
     }
-    if(WPAD_ButtonsHeld(0) & WPAD_BUTTON_RIGHT){
+    if(WPAD_ButtonsHeld(0) & WPAD_BUTTON_RIGHT)
+    {
         g_real_keys[SDLK_RIGHT] = 1;
     }
-    if(WPAD_ButtonsHeld(0) & WPAD_BUTTON_DOWN) {
-         g_real_keys[SDLK_DOWN] = 1;
+    if(WPAD_ButtonsHeld(0) & WPAD_BUTTON_DOWN)
+    {
+        g_real_keys[SDLK_DOWN] = 1;
     }
-    if(WPAD_ButtonsHeld(0) & WPAD_BUTTON_UP) {
-         g_real_keys[SDLK_UP] = 1;
-    }
-
-    if(WPAD_ButtonsHeld(0) & WPAD_BUTTON_A) {
-         g_real_keys[SDLK_RETURN] = 1;
-
+    if(WPAD_ButtonsHeld(0) & WPAD_BUTTON_UP)
+    {
+        g_real_keys[SDLK_UP] = 1;
     }
 
-
-    if(WPAD_ButtonsHeld(0) & WPAD_BUTTON_B) {
-         g_real_keys[SDLK_b] = 1;
+    if(WPAD_ButtonsHeld(0) & WPAD_BUTTON_A)
+    {
+        g_real_keys[SDLK_RETURN] = 1;
 
     }
 
-    if(WPAD_ButtonsHeld(0) & WPAD_BUTTON_PLUS) {
-         g_real_keys[SDLK_PLUS] = 1;
+
+    if(WPAD_ButtonsHeld(0) & WPAD_BUTTON_B)
+    {
+        g_real_keys[SDLK_b] = 1;
 
     }
 
-    if(WPAD_ButtonsHeld(0) & WPAD_BUTTON_MINUS) {
-         g_real_keys[SDLK_MINUS] = 1;
+    if(WPAD_ButtonsHeld(0) & WPAD_BUTTON_PLUS)
+    {
+        g_real_keys[SDLK_PLUS] = 1;
 
     }
 
-    if(WPAD_ButtonsHeld(0) & WPAD_BUTTON_1) {
-         g_real_keys[SDLK_1] = 1;
+    if(WPAD_ButtonsHeld(0) & WPAD_BUTTON_MINUS)
+    {
+        g_real_keys[SDLK_MINUS] = 1;
 
     }
 
-    if(WPAD_ButtonsHeld(0) & WPAD_BUTTON_2) {
-         g_real_keys[SDLK_2] = 1;
+    if(WPAD_ButtonsHeld(0) & WPAD_BUTTON_1)
+    {
+        g_real_keys[SDLK_1] = 1;
+
+    }
+
+    if(WPAD_ButtonsHeld(0) & WPAD_BUTTON_2)
+    {
+        g_real_keys[SDLK_2] = 1;
 
     }
 #endif
@@ -208,7 +221,8 @@ void delete_playlist(int value)
 
     fav_item* csl = favs->first;
     int x = 0;
-    while(csl){
+    while(csl)
+    {
         if (x==value) break;
 
         csl = csl->nextnode;
@@ -239,17 +253,17 @@ int search_thread(void* arg)
 
     switch(s->search_type)
     {
-        case SEARCH_GENRE:
+    case SEARCH_GENRE:
         sprintf(path,"/sbin/newxml.phtml?service=winamp2&no_compress=1&genre=%s&limit=1000",s->buf);
         break;
-        case SEARCH_STATIONS:
+    case SEARCH_STATIONS:
         sprintf(path,"/sbin/newxml.phtml?service=winamp2&no_compress=1&search=%s&limit=1000",s->buf);
         break;
-        default:
+    default:
         return 0;
     }
     // bring down upto 1k of stations per genre.  We will then cache them incase of shoutcast DB problems
-   // sprintf(path,"/sbin/newxml.phtml?service=winamp2&no_compress=1&genre=%s&limit=1000",selected);
+    // sprintf(path,"/sbin/newxml.phtml?service=winamp2&no_compress=1&genre=%s&limit=1000",selected);
     station_lister(path,s->buf);
 
     SetScreenStatus(S_BROWSER); // default to browser as results will be here
@@ -307,8 +321,10 @@ int connect_thread(void* arg)
 
         connected = connect_try;
 
-    } else {
-      status = FAILED;
+    }
+    else
+    {
+        status = FAILED;
     }
 
     return 0;
@@ -317,11 +333,17 @@ int connect_thread(void* arg)
 
 void split_url(char* o_url, char* o_path, int* o_port, char* url)
 {
+    if(!url) return;
+
     int part = 0;
-    char* split = url;
-     // ignore http://
-    char* search = strstr(url,"http://");
-    if(!search) return;
+    char local_url[MED_MEM];
+    strcpy(local_url,url);
+
+    char* split = local_url;
+
+    // ignore http://
+    char* search = strstr(local_url,"http://");
+
 
     // Clear data
     strcpy(o_url,  "");
@@ -331,17 +353,24 @@ void split_url(char* o_url, char* o_path, int* o_port, char* url)
     search += strlen("http://");
 
     split = strtok(search,":/");
-    while(split) {
+    while(split)
+    {
 
-        if(!part) {
+        if(!part)
+        {
             strcpy(o_url,split);
-        }else if(part==1) {
+        }
+        else if(part==1)
+        {
             *o_port = atoi(split);
-            if (*o_port == 0) {
+            if (*o_port == 0)
+            {
                 strcat(o_path,"/");
                 strcat(o_path,split);
             }
-        }else{
+        }
+        else
+        {
             strcat(o_path,"/");
             strcat(o_path,split);
         }
@@ -382,9 +411,10 @@ void connect_to_stream(int value, connect_info info)
     status = CONNECTING; // attempting a new connection
 
     // Sort out data for stream to connect to
-    switch (info) {
-      case I_STATION:
-      {
+    switch (info)
+    {
+    case I_STATION:
+    {
         value += display_idx;
         if (value > scb->total_items)
         {
@@ -395,13 +425,15 @@ void connect_to_stream(int value, connect_info info)
         station_list* csl = scb->sl_first;
         // loop through stations
         int x = 0;
-        while(csl){
+        while(csl)
+        {
             if (x==value) break;
 
             csl = csl->nextnode;
             x++;
         }
-        if (!csl) {
+        if (!csl)
+        {
             status = FAILED;
             return;
         }
@@ -410,7 +442,9 @@ void connect_to_stream(int value, connect_info info)
         if (csl->service_type == SERVICE_SHOUTCAST)
         {
             playlst->get_playlist(csl->station_id);
-        }else if (csl->service_type == SERVICE_ICECAST){
+        }
+        else if (csl->service_type == SERVICE_ICECAST)
+        {
             // no pls for ICEcast
             playlst->split_url(csl->station_id);
         }
@@ -420,27 +454,30 @@ void connect_to_stream(int value, connect_info info)
         strcpy(playing->station_path, playlst->first_entry->path);
 
         // Set standard port
-        if (!playing->port) {
+        if (!playing->port)
+        {
             playing->port = STD_STREAM_PORT;
         }
 
         //save to the now playing mem
         strcpy(playing->station_name,csl->station_name);
         break;
-      }
-      case I_PLAYLIST:
-      {
+    }
+    case I_PLAYLIST:
+    {
         // play from playlst file
         fav_item* csl = favs->first;
         // loop through stations
         int x = 0;
-        while(csl){
+        while(csl)
+        {
             if (x==value) break;
 
             csl = csl->nextnode;
             x++;
         }
-        if (!csl) {
+        if (!csl)
+        {
             status = FAILED;
             return;
         }
@@ -450,19 +487,21 @@ void connect_to_stream(int value, connect_info info)
         strcpy(playing->station_path, csl->station_path);
 
         // Set standard port
-        if (!playing->port) {
+        if (!playing->port)
+        {
             playing->port = STD_STREAM_PORT;
         }
 
         //save to the now playing mem
         strcpy(playing->station_name,csl->station_name);
         break;
-      }
-      case I_DIRECT:
+    }
+    case I_DIRECT:
         // do nothing
-      break;
+        break;
 
-      case I_HASBEENSET: break;
+    case I_HASBEENSET:
+        break;
     }
 
     // start a new connection thread
@@ -475,8 +514,9 @@ void screen_timeout()
 {
     if (!visualize)
 
-    // auto burnin reducer if there not viewing a visual
-    loopi(MAX_KEYS) {
+        // auto burnin reducer if there not viewing a visual
+        loopi(MAX_KEYS)
+    {
         if (g_real_keys[i]) last_button_time = get_tick_count();
     }
 
@@ -485,26 +525,27 @@ void screen_timeout()
 
     switch (g_screensavetime)
     {
-        case 0:
+    case 0:
         calc_timeout = (1000*60); //1 mins
         break;
 
-        case 1:
+    case 1:
         calc_timeout = (1000*300); //5 mins
         break;
 
-        case 2:
+    case 2:
         calc_timeout = (1000*600); //10 mins
         break;
 
-        case 3:
+    case 3:
         return;
 
     };
 
     if (get_tick_count() - last_button_time > calc_timeout)
         screen_sleeping = true;
-    else if (screen_sleeping) {
+    else if (screen_sleeping)
+    {
         screen_sleeping = false;
         visualize = false;
         visualize_number = 0; //reset
@@ -523,7 +564,7 @@ void check_keys()
 
     // -- keys that always perform the same action go first!!!
     if (g_real_keys[SDLK_2] && ! g_keys_last_state[SDLK_2])
-		visualize = !visualize;
+        visualize = !visualize;
 
     if (g_real_keys[SDLK_MINUS] && !g_keys_last_state[SDLK_MINUS])
     {
@@ -536,7 +577,9 @@ void check_keys()
 #else
             FMOD_Channel_SetVolume(channel1, 0.);
 #endif
-        }else{
+        }
+        else
+        {
 #ifdef _WII_
             MP3Player_Volume(mp3_volume);
 #else
@@ -547,7 +590,8 @@ void check_keys()
     }
 
 
-    if (g_real_keys[SDLK_DOWN]) {
+    if (g_real_keys[SDLK_DOWN])
+    {
 
         mute = false;
 
@@ -561,7 +605,8 @@ void check_keys()
         g_vol_lasttime = get_tick_count();
     }
 
-    if (g_real_keys[SDLK_UP]) {
+    if (g_real_keys[SDLK_UP])
+    {
 
         mute = false;
 
@@ -580,9 +625,14 @@ void check_keys()
     if (g_real_keys[SDLK_1] && !g_keys_last_state[SDLK_1])
     {
 
-        if (GetScreenStatus() != S_STREAM_INFO) {
+        if (GetScreenStatus() != S_STREAM_INFO)
+        {
             if (!visualize) SetScreenStatus(S_STREAM_INFO);
-        }else if (GetScreenStatus() == S_STREAM_INFO)  { SetLastScreenStatus(); }
+        }
+        else if (GetScreenStatus() == S_STREAM_INFO)
+        {
+            SetLastScreenStatus();
+        }
 
     }
 
@@ -611,7 +661,7 @@ void check_keys()
 
         switch(GetScreenStatus())
         {
-            case S_BROWSER:
+        case S_BROWSER:
 
             if (display_idx > MAX_STATION_CACHE) return;
             else display_idx += max_listings;
@@ -620,7 +670,7 @@ void check_keys()
 
             break;
 
-            case S_PLAYLISTS:
+        case S_PLAYLISTS:
 
             if (pls_display + max_listings  >= total_num_playlists) return;
             else pls_display += max_listings;
@@ -628,7 +678,7 @@ void check_keys()
             ui->reset_scrollings();
             break;
 
-            case S_GENRES:
+        case S_GENRES:
 
             //if (genre_display + max_listings  >= MAX_GENRE) return;
             if (genre_display + max_listings  >= ui->gl.total) return;
@@ -638,7 +688,7 @@ void check_keys()
 
             break;
 
-            default:
+        default:
             break;
 
         }
@@ -657,7 +707,7 @@ void check_keys()
 
         switch(GetScreenStatus())
         {
-            case S_BROWSER:
+        case S_BROWSER:
 
             if (display_idx < 0) display_idx = 0;
             else display_idx -= max_listings;
@@ -665,7 +715,7 @@ void check_keys()
             ui->reset_scrollings();
             break;
 
-            case S_PLAYLISTS:
+        case S_PLAYLISTS:
 
             pls_display -= max_listings;
             if (pls_display < 0) pls_display = 0;
@@ -673,7 +723,7 @@ void check_keys()
             ui->reset_scrollings();
             break;
 
-            case S_GENRES:
+        case S_GENRES:
 
             genre_display -= max_listings;
             if (genre_display < 0) genre_display = 0;
@@ -681,7 +731,7 @@ void check_keys()
             ui->reset_scrollings();
             break;
 
-            default:
+        default:
             break;
         }
     }
@@ -708,7 +758,8 @@ void search_function(char* value,int search_type)
     }
 
     if (search_type == SEARCH_STATIONS)
-    { // can't do this yet with icecast
+    {
+        // can't do this yet with icecast
         g_servicetype = SERVICE_SHOUTCAST;
     }
 
@@ -745,8 +796,8 @@ static void cb_fft(unsigned char* in, int max)
     if (visualize || ui->vis_on_screen) // Only update if viewing
     {
         loopi(max) audio_data[i] = in[i];
-       //fourier->setAudioData(in,max);
-       //fourier->getFFT(visuals->fft_results);
+        //fourier->setAudioData(in,max);
+        //fourier->getFFT(visuals->fft_results);
     }
 }
 #endif
@@ -803,13 +854,15 @@ int critical_thread(void *arg)
                 // just emulate the audio data on windows for now
                 loopi(8192) audio_data[i] = rand() % (i + 8000);
 #endif
-            } else if (len < 0)
+            }
+            else if (len < 0)
             {
                 /* would block, not really an error in this case */
                 if (len != -EAGAIN) errors++; // -11
 
                 if (errors > 300)
-                {   // -- too many errors let's reset
+                {
+                    // -- too many errors let's reset
                     status = FAILED;
                     continue;
                 }
@@ -867,7 +920,9 @@ int critical_thread(void *arg)
                 errors = 0;
             }
 
-        }else{
+        }
+        else
+        {
 
             errors = 0; // no rec errors
             Sleep(500); // don't hog if not connected
@@ -877,7 +932,8 @@ int critical_thread(void *arg)
         Sleep(15); // minimum delay
     }
 
-    free(net_buffer); net_buffer =0;
+    free(net_buffer);
+    net_buffer =0;
     if (connected) net->client_close();
 
     return 0;
@@ -886,7 +942,8 @@ int critical_thread(void *arg)
 #ifdef _WII_
 
 int evctr = 0;
-void countevs(int chan, const WPADData *data) {
+void countevs(int chan, const WPADData *data)
+{
     evctr++;
 }
 
@@ -925,7 +982,7 @@ int main(int argc, char **argv)
     WPAD_SetDataFormat(WPAD_CHAN_ALL, WPAD_FMT_BTNS_ACC_IR);
     // -- *2 so we don't lagg when hitting the right or bottom of the screen
     WPAD_SetVRes(WPAD_CHAN_ALL, SCREEN_WIDTH +2*SCREEN_WIDTH_BUFFER,
-                                SCREEN_HEIGHT+2*SCREEN_HEIGHT_BUFFER);
+                 SCREEN_HEIGHT+2*SCREEN_HEIGHT_BUFFER);
     WPAD_SetIdleTimeout(200);
 
     // Wii Power/Reset buttons
@@ -943,14 +1000,16 @@ int main(int argc, char **argv)
     // load options
     load_options();
 
-    if ( SDL_Init( SDL_INIT_VIDEO | SDL_INIT_TIMER  ) < 0 ) {
+    if ( SDL_Init( SDL_INIT_VIDEO | SDL_INIT_TIMER  ) < 0 )
+    {
         printf("SDL_Init() failed\n");
         exit(1);
     }
 
     if ( SDL_SetVideoMode( SCREEN_WIDTH, SCREEN_HEIGHT, BITDEPTH,
-             (fullscreen ? SDL_FULLSCREEN : 0) | SDL_HWSURFACE | SDL_DOUBLEBUF ) < 0 ) { //SDL_HWSURFACE
-    printf("SDL_SetVideoMode() failed\n");
+                           (fullscreen ? SDL_FULLSCREEN : 0) | SDL_HWSURFACE | SDL_DOUBLEBUF ) < 0 )   //SDL_HWSURFACE
+    {
+        printf("SDL_SetVideoMode() failed\n");
         exit(1);
     }
 
@@ -962,19 +1021,23 @@ int main(int argc, char **argv)
     screen = NULL;
     screen = SDL_GetVideoSurface();
 
-    if (!screen) {
-    printf("SDL_GetVideoSurface() failed\n");
-    exit(1);
-  }
+    if (!screen)
+    {
+        printf("SDL_GetVideoSurface() failed\n");
+        exit(1);
+    }
 
     draw_rect(screen,0,0,SCREEN_WIDTH,SCREEN_HEIGHT,0); // clear backbuffer
     SDL_Flip(screen);
 
     // INIT
     fnts            = new fonts;
-    fnts->change_color(200,200,200); fnts->set_size(FS_SYSTEM);
-    fnts->text(screen,"Loading...",30,70,0);SDL_Flip(screen);
-    fnts->text(screen,"Setting Up Network...",30,90,0);SDL_Flip(screen);
+    fnts->change_color(200,200,200);
+    fnts->set_size(FS_SYSTEM);
+    fnts->text(screen,"Loading...",30,70,0);
+    SDL_Flip(screen);
+    fnts->text(screen,"Setting Up Network...",30,90,0);
+    SDL_Flip(screen);
     net             = new network;
     scb             = new shoutcast_browser;
     playlst         = new playlists;
@@ -1005,7 +1068,7 @@ int main(int argc, char **argv)
 
 #endif
 
- // create a new reader thread
+// create a new reader thread
     g_running = true;
     mainthread = SDL_CreateThread(critical_thread,0);
     if (!mainthread) exit(0);
@@ -1018,12 +1081,15 @@ int main(int argc, char **argv)
 
 _reload:
 
-    if (g_reloading_skin) { // only if we have a skin open
+    if (g_reloading_skin)   // only if we have a skin open
+    {
 
         char* sp = sk->get_current_skin_path();
         if (sp) strcpy(g_currentskin,sp); // save as option
 
-    }else{
+    }
+    else
+    {
         if (!*g_currentskin)
             strcpy(g_currentskin,"skins/wiiradio/"); // -- load default
 
@@ -1041,19 +1107,25 @@ _reload:
     lang->load_lang(g_currentlang);
 
     // --- skin
-    fnts->change_color(200,200,200); fnts->set_size(FS_SYSTEM);
-    fnts->text(screen,"Loading Skin...",30,110,0);SDL_Flip(screen);
+    fnts->change_color(200,200,200);
+    fnts->set_size(FS_SYSTEM);
+    fnts->text(screen,"Loading Skin...",30,110,0);
+    SDL_Flip(screen);
 
     tx              = new texture_cache;
     ui              = new gui(fnts,visuals,g_currentskin);
 
 
-    if (!g_reloading_skin) {
+    if (!g_reloading_skin)
+    {
         // If there are playlists, show them first
-        if (total_num_playlists) {
+        if (total_num_playlists)
+        {
             SetScreenStatus(S_PLAYLISTS);
-        // If there are no playlists, show genre list
-        } else {
+            // If there are no playlists, show genre list
+        }
+        else
+        {
             // first time so get list ...
             //search_function((char*)"dance",SEARCH_GENRE);
             SetScreenStatus(S_GENRES);
@@ -1066,7 +1138,8 @@ _reload:
     while(g_running)
     {
 
-        loopi(MAX_KEYS) {
+        loopi(MAX_KEYS)
+        {
             g_keys_last_state[i] = g_real_keys[i];
             g_real_keys[i] = 0;
         }
@@ -1122,31 +1195,37 @@ _reload:
             }
 
             ui->handle_events(&event);
-        } else {
+        }
+        else
+        {
             cursor_visible = 0;
         }
 #else
-       while (SDL_PollEvent( &event )) {
-           if (event.type == SDL_MOUSEMOTION) {
-               cursor_x = event.motion.x;
-               cursor_y = event.motion.y;
-           }
+        while (SDL_PollEvent( &event ))
+        {
+            if (event.type == SDL_MOUSEMOTION)
+            {
+                cursor_x = event.motion.x;
+                cursor_y = event.motion.y;
+            }
 
-           ui->handle_events(&event);
-       }
+            ui->handle_events(&event);
+        }
 #endif
 
         check_keys();
 
-        if (!g_pause_draw) {
-          draw_ui(0);
-          if (cursor_visible && !visualize) {
-            ui->draw_cursor(cursor_x, cursor_y, cursor_angle);
-          }
-          // flip to main screen buffer
-          // SDL_Rect ds = { 100,100,640,480};
-          SDL_BlitSurface(ui->guibuffer,0,screen,0);
-          SDL_Flip(screen);
+        if (!g_pause_draw)
+        {
+            draw_ui(0);
+            if (cursor_visible && !visualize)
+            {
+                ui->draw_cursor(cursor_x, cursor_y, cursor_angle);
+            }
+            // flip to main screen buffer
+            // SDL_Rect ds = { 100,100,640,480};
+            SDL_BlitSurface(ui->guibuffer,0,screen,0);
+            SDL_Flip(screen);
         }
 
         // do the fft using the local
@@ -1165,8 +1244,10 @@ _reload:
 #endif
     }
 
-    delete ui; ui = 0;
-    delete tx; tx = 0;
+    delete ui;
+    ui = 0;
+    delete tx;
+    tx = 0;
 
     // --- skin
     if (g_reloading_skin) goto _reload;
