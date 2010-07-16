@@ -10,6 +10,17 @@ public:
 
     stream_ripper() : rip_file(0)
     {
+        // check dir
+        if(!opendir (make_path("music")))
+        {
+#ifdef _WIN32
+            // no mode on windows
+            mkdir(make_path("music"));
+#else
+            mkdir(make_path("music"),0777);
+#endif
+        }
+
         memset(curren_file,0,MED_MEM);
     };
 
