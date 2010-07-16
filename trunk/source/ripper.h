@@ -1,6 +1,10 @@
 #ifndef RIPPER_H_INCLUDED
 #define RIPPER_H_INCLUDED
 
+#ifndef _WIN32
+#include <sys/stat.h>
+#endif
+
 class stream_ripper
 {
 public:
