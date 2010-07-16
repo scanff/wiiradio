@@ -1,6 +1,9 @@
 #include "globals.h"
 #include "options.h"
 
+#include <fstream>
+#include <string>
+
 int g_owidescreen;
 int g_oscrolltext;
 int g_screensavetime;
@@ -8,10 +11,7 @@ char g_currentskin[SMALL_MEM];
 char g_currentlang[SMALL_MEM];
 int g_servicetype;
 
-void parse_options(char* buf)
-{
-    sscanf(buf,"ws %d\nst %d\nss %d\nskin %s\nlang %s\nservice %d\n",&g_owidescreen,&g_oscrolltext,&g_screensavetime,g_currentskin,g_currentlang,&g_servicetype);
-}
+using namespace std;
 
 void set_defaults()
 {
@@ -25,37 +25,37 @@ bool load_options()
 {
     set_defaults();
 
-    FILE* f = 0;
+    ifstream file;
 
-    f = fopen(make_path("options.dat"),"r");
-    if (!f) return false;
+    string line;
+    char option[255], value[255];
 
-    fseek(f,0,SEEK_END);
-    unsigned int size = ftell(f);
-    fseek(f,0,SEEK_SET);
+    file.open(make_path("options.dat"));
+    file.is_open();
+    if (file.fail()) return false;
 
-    char* options_data = 0;
-    options_data = new char[size+1];
-    if (!options_data)
+    while (!file.eof())
     {
-        fclose(f);
-        return false;
+        getline(file, line);
+        if (sscanf(line.c_str(), "%254s %254s", option, value) == 2)
+        {
+            if (!strcmp(option, "ws"))
+                g_owidescreen = atoi(value);
+            else if (!strcmp(option, "st"))
+                g_oscrolltext = atoi(value);
+            else if (!strcmp(option, "ss"))
+                g_screensavetime = atoi(value);
+            else if (!strcmp(option, "skin"))
+                sscanf(value, "%254s", g_currentskin);
+            else if (!strcmp(option, "lang"))
+                sscanf(value, "%254s", g_currentlang);
+            else if (!strcmp(option, "service"))
+                g_servicetype = atoi(value);
+        }
     }
 
-    memset(options_data,0,size+1);
-
-
-    fread(options_data,size,1,f);
-
-    parse_options(options_data);
-
-    delete[] options_data;
-    options_data = 0;
-
-    fclose(f);
-
+    file.close();
     return true;
-
 }
 
 void save_options()
@@ -66,7 +66,13 @@ void save_options()
     f = fopen(make_path("options.dat"),"w");
     if (!f) return;
 
-    fprintf(f,"ws %d\nst %d\nss %d\nskin %s\nlang %s\nservice %d\n",g_owidescreen,g_oscrolltext,g_screensavetime,g_currentskin,g_currentlang,g_servicetype);
+    fprintf(f,"ws %d\nst %d\nss %d\nskin %s\nlang %s\nservice %d\n",
+        g_owidescreen,
+        g_oscrolltext,
+        g_screensavetime,
+        g_currentskin,
+        g_currentlang,
+        g_servicetype);
 
     fclose(f);
 }
