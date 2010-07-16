@@ -12,6 +12,7 @@ class gui_options : public gui_dlg
     enum _option_buttons {
         O_SCROLL_TEXT = 0,
         O_WIDESCREEN,
+        O_RIPMUSIC,
         O_MAX
     };
 
@@ -64,10 +65,13 @@ class gui_options : public gui_dlg
         b_option_item[O_SCROLL_TEXT]->set_images(0,0,(char*)"imgs/toggle_out.png",(char*)"imgs/toggle_on.png");
         b_option_item[O_SCROLL_TEXT]->bind_screen = S_OPTIONS;
 
-        b_option_item[O_WIDESCREEN] = new gui_toggle(gui_dlg::dest,gui_dlg::fnts,480,150,41,26,0,0);
+        b_option_item[O_WIDESCREEN] = new gui_toggle(gui_dlg::dest,gui_dlg::fnts,380,150,41,26,0,0);
         b_option_item[O_WIDESCREEN]->set_images(0,0,(char*)"imgs/toggle_out.png",(char*)"imgs/toggle_on.png");
         b_option_item[O_WIDESCREEN]->bind_screen = S_OPTIONS;
 
+        b_option_item[O_RIPMUSIC] = new gui_toggle(gui_dlg::dest,gui_dlg::fnts,530,150,41,26,0,0);
+        b_option_item[O_RIPMUSIC]->set_images(0,0,(char*)"imgs/toggle_out.png",(char*)"imgs/toggle_on.png");
+        b_option_item[O_RIPMUSIC]->bind_screen = S_OPTIONS;
 
 
 
@@ -104,7 +108,7 @@ class gui_options : public gui_dlg
         // set options
         g_oscrolltext ? b_option_item[O_SCROLL_TEXT]->obj_state = B_ON : b_option_item[O_SCROLL_TEXT]->obj_state = B_OFF;
         g_owidescreen ? b_option_item[O_WIDESCREEN]->obj_state = B_ON : b_option_item[O_WIDESCREEN]->obj_state = B_OFF;
-
+        g_oripmusic ? b_option_item[O_RIPMUSIC]->obj_state = B_ON : b_option_item[O_RIPMUSIC]->obj_state = B_OFF;
     };
 
     ~gui_options()
@@ -158,6 +162,9 @@ class gui_options : public gui_dlg
                 SetWidescreen();
             }
 
+            // rip music
+            b_option_item[O_RIPMUSIC]->obj_state == B_OFF ? g_oripmusic = 0 : g_oripmusic = 1;
+
         }
 
         return 0;
@@ -174,7 +181,8 @@ class gui_options : public gui_dlg
         fnts->set_size(FS_SYSTEM);
 
         fnts->text(dest,vars.search_var("$LANG_SCROLL_STATIONTEXT"),200,150,0,1);
-        fnts->text(dest,"Widescreen :",470,150,0,1); // -- TO DO Variable this
+        fnts->text(dest,"Widescreen :",370,150,0,1); // -- TO DO Variable this
+        fnts->text(dest,"Rip Music :",520,150,0,1); // -- TO DO Variable this
 
         // for service type
         fnts->text(dest,"SHOUTcast :",200,110,0,1);
