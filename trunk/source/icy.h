@@ -157,12 +157,12 @@ public:
 
     void icy_ripdata(char* data, int len)
     {
-#ifdef ALLOW_RIPPING
-        // add option for this ... for now remove #ifdef to test rip
-        ripper->new_file(track_title);
-        ripper->save_data(data,len);
+        if(g_oripmusic)
+        {
+            ripper->new_file(track_title);
+            ripper->save_data(data,len);
+        }
 
-#endif
     }
 
     void parse_header_item(const char* obj)

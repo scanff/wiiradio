@@ -9,4 +9,5 @@ extern int g_screensavetime;
 extern char g_currentskin[SMALL_MEM];
 extern char g_currentlang[SMALL_MEM];
 extern int g_servicetype;
+extern int g_oripmusic;
 #endif // OPTIONS_H_INCLUDED
