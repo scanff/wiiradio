@@ -213,8 +213,12 @@ class gui {
         }
 
         //cursor HIT offsets
+#ifdef _WII_
         Y_OFFSET = sk->get_value_int("cursor_y_off");
         X_OFFSET = sk->get_value_int("cursor_x_off");
+#else
+        Y_OFFSET = X_OFFSET = 0;
+#endif
 
 
         // -- background
