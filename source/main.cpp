@@ -1205,8 +1205,8 @@ _reload:
         {
             if (event.type == SDL_MOUSEMOTION)
             {
-                cursor_x = event.motion.x;
-                cursor_y = event.motion.y;
+                cursor_x = event.motion.x - sk->get_value_int("cursor_x_off");
+                cursor_y = event.motion.y - sk->get_value_int("cursor_y_off");
             }
 
             ui->handle_events(&event);
