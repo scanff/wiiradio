@@ -1205,8 +1205,8 @@ _reload:
         {
             if (event.type == SDL_MOUSEMOTION)
             {
-                cursor_x = event.motion.x - sk->get_value_int("cursor_x_off");
-                cursor_y = event.motion.y - sk->get_value_int("cursor_y_off");
+                cursor_x = event.motion.x;
+                cursor_y = event.motion.y;
             }
 
             ui->handle_events(&event);
@@ -1220,7 +1220,13 @@ _reload:
             draw_ui(0);
             if (cursor_visible && !visualize)
             {
+#ifdef _WII_
                 ui->draw_cursor(cursor_x, cursor_y, cursor_angle);
+#else
+                ui->draw_cursor(cursor_x - sk->get_value_int("cursor_x_off"),
+                                cursor_y - sk->get_value_int("cursor_y_off"),
+                                cursor_angle);
+#endif
             }
             // flip to main screen buffer
             // SDL_Rect ds = { 100,100,640,480};
