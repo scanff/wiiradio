@@ -5,6 +5,11 @@
 #define L_ENDIAN 0
 
 
+#include <string>
+#include <sstream>
+
+using namespace std;
+
 #ifdef _WII_
     #define MAX_PATH 255
     #define ENDIAN B_ENDIAN
@@ -16,7 +21,6 @@
     #include <fat.h>
     #include <stdio.h>
     #include <stdlib.h>
-    #include <string.h>
     //#include <ogcsys.h>
     #include <gccore.h>
     #include <gctypes.h>
@@ -214,7 +218,6 @@ extern SDL_Surface*        screen;
 #define SCREEN_HEIGHT_BUFFER (50)
 #define FONT_SIZE       (40)
 #define VERSION_NUMBER  (0.6)
-#define VERSION_NAME    ("Version")
 #define BITDEPTH        (24)
 
 #define TIME_OUT_MS     (8000) // eight second timeout
