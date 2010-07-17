@@ -2,7 +2,6 @@
 #define SKINS_H_INCLUDED
 
 #include <dirent.h>
-#include <string.h>
 
 class skins {
     public:

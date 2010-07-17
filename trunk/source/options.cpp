@@ -12,8 +12,6 @@ char g_currentlang[SMALL_MEM];
 int g_servicetype;
 int g_oripmusic;
 
-using namespace std;
-
 void set_defaults()
 {
     g_owidescreen = 0;

@@ -1,6 +1,7 @@
 #ifndef GUI_OPTIONS_H_INCLUDED
 #define GUI_OPTIONS_H_INCLUDED
 
+#include "../globals.h"
 #include "gui_button.h"
 #include "gui_toggle.h"
 #include "gui_group.h"
@@ -173,20 +174,30 @@ class gui_options : public gui_dlg
     void output_options()
     {
         int x = 0;
+        ostringstream str;
+
         //logo
         SDL_Rect rc = {50,30,logo->w,logo->h};
         SDL_BlitSurface(logo,0,dest,&rc);
 
+        // Font setup
         fnts->change_color(100,100,100);
         fnts->set_size(FS_SYSTEM);
 
-        fnts->text(dest,vars.search_var("$LANG_SCROLL_STATIONTEXT"),200,150,0,1);
-        fnts->text(dest,"Widescreen :",370,150,0,1); // -- TO DO Variable this
-        fnts->text(dest,"Rip Music :",520,150,0,1); // -- TO DO Variable this
+        // -- about
+        str << vars.search_var("$LANG_ABOUT")
+            << " v" << VERSION_NUMBER << " - " << vars.search_var("$LANG_AUTHOR")
+            << " Scanff, TiMeBoMb " << vars.search_var("$LANG_AND") << " Knarrff";
+        fnts->text(dest, str.str().c_str(), 200, 50, 0, 0);
 
         // for service type
         fnts->text(dest,"SHOUTcast :",200,110,0,1);
         fnts->text(dest,"Icecast :",370,110,0,1);
+
+        // Scrolltext, Widescreen, Rip Music
+        fnts->text(dest,vars.search_var("$LANG_SCROLL_STATIONTEXT"),200,150,0,1);
+        fnts->text(dest,"Widescreen :",370,150,0,1); // -- TO DO Variable this
+        fnts->text(dest,"Rip Music :",520,150,0,1); // -- TO DO Variable this
 
         // screen save
         fnts->text(dest,"1min       5min     10min     Off",220,180,0,0);
@@ -206,20 +217,7 @@ class gui_options : public gui_dlg
         fnts->change_color(100,100,100);
         fnts->text(dest,vars.search_var("$LANG_CHANGE_LANG"),200,320,0,1);
         fnts->change_color(40,40,100);
-
-
         fnts->text(dest,vars.search_var("$LANG_NAME"),220,320,0);
-
-
-        // -- about
-        fnts->change_color(100,100,100);
-        fnts->text(dest,vars.search_var("$LANG_ABOUT"),200,350,0,1);
-        x =fnts->text(dest,"v0.6 - "                        ,220  ,350,0);
-        x+=fnts->text(dest,vars.search_var("$LANG_AUTHOR"),220+x,350,0);
-        x+=fnts->text(dest," Scanff, TiMeBoMb "           ,220+x,350,0);
-        x+=fnts->text(dest,vars.search_var("$LANG_AND")   ,220+x,350,0);
-        x+=fnts->text(dest," Knarrff"                     ,220+x,350,0);
-
 
         // -- draw the butons ect...
         loopi(O_MAX) b_option_item[i]->draw();
