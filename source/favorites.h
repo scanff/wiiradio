@@ -59,10 +59,8 @@ class favorites {
     };
 
     // make .pls compat. file
-    void save_current(station s)
+    void save_pls(string full_name, station s)
     {
-        string full_name = "pls/"+friendly_name(s.name)+".pls";
-
         FILE* f = fopen(make_path(full_name.c_str()),"w");
         if (!f) return;
 
@@ -73,13 +71,6 @@ class favorites {
 
         fwrite("File1=http://",13,1,f);
         fwrite(s.url().c_str(),s.url().length(),1,f);
-        fwrite(":",1,1,f);
-
-        char tmp[8] = {0}; // save as ascii
-        sprintf(tmp,"%d",s.port);
-        fwrite(tmp,strlen(tmp),1,f);
-
-        fwrite(s.path.c_str(),s.path.length(),1,f);
         fwrite("\n",1,1,f);
 
         fwrite("Title1=(#1 - 1/1) ",18,1,f);
@@ -95,6 +86,17 @@ class favorites {
         fclose(f);
 
     };
+
+    void save_fav(station s)
+    {
+        string full_name = "pls/"+friendly_name(s.name)+".pls";
+        save_pls(full_name, s);
+    }
+
+    void save_current(station s)
+    {
+        save_pls("current.pls", s);
+    }
 
     void clear_list()
     {
@@ -180,8 +182,10 @@ class favorites {
         delete[] data;
     };
 
-    void parse_items_pls(FILE* f,char* fname)
+    vector<favorite> parse_items_pls(FILE* f,char* fname)
     {
+        vector<favorite> ret;
+
         fseek(f,0,SEEK_END);
         unsigned int size = ftell(f);
         fseek(f,0,SEEK_SET);
@@ -243,13 +247,12 @@ class favorites {
                     string url  = station_url;
                     string fn   = fname;
                     favorite fav(name, url, fn);
-                    list.push_back(fav);
-
-                    total_num_playlists++;
+                    ret.push_back(fav);
             }
 
         }
         delete[] data;
+        return ret;
     };
 
     int get_fav_type(FILE* f)
@@ -284,11 +287,15 @@ class favorites {
 
         // pls parser
         int fav_type = get_fav_type(file);
+        vector<favorite> parsed;
 
         switch (fav_type)
         {
             case 0:
-            parse_items_pls(file,make_path(full_name)); // .pls
+            parsed = parse_items_pls(file,make_path(full_name)); // .pls
+            for (unsigned int i=0; i<parsed.size(); i++)
+                list.push_back(parsed[i]);
+            total_num_playlists+=parsed.size();
             break;
 
             case 1:

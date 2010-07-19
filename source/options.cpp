@@ -11,6 +11,7 @@ char g_currentskin[SMALL_MEM];
 char g_currentlang[SMALL_MEM];
 int g_servicetype;
 int g_oripmusic;
+int g_startfromlast;
 
 void set_defaults()
 {
@@ -53,6 +54,8 @@ bool load_options()
                 g_servicetype = atoi(value);
             else if (!strcmp(option, "ripmusic"))
                 g_oripmusic = atoi(value);
+            else if (!strcmp(option, "startfromlast"))
+                g_startfromlast = atoi(value);
 
         }
     }
@@ -69,14 +72,16 @@ void save_options()
     f = fopen(make_path("options.dat"),"w");
     if (!f) return;
 
-    fprintf(f,"ws %d\nst %d\nss %d\nskin %s\nlang %s\nservice %d\nripmusic %d\n",
+    fprintf(f,"ws %d\nst %d\nss %d\nskin %s\nlang %s\nservice %d\nripmusic %d\nstartfromlast %d\n",
         g_owidescreen,
         g_oscrolltext,
         g_screensavetime,
         g_currentskin,
         g_currentlang,
         g_servicetype,
-        g_oripmusic);
+        g_oripmusic,
+        g_startfromlast);
 
     fclose(f);
 }
+

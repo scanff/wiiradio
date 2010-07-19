@@ -455,6 +455,7 @@ void connect_to_stream(int value, connect_info info)
     case I_HASBEENSET:
         break;
     }
+    favs->save_current(playing);
 
     // start a new connection thread
     connectthread = SDL_CreateThread(connect_thread,0);
@@ -762,7 +763,7 @@ void get_favorites()
 void request_save_fav(); // extern'd
 void request_save_fav()
 {
-    favs->save_current(playing); // save to file then reload
+    favs->save_fav(playing); // save to file then reload
     favs->load_favorites();
 }
 
@@ -1029,6 +1030,17 @@ int main(int argc, char **argv)
     Uint64 last_time, current_time;
     last_time = current_time = get_tick_count();
 
+// restart stream if requested
+    if (g_startfromlast != 0)
+    {
+        FILE * file = fopen(make_path("current.pls"),"r");
+        vector<favorite> parsed = favs->parse_items_pls(file,make_path("current.pls"));
+        if (parsed.size() && parsed[0].server.length())
+        {
+            playing = parsed[0];
+            connect_to_stream(0,I_DIRECT);
+        }
+    }
 _reload:
 
     if (g_reloading_skin)   // only if we have a skin open
