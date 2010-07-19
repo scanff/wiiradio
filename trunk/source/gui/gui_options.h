@@ -14,9 +14,9 @@ class gui_options : public gui_dlg
         O_SCROLL_TEXT = 0,
         O_WIDESCREEN,
         O_RIPMUSIC,
+        O_STARTFROMLAST,
         O_MAX
     };
-
 
     gui_button*     b_quit;
     gui_button*     b_return;
@@ -31,7 +31,6 @@ class gui_options : public gui_dlg
 
     gui_options(gui* g_) : logo(0)
     {
-
         gui_dlg::fnts = g_->fnts;
         gui_dlg::dest = g_->guibuffer;
 
@@ -60,24 +59,40 @@ class gui_options : public gui_dlg
         b_return->center_text = true;
         b_return->bind_screen = S_OPTIONS;
 
+        int y = 110;
 
+        service_group = new gui_group(2,220,y,41,26,120,gui_dlg::dest,gui_dlg::fnts);
+        service_group->set_on(g_servicetype);
 
-        b_option_item[O_SCROLL_TEXT] = new gui_toggle(gui_dlg::dest,gui_dlg::fnts,220,150,41,26,0,0);
+        y += 40;
+
+        b_option_item[O_SCROLL_TEXT] = new gui_toggle(gui_dlg::dest,gui_dlg::fnts,220,y,41,26,0,0);
         b_option_item[O_SCROLL_TEXT]->set_images(0,0,(char*)"imgs/toggle_out.png",(char*)"imgs/toggle_on.png");
         b_option_item[O_SCROLL_TEXT]->bind_screen = S_OPTIONS;
 
-        b_option_item[O_WIDESCREEN] = new gui_toggle(gui_dlg::dest,gui_dlg::fnts,380,150,41,26,0,0);
+        b_option_item[O_WIDESCREEN] = new gui_toggle(gui_dlg::dest,gui_dlg::fnts,380,y,41,26,0,0);
         b_option_item[O_WIDESCREEN]->set_images(0,0,(char*)"imgs/toggle_out.png",(char*)"imgs/toggle_on.png");
         b_option_item[O_WIDESCREEN]->bind_screen = S_OPTIONS;
 
-        b_option_item[O_RIPMUSIC] = new gui_toggle(gui_dlg::dest,gui_dlg::fnts,530,150,41,26,0,0);
+        y += 40;
+
+        b_option_item[O_STARTFROMLAST] = new gui_toggle(gui_dlg::dest,gui_dlg::fnts,220,y,41,26,0,0);
+        b_option_item[O_STARTFROMLAST]->set_images(0,0,(char*)"imgs/toggle_out.png",(char*)"imgs/toggle_on.png");
+        b_option_item[O_STARTFROMLAST]->bind_screen = S_OPTIONS;
+
+        b_option_item[O_RIPMUSIC] = new gui_toggle(gui_dlg::dest,gui_dlg::fnts,380,y,41,26,0,0);
         b_option_item[O_RIPMUSIC]->set_images(0,0,(char*)"imgs/toggle_out.png",(char*)"imgs/toggle_on.png");
         b_option_item[O_RIPMUSIC]->bind_screen = S_OPTIONS;
 
+        y += 60;
 
+        saver_group = new gui_group(4,220,y,41,26,20,gui_dlg::dest,gui_dlg::fnts);
+        saver_group->set_on(g_screensavetime);
+
+        y += 44;
 
         // next skin
-        b_next_skin = new gui_button(gui_dlg::dest,gui_dlg::fnts,420,254,0,0,false);
+        b_next_skin = new gui_button(gui_dlg::dest,gui_dlg::fnts,420,y,0,0,false);
         b_next_skin->set_images((char*)"imgs/button_out.png",(char*)"imgs/button_out.png",0,0);
         b_next_skin->set_text(vars.search_var("$LANG_TXT_NEXT_SKIN"));
         b_next_skin->pad_y = 5;
@@ -87,8 +102,10 @@ class gui_options : public gui_dlg
         b_next_skin->center_text = true;
         b_next_skin->bind_screen = S_OPTIONS;
 
+        y += 60;
 
-        b_next_lang = new gui_button(gui_dlg::dest,gui_dlg::fnts,420,314,0,0,false);
+        // next lang
+        b_next_lang = new gui_button(gui_dlg::dest,gui_dlg::fnts,420,y,0,0,false);
         b_next_lang->set_images((char*)"imgs/button_out.png",(char*)"imgs/button_out.png",0,0);
         b_next_lang->set_text(vars.search_var("$LANG_TXT_NEXT_LANG"));
         b_next_lang->pad_y = 5;
@@ -99,17 +116,11 @@ class gui_options : public gui_dlg
         b_next_lang->bind_screen = S_OPTIONS;
 
 
-        saver_group = new gui_group(4,220,210,41,26,20,gui_dlg::dest,gui_dlg::fnts);
-        saver_group->set_on(g_screensavetime);
-
-        service_group = new gui_group(2,220,110,41,26,120,gui_dlg::dest,gui_dlg::fnts);
-        service_group->set_on(g_servicetype);
-
-
         // set options
         g_oscrolltext ? b_option_item[O_SCROLL_TEXT]->obj_state = B_ON : b_option_item[O_SCROLL_TEXT]->obj_state = B_OFF;
         g_owidescreen ? b_option_item[O_WIDESCREEN]->obj_state = B_ON : b_option_item[O_WIDESCREEN]->obj_state = B_OFF;
         g_oripmusic ? b_option_item[O_RIPMUSIC]->obj_state = B_ON : b_option_item[O_RIPMUSIC]->obj_state = B_OFF;
+        g_startfromlast ? b_option_item[O_STARTFROMLAST]->obj_state = B_ON : b_option_item[O_STARTFROMLAST]->obj_state = B_OFF;
     };
 
     ~gui_options()
@@ -165,6 +176,8 @@ class gui_options : public gui_dlg
 
             // rip music
             b_option_item[O_RIPMUSIC]->obj_state == B_OFF ? g_oripmusic = 0 : g_oripmusic = 1;
+            // start from last
+            b_option_item[O_STARTFROMLAST]->obj_state == B_OFF ? g_startfromlast = 0 : g_startfromlast = 1;
 
         }
 
@@ -190,34 +203,43 @@ class gui_options : public gui_dlg
             << " Scanff, TiMeBoMb " << vars.search_var("$LANG_AND") << " Knarrff";
         fnts->text(dest, str.str().c_str(), 200, 50, 0, 0);
 
+        int y = 110;
+
         // for service type
         fnts->text(dest,"SHOUTcast :",200,110,0,1);
         fnts->text(dest,"Icecast :",370,110,0,1);
 
+        y += 40;
         // Scrolltext, Widescreen, Rip Music
-        fnts->text(dest,vars.search_var("$LANG_SCROLL_STATIONTEXT"),200,150,0,1);
-        fnts->text(dest,"Widescreen :",370,150,0,1); // -- TO DO Variable this
-        fnts->text(dest,"Rip Music :",520,150,0,1); // -- TO DO Variable this
+        fnts->text(dest,vars.search_var("$LANG_SCROLL_STATIONTEXT"),200,y,0,1);
+        fnts->text(dest,"Widescreen :",370,y,0,1); // -- TO DO Variable this
 
+        y += 40;
+        fnts->text(dest,"Play last at start :", 200,y,0,1); // -- TO DO Variable this
+        fnts->text(dest,"Rip Music :",370,y,0,1); // -- TO DO Variable this
+
+        y += 60;
         // screen save
-        fnts->text(dest,"1min       5min     10min     Off",220,180,0,0);
-        fnts->text(dest,vars.search_var("$LANG_SCREEN_SAVE"),200,210,0,1);
+        fnts->text(dest,vars.search_var("$LANG_SCREEN_SAVE"),200,y,0,1);
+        fnts->text(dest,"1min        5min      10min       Off",220,y-30,0,0);
 
+        y += 50;
         // -- skin changer
         fnts->change_color(100,100,100);
-        fnts->text(dest,vars.search_var("$LANG_CHANGE_SKIN"),200,260,0,1);
+        fnts->text(dest,vars.search_var("$LANG_CHANGE_SKIN"),200,y,0,1);
         fnts->change_color(40,40,100);
 
-        fnts->text(dest,vars.search_var("skinname"),220,260,0);
-        x = fnts->text(dest,vars.search_var("$LANG_AUTHOR"),220,280,0);
-        x += fnts->text(dest,": ",220+x,280,0);
-        fnts->text(dest,vars.search_var("skinauthor"),220+x,280,0);
+        fnts->text(dest,vars.search_var("skinname"),220,y,0);
+        x = fnts->text(dest,vars.search_var("$LANG_AUTHOR"),220,y+20,0);
+        x += fnts->text(dest,": ",220+x,y+20,0);
+        fnts->text(dest,vars.search_var("skinauthor"),220+x,y+20,0);
 
+        y += 60;
         // -- language selection
         fnts->change_color(100,100,100);
-        fnts->text(dest,vars.search_var("$LANG_CHANGE_LANG"),200,320,0,1);
+        fnts->text(dest,vars.search_var("$LANG_CHANGE_LANG"),200,y,0,1);
         fnts->change_color(40,40,100);
-        fnts->text(dest,vars.search_var("$LANG_NAME"),220,320,0);
+        fnts->text(dest,vars.search_var("$LANG_NAME"),220,y,0);
 
         // -- draw the butons ect...
         loopi(O_MAX) b_option_item[i]->draw();

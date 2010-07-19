@@ -10,4 +10,5 @@ extern char g_currentskin[SMALL_MEM];
 extern char g_currentlang[SMALL_MEM];
 extern int g_servicetype;
 extern int g_oripmusic;
+extern int g_startfromlast;
 #endif // OPTIONS_H_INCLUDED
