@@ -1015,6 +1015,9 @@ int main(int argc, char **argv)
     exinfo.length = icy_info->buffer_size;
 
     FMOD_System_Create(&fmod_system);
+#ifdef _LINUX_
+    FMOD_System_SetOutput(fmod_system, FMOD_OUTPUTTYPE_ALSA);
+#endif
     FMOD_System_Init(fmod_system, 32, FMOD_INIT_NORMAL, NULL);
 
 #endif
