@@ -916,7 +916,7 @@ class gui {
                   //  if (genre_display + max_listings  >= MAX_GENRE) return 0;
                   //  else genre_display += max_listings;
                     if (genre_display + max_listings  >= gl.total) return 0;
-                    else genre_display += max_listings;
+                    genre_display += max_listings;
 
                     reset_scrollings();
                     return 0;
@@ -925,7 +925,7 @@ class gui {
                 if (GetScreenStatus() == S_PLAYLISTS) {
 
                     if (pls_display + max_listings  >= total_num_playlists) return 0;
-                    else pls_display += max_listings;
+                    pls_display += max_listings;
 
                     reset_scrollings();
                     return 0;
@@ -977,28 +977,23 @@ class gui {
 
     };
 
-    void draw_favs(fav_item* lst)
+    void draw_favs(favorites *favs)
     {
 
-        int i = 0;
-        int p = 0;
-        fav_item* cl = lst;
+        unsigned int i = 0;
+        unsigned int p = 0;
 
-        while(i<max_listings && cl != 0)
+        while(i<(unsigned int)max_listings && p<favs->list.size())
         {
-            if (i==max_listings) break;
-            if (p >= pls_display) {
-                buttons_playlists[i]->set_text((cl==0 ? (char*)"" : cl->station_name));
+            if (p >= (unsigned int)pls_display) {
+                buttons_playlists[i]->set_text(favs->list[p].name.c_str());
                 buttons_playlists[i]->draw();
                 // delete option
                 buttons_delete[i]->draw();
 
                 i++;
             }
-
-            if(cl) cl = cl->nextnode;
             p++;
-
         }
     }
 
@@ -1106,7 +1101,7 @@ class gui {
                     break;
 
                     case S_PLAYLISTS:
-                        draw_favs(favs->first);
+                        draw_favs(favs);
                     break;
 
                     case S_GENRES:

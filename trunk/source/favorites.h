@@ -2,68 +2,68 @@
 #define _FAVORITES_H_
 
 #include <dirent.h>
+#include <vector>
+#include "station.h"
 
+class favorite : public station {
+  public:
+    string      filename;
 
-struct fav_item {
-    fav_item() {
-        nextnode = 0;
-        memset(station_name,0,SMALL_MEM);
-        memset(station_url,0,SMALL_MEM);
-        memset(station_path,0,SMALL_MEM);
-        memset(file_name,0,SMALL_MEM);
-        port=0;
-    };
-
-    char station_name[SMALL_MEM]; // name
-    char station_url[SMALL_MEM]; // playing
-    char station_path[SMALL_MEM]; // playing
-    char file_name[SMALL_MEM]; // file
-    int port;
-
-    struct fav_item *nextnode; // pointer to next
+    favorite(string name, string url, string filename);
 };
+
+favorite::favorite(string _name, string _url, string _filename) : station(_name, _url)
+{
+    filename = _filename;
+}
 
 class favorites {
     public:
 
     #define F_PATH ("pls/")
 
-    fav_item*   first;
-    fav_item*   list;
+    vector<favorite> list;
 
-
-    favorites() : first(0), list(0) {};
+    favorites() {};
     ~favorites() { clear_list(); };
 
-    char* friendly_name(char* current)
+    void delete_favorite(unsigned int item)
+    {
+        if (item >= list.size())
+            return;
+        vector<favorite>::iterator it = list.begin();
+        unsigned int i=0;
+        while (i++ < item) ++it;
+
+        remove(list[item].filename.c_str());
+        list.erase(it);
+        total_num_playlists--;
+    }
+
+    string friendly_name(string s)
     {
         char remove[10] = { '/','\\',':','*','"','\'','?','<','>','|' };
 
-        int len = strlen(current);
-
-        loopi(len)
+        loopi(s.length())
         {
             loopj(10)
             {
-                if ((current[i] < 0x20) || (current[i] == remove[j])) {
-                    current[i] = 0x20;
+                if ((s[i] < 0x20) || (s[i] == remove[j])) {
+                    s[i] = 0x20;
                     break;
                 }
             }
         }
 
-        return current;
+        return s;
     };
 
     // make .pls compat. file
-    void save_current(fav_item* c)
+    void save_current(station s)
     {
-        if (!c) return;
+        string full_name = "pls/"+friendly_name(s.name)+".pls";
 
-        char full_name[SMALL_MEM]={0};
-        sprintf(full_name,"pls/%s.pls",friendly_name(c->station_name));
-
-        FILE* f = fopen(make_path(full_name),"w");
+        FILE* f = fopen(make_path(full_name.c_str()),"w");
         if (!f) return;
 
         fwrite("[playlist]",10,1,f);
@@ -72,18 +72,18 @@ class favorites {
         fwrite("\n",1,1,f);
 
         fwrite("File1=http://",13,1,f);
-        fwrite(c->station_url,strlen(c->station_url),1,f);
+        fwrite(s.url().c_str(),s.url().length(),1,f);
         fwrite(":",1,1,f);
 
         char tmp[8] = {0}; // save as ascii
-        sprintf(tmp,"%d",c->port);
+        sprintf(tmp,"%d",s.port);
         fwrite(tmp,strlen(tmp),1,f);
 
-        fwrite(c->station_path,strlen(c->station_path),1,f);
+        fwrite(s.path.c_str(),s.path.length(),1,f);
         fwrite("\n",1,1,f);
 
         fwrite("Title1=(#1 - 1/1) ",18,1,f);
-        fwrite(c->station_name,strlen(c->station_name),1,f);
+        fwrite(s.name.c_str(),s.name.length(),1,f);
         fwrite("\n",1,1,f);
 
         fwrite("Length1=-1",10,1,f);
@@ -98,50 +98,10 @@ class favorites {
 
     void clear_list()
     {
-        struct fav_item* f = first;
-        struct fav_item* n = 0;
-        while(f) {
-
-            n = f->nextnode;
-
-            if (f) {
-                delete f;
-                f = 0;
-            }
-
-            f = n;
-        }
-
-        first = 0;
-        list = 0;
+        list.clear();
     };
 
-    struct fav_item* new_fav_item()
-    {
-        if (!first)
-        {
-            first = new fav_item;
-            return first;
-
-        }else{
-
-            fav_item* prior = list;
-
-            if(!list) {
-                list = new fav_item;
-                first->nextnode = list;
-            }else{
-                list = new fav_item;
-                prior->nextnode = list;
-            }
-
-            return list;
-        }
-
-        return 0;
-    };
-
-    void parse_items_m3u(FILE* f,char* fname)
+    void parse_items_m3u(FILE* f, char* fname)
     {
         fseek(f,0,SEEK_END);
         unsigned int size = ftell(f);
@@ -207,17 +167,13 @@ class favorites {
             if (strlen(station_url)>0
                 && strlen(station_name)>0
                 ) {
-
-                fav_item* n = new_fav_item();
-
-                if (n) {
-                    split_url( n, station_url);
-                    strcpy(n->station_name,station_name);
-                    strcpy(n->file_name,fname);
+                    string name = station_name;
+                    string url  = station_url;
+                    string fn   = fname;
+                    favorite fav(name, url, fn);
+                    list.push_back(fav);
 
                     total_num_playlists++;
-                }
-
             }
 
         }
@@ -283,58 +239,18 @@ class favorites {
             if (strlen(station_url)>0
                 && strlen(station_name)>0
                 ) {
-
-                fav_item* n = new_fav_item();
-
-                if (n) {
-                    split_url( n, station_url);
-                    strcpy(n->station_name,station_name);
-                    strcpy(n->file_name,fname);
+                    string name = station_name;
+                    string url  = station_url;
+                    string fn   = fname;
+                    favorite fav(name, url, fn);
+                    list.push_back(fav);
 
                     total_num_playlists++;
-                }
-
             }
 
         }
         delete[] data;
     };
-
-    void split_url(fav_item* n,char* url)
-    {
-        int part = 0;
-        char* split = url;
-         // ignore http://
-        char* search = strstr(url,"http://");
-        if(!search) return;
-
-        // Clear data
-        strcpy(n->station_url,  "");
-        strcpy(n->station_path, "");
-        n->port = 0;
-
-        search += strlen("http://");
-
-        split = strtok(search,":/");
-        while(split) {
-
-            if(!part) {
-                strcpy(n->station_url,split);
-            }else if(part==1) {
-                n->port = atoi(split);
-                if (n->port == 0) {
-                    strcat(n->station_path,"/");
-                    strcat(n->station_path,split);
-                }
-            }else{
-                strcat(n->station_path,"/");
-                strcat(n->station_path,split);
-            }
-
-            split = strtok(0,":/");
-            part++;
-        }
-    }
 
     int get_fav_type(FILE* f)
     {
@@ -380,10 +296,7 @@ class favorites {
             break;
         }
 
-
-
         fclose(file);
-
 
     };
 #ifdef _WII_

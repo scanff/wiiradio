@@ -9,6 +9,7 @@
 #include "icy.h"
 #include "visuals.h"
 #include "gui/gui.h"
+#include "station.h"
 
 // ---------------------
 // Variables:
@@ -36,7 +37,7 @@ network*            net;
 gui*                ui;
 fft*                fourier;
 favorites*          favs;
-fav_item*           playing; // make now playing as fav struct so we can access the ip/name quickly
+station             playing; // make now playing as fav struct so we can access the ip/name quickly
 visualizer*         visuals;
 langs*              lang;
 skins*              sk;
@@ -218,24 +219,7 @@ void stop_playback()
 void delete_playlist(int);
 void delete_playlist(int value)
 {
-
-    fav_item* csl = favs->first;
-    int x = 0;
-    while(csl)
-    {
-        if (x==value) break;
-
-        csl = csl->nextnode;
-        x++;
-    }
-    if (!csl) return;
-
-    //delete
-    //file_name...
-    remove(csl->file_name);
-
-    favs->load_favorites(); // reload
-
+    favs->delete_favorite(value);
 }
 
 
@@ -274,9 +258,9 @@ int search_thread(void* arg)
 // -- Connect thread
 int connect_thread(void* arg)
 {
-    char* url = playing->station_url;
-    int port = playing->port;
-    char* path = playing->station_path;
+    char* server = (char*)(playing.server.c_str());
+    int port = playing.port;
+    char* path = (char*)(playing.path.c_str());
     char* host = 0;
     char request[1024] = {0};
 
@@ -291,7 +275,7 @@ int connect_thread(void* arg)
     stop_playback();
 
     // connect to new stream
-    int connect_try = net->client_connect(url,port,TCP,false);
+    int connect_try = net->client_connect(server,port,TCP,false);
 
     if (status != CONNECTING) return 0; // cancelled !
 
@@ -383,20 +367,9 @@ void split_url(char* o_url, char* o_path, int* o_port, char* url)
 void connect_direct(char* typed);
 void connect_direct(char* typed)
 {
-    char url[255] = {0};
-    char path[255] = {0};
-    int port;
-
-    split_url(url,path,&port,typed);
-
-    if (port == 0) port = 80;
-
-    strcpy(playing->station_url, url);
-    playing->port = port;
-    strcpy(playing->station_path, path);
+    playing = station(typed);
 
     connect_to_stream(0,I_DIRECT);
-
 };
 
 void connect_to_stream(int,connect_info); //extern'd
@@ -449,51 +422,30 @@ void connect_to_stream(int value, connect_info info)
             playlst->split_url(csl->station_id);
         }
 
-        strcpy(playing->station_url, playlst->first_entry->url);
-        playing->port = playlst->first_entry->port;
-        strcpy(playing->station_path, playlst->first_entry->path);
+        playing.server= playlst->first_entry->url;
+        playing.port = playlst->first_entry->port;
+        playing.path = playlst->first_entry->path;
 
         // Set standard port
-        if (!playing->port)
+        if (!playing.port)
         {
-            playing->port = STD_STREAM_PORT;
+            playing.port = STD_STREAM_PORT;
         }
 
         //save to the now playing mem
-        strcpy(playing->station_name,csl->station_name);
+        playing.name = csl->station_name;
         break;
     }
     case I_PLAYLIST:
     {
-        // play from playlst file
-        fav_item* csl = favs->first;
-        // loop through stations
-        int x = 0;
-        while(csl)
-        {
-            if (x==value) break;
-
-            csl = csl->nextnode;
-            x++;
-        }
-        if (!csl)
-        {
-            status = FAILED;
-            return;
-        }
-
-        strcpy(playing->station_url, csl->station_url);
-        playing->port = csl->port;
-        strcpy(playing->station_path, csl->station_path);
+        playing = favs->list[value];
 
         // Set standard port
-        if (!playing->port)
+        if (!playing.port)
         {
-            playing->port = STD_STREAM_PORT;
+            playing.port = STD_STREAM_PORT;
         }
 
-        //save to the now playing mem
-        strcpy(playing->station_name,csl->station_name);
         break;
     }
     case I_DIRECT:
@@ -878,7 +830,7 @@ int critical_thread(void *arg)
             }
             else if (icy_info->redirect_detected)
             {
-                favs->split_url(playing, icy_info->icy_url);
+                playing = station(icy_info->icy_url);
                 connect_to_stream(0, I_HASBEENSET);
             }
 
@@ -957,7 +909,6 @@ void ShutdownCB()
 
 int main(int argc, char **argv)
 {
-
     display_idx = 0;
     favs_idx = 0;
     fullscreen = 0;
@@ -1045,7 +996,6 @@ int main(int argc, char **argv)
     visuals         = new visualizer(fourier);
     icy_info        = new icy;
     favs            = new favorites;
-    playing         = new fav_item;
     sk              = new skins;
     lang            = new langs;
 
@@ -1274,7 +1224,6 @@ _reload:
 
     delete lang;
     delete sk;
-    delete playing;
     delete favs;
     delete visuals;
     delete fourier;
