@@ -1238,7 +1238,7 @@ class gui {
             SDL_BlitSurface( vol_bg,0, guibuffer,&r);
 
             // actual volume bar
-            int pc =  (int)(((float)mp3_volume / 255.0) * (float)vol_ol->w);
+            int pc =  (int)(((float)volume / 255.0) * (float)vol_ol->w);
 
             pc > vol_ol->w ? pc = vol_ol->w : pc < 0 ? pc = 0 : 0; // clip
 

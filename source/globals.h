@@ -176,7 +176,7 @@ extern enum_status  status;
 extern bool         visualize;
 extern int          visualize_number;
 extern bool         g_pause_draw;
-extern int          mp3_volume;
+extern int          volume;
 extern Uint64       g_vol_lasttime;
 extern bool         mute;
 extern bool         screen_sleeping;
