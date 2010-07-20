@@ -159,5 +159,4 @@ char* make_path(const char*);
 Uint64 get_tick_count();
 bool refresh_genre_cache;
 bool sc_error;
-bool g_pause_draw;
 int  g_stream_source;

@@ -175,7 +175,6 @@ extern bool         g_running;
 extern enum_status  status;
 extern bool         visualize;
 extern int          visualize_number;
-extern bool         g_pause_draw;
 extern int          volume;
 extern Uint64       g_vol_lasttime;
 extern bool         mute;
