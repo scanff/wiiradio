@@ -1224,7 +1224,7 @@ class gui {
 
     void draw_volume()
     {
-        if (mute && !screen_sleeping) // alway show if muted
+        if (mute && !screen_sleeping) // always show if muted
         {
             SDL_Rect d = {20,50,mute_img->w,mute_img->h};
             SDL_BlitSurface(mute_img,0, guibuffer,&d);
