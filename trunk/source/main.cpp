@@ -534,9 +534,9 @@ void check_keys()
         else
         {
 #ifdef _WII_
-            MP3Player_Volume(mp3_volume);
+            MP3Player_Volume(volume);
 #else
-            FMOD_Channel_SetVolume(channel1, mp3_volume/255.);
+            FMOD_Channel_SetVolume(channel1, volume/255.);
 #endif
         }
 
@@ -548,12 +548,12 @@ void check_keys()
 
         mute = false;
 
-        mp3_volume-=4;
-        mp3_volume <= 0 ? mp3_volume = 0 : 0;
+        volume-=4;
+        volume <= 0 ? volume = 0 : 0;
 #ifdef _WII_
-        MP3Player_Volume(mp3_volume);
+        MP3Player_Volume(volume);
 #else
-        FMOD_Channel_SetVolume(channel1, mp3_volume/255.);
+        FMOD_Channel_SetVolume(channel1, volume/255.);
 #endif
         g_vol_lasttime = get_tick_count();
     }
@@ -563,12 +563,12 @@ void check_keys()
 
         mute = false;
 
-        mp3_volume+=4;
-        mp3_volume >= 255 ? mp3_volume = 255 : 0;
+        volume+=4;
+        volume >= 255 ? volume = 255 : 0;
 #ifdef _WII_
-        MP3Player_Volume(mp3_volume);
+        MP3Player_Volume(volume);
 #else
-        FMOD_Channel_SetVolume(channel1, mp3_volume/255.);
+        FMOD_Channel_SetVolume(channel1, volume/255.);
 #endif
 
         g_vol_lasttime = get_tick_count();
@@ -916,7 +916,7 @@ int main(int argc, char **argv)
     refresh_genre_cache = true; // default is to refresh cache
     visualize = false;
     g_pause_draw = false;
-    mp3_volume = 255; // max volume
+    volume = 255; // max volume
     g_vol_lasttime = 0;
     visualize_number = 0;
     mute = false;
@@ -1006,7 +1006,7 @@ int main(int argc, char **argv)
 #ifdef _WII_
     ASND_Init();
     MP3Player_Init();
-    SND_ChangeVolumeVoice(0,mp3_volume,mp3_volume);
+    SND_ChangeVolumeVoice(0,volume,volume);
 #else
 
 

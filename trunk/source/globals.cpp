@@ -8,7 +8,7 @@ int         Y_OFFSET;
 int         max_listings;
 int         g_reloading_skin; // flag to see if we are loading a new skin!
 
-int         mp3_volume;
+int         volume;
 bool        visualize;
 int         visualize_number;
 bool        mute;
