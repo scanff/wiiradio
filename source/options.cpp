@@ -56,6 +56,8 @@ bool load_options()
                 g_oripmusic = atoi(value);
             else if (!strcmp(option, "startfromlast"))
                 g_startfromlast = atoi(value);
+            else if (!strcmp(option, "volume"))
+                volume = atoi(value);
 
         }
     }
@@ -72,7 +74,7 @@ void save_options()
     f = fopen(make_path("options.dat"),"w");
     if (!f) return;
 
-    fprintf(f,"ws %d\nst %d\nss %d\nskin %s\nlang %s\nservice %d\nripmusic %d\nstartfromlast %d\n",
+    fprintf(f,"ws %d\nst %d\nss %d\nskin %s\nlang %s\nservice %d\nripmusic %d\nstartfromlast %d\nvolume %d\n",
         g_owidescreen,
         g_oscrolltext,
         g_screensavetime,
@@ -80,7 +82,8 @@ void save_options()
         g_currentlang,
         g_servicetype,
         g_oripmusic,
-        g_startfromlast);
+        g_startfromlast,
+        volume);
 
     fclose(f);
 }
