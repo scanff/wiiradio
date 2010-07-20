@@ -22,6 +22,7 @@ int         favs_idx;
 int         genre_display = 0;
 int         total_num_playlists = 0;
 int         pls_display = 0;
+bool        unsaved_volume_change = false;
 
 Uint64      last_button_time;
 bool        g_critical_running;
@@ -556,6 +557,7 @@ void check_keys()
         FMOD_Channel_SetVolume(channel1, volume/255.);
 #endif
         g_vol_lasttime = get_tick_count();
+        unsaved_volume_change = true;
     }
 
     if (g_real_keys[SDLK_UP])
@@ -572,6 +574,7 @@ void check_keys()
 #endif
 
         g_vol_lasttime = get_tick_count();
+        unsaved_volume_change = true;
     }
 
 
@@ -1203,6 +1206,14 @@ _reload:
                 fourier->setAudioData((short*)audio_data,8192);
                 fourier->getFFT(visuals->fft_results);
             }
+        }
+        // Check for unsaved volume changes and save if not changed for some time
+        //   to avoid too many write accesses. At the moment this time corresponds
+        //   to the time the volume "OSD" disappears from the screen
+        if (unsaved_volume_change && (get_tick_count() - g_vol_lasttime > 2000))
+        {
+          save_options();
+          unsaved_volume_change = false;
         }
 #ifdef _WII_
         Sleep(5);
