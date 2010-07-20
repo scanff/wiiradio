@@ -915,7 +915,6 @@ int main(int argc, char **argv)
     fullscreen = 0;
     refresh_genre_cache = true; // default is to refresh cache
     visualize = false;
-    g_pause_draw = false;
     volume = 255; // max volume
     g_vol_lasttime = 0;
     visualize_number = 0;
@@ -1180,24 +1179,21 @@ _reload:
 
         check_keys();
 
-        if (!g_pause_draw)
+        draw_ui(0);
+        if (cursor_visible && !visualize)
         {
-            draw_ui(0);
-            if (cursor_visible && !visualize)
-            {
 #ifdef _WII_
-                ui->draw_cursor(cursor_x, cursor_y, cursor_angle);
+            ui->draw_cursor(cursor_x, cursor_y, cursor_angle);
 #else
-                ui->draw_cursor(cursor_x - sk->get_value_int("cursor_x_off"),
-                                cursor_y - sk->get_value_int("cursor_y_off"),
-                                cursor_angle);
+            ui->draw_cursor(cursor_x - sk->get_value_int("cursor_x_off"),
+                            cursor_y - sk->get_value_int("cursor_y_off"),
+                            cursor_angle);
 #endif
-            }
-            // flip to main screen buffer
-            // SDL_Rect ds = { 100,100,640,480};
-            SDL_BlitSurface(ui->guibuffer,0,screen,0);
-            SDL_Flip(screen);
         }
+        // flip to main screen buffer
+        // SDL_Rect ds = { 100,100,640,480};
+        SDL_BlitSurface(ui->guibuffer,0,screen,0);
+        SDL_Flip(screen);
 
         // do the fft using the local
         if (visualize || ui->vis_on_screen) // Only update if viewing
