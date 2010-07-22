@@ -63,6 +63,12 @@ class gui {
         GUI_MAX
     };
 
+    enum // animated images ... only rip music image right now
+    {
+        GUI_IMG_FRAME_1 = 0,
+        GUI_IMG_FRAME_2,
+        GUI_IMG_FRAME_MAX
+    };
 
     fonts*          fnts;
     visualizer*     vis;
@@ -83,6 +89,7 @@ class gui {
     SDL_Surface*    vol_ol;
     SDL_Surface*    dialog;
     SDL_Surface*    mute_img;
+    SDL_Surface*    ripping_img[GUI_IMG_FRAME_MAX];
 
    // gui_search*     search_gui;
 
@@ -109,11 +116,20 @@ class gui {
 
     genre_list      gl; // - genre list
 
+    int             rip_image_idx; // current frame for rip image
+    unsigned long   gui_last_time_rip;
+
+    // keep track of time ... for animations ect...
+
+    unsigned long   gui_current_time;
+
     gui(fonts* f,visualizer* v, char* dir) :
         fnts(f), vis(v), buttons_listing(0), buttons_genre(0),
         buttons_playlists(0), buttons_delete(0), genre_selected(0),
-        vis_on_screen(0), dialog_text_color(0)
+        vis_on_screen(0), dialog_text_color(0), rip_image_idx(0),
+        gui_last_time_rip(0), gui_current_time(0)
     {
+        ripping_img[GUI_IMG_FRAME_1] = ripping_img[GUI_IMG_FRAME_2] = 0;
 
         gl.load_file();
 
@@ -251,6 +267,12 @@ class gui {
         if (!sk->get_value_file("mute",s_value1,dir)) exit(0);
         mute_img = tx->texture_lookup(s_value1);
 
+        // --- Ripping indicator ... (TODO add skin option?)
+        if (!ripping_img[GUI_IMG_FRAME_1])
+            ripping_img[GUI_IMG_FRAME_1] = tx->texture_lookup("imgs/record.png");
+
+        if (!ripping_img[GUI_IMG_FRAME_2])
+            ripping_img[GUI_IMG_FRAME_2] = tx->texture_lookup("imgs/record-blink.png");
 
         //more
         if (!sk->get_value_file("next_out",s_value1,dir)) exit(0);
@@ -647,7 +669,6 @@ class gui {
 
         if(visbuffer) SDL_FreeSurface(visbuffer);
 
-
         loopi(GUI_MAX)
         {
             if (guis[i])
@@ -977,7 +998,7 @@ class gui {
 
     };
 
-    void draw_favs(favorites *favs)
+    void inline draw_favs(favorites *favs)
     {
 
         unsigned int i = 0;
@@ -1001,7 +1022,9 @@ class gui {
     char visual_last_track_title[SMALL_MEM];
     void draw(station_list* current_list, icy* ic, favorites* favs)
     {
-         draw_rect(guibuffer,0,0,SCREEN_WIDTH,SCREEN_HEIGHT,0); // clear the buffer
+        gui_current_time = SDL_GetTicks();
+
+        draw_rect(guibuffer,0,0,SCREEN_WIDTH,SCREEN_HEIGHT,0); // clear the buffer
 
         if (visualize)
         {
@@ -1165,6 +1188,8 @@ class gui {
 
             visual_show_title = get_tick_count();
             strcpy(visual_last_track_title, ic->track_title);
+
+            draw_recording();
         }
 
         // volume display ... like an OSD
@@ -1172,12 +1197,12 @@ class gui {
 
     };
 
-    void draw_info(char* txt)
+    void inline draw_info(char* txt)
     {
         guis[GUI_INFO]->draw(txt);
     };
 
-    void draw_sc_error()
+    void inline draw_sc_error()
     {
         fnts->change_color((dialog_text_color >> 16), ((dialog_text_color >> 8) & 0xff),(dialog_text_color & 0xff));
         SDL_Rect t = {48,(400 / 2) - (info_dlg->h / 2),info_dlg->w,info_dlg->h};
@@ -1187,12 +1212,12 @@ class gui {
         fnts->text(guibuffer,vars.search_var("$LANG_TXT_SC_ERROR_l2"),t.x + 94,t.y + 72,0);
     }
 
-    void draw_about()
+    void inline draw_about()
     {
         guis[GUI_OPTIONS]->draw();
     };
 
-    void draw_log()
+    void inline draw_log()
     {
         guis[GUI_LOG]->draw();
     };
@@ -1202,7 +1227,7 @@ class gui {
         return guis[GUI_LOG]->text;
     };
 
-    void draw_stream_details(icy* ic)
+    void inline draw_stream_details(icy* ic)
     {
         fnts->change_color((dialog_text_color >> 16), ((dialog_text_color >> 8) & 0xff),(dialog_text_color & 0xff));
         fnts->set_size(FS_SMALL);
@@ -1222,7 +1247,24 @@ class gui {
 
     };
 
-    void draw_volume()
+    void inline draw_recording()
+    {
+        if (g_oripmusic && !screen_sleeping && ( status==PLAYING || status== BUFFERING ))
+        {
+            if ((gui_current_time - gui_last_time_rip) > 500)
+            {
+                rip_image_idx = !rip_image_idx;
+                gui_last_time_rip = gui_current_time;
+            }
+
+            SDL_Rect d = {SCREEN_WIDTH -100,50,ripping_img[rip_image_idx]->w,ripping_img[rip_image_idx]->h};
+            SDL_BlitSurface(ripping_img[rip_image_idx],0, guibuffer,&d);
+
+        }
+
+    }
+
+    void inline draw_volume()
     {
         if (mute && !screen_sleeping) // always show if muted
         {
@@ -1249,7 +1291,7 @@ class gui {
         }
     };
 
-    void draw_cursor(int x,int y, float angle)
+    void inline draw_cursor(int x,int y, float angle)
     {
         SDL_Rect r = { x,y,cursor->w,cursor->h };
       /*
@@ -1275,13 +1317,13 @@ class gui {
         return t;
     };
 
-    void black_screen_saver()
+    void inline black_screen_saver()
     {
         draw_rect(guibuffer,0,0,SCREEN_WIDTH,SCREEN_HEIGHT,0);
     };
 
     // -- for on screen bars
-    void render_gui_bars()
+    void inline render_gui_bars()
     {
 
         int x = vis_rect.x;
