@@ -26,7 +26,7 @@ class texture_cache {
 
     };
 
-    SDL_Surface* texture_lookup(char* name)
+    SDL_Surface* texture_lookup(const char* name)
     {
         unsigned long hash = 0;
         const char* ptr = name;
