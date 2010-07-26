@@ -1035,17 +1035,6 @@ int main(int argc, char **argv)
     Uint64 last_time, current_time;
     last_time = current_time = get_tick_count();
 
-// restart stream if requested
-    if (g_startfromlast != 0)
-    {
-        FILE * file = fopen(make_path("current.pls"),"r");
-        vector<favorite> parsed = favs->parse_items_pls(file,make_path("current.pls"));
-        if (parsed.size() && parsed[0].server.length())
-        {
-            playing = parsed[0];
-            connect_to_stream(0,I_DIRECT);
-        }
-    }
 _reload:
 
     if (g_reloading_skin)   // only if we have a skin open
@@ -1097,11 +1086,23 @@ _reload:
             //search_function((char*)"dance",SEARCH_GENRE);
             SetScreenStatus(S_GENRES);
         }
+        // restart stream if requested
+        if (g_startfromlast != 0)
+        {
+            FILE * file = fopen(make_path("current.pls"),"r");
+            vector<favorite> parsed = favs->parse_items_pls(file,make_path("current.pls"));
+            if (parsed.size() && parsed[0].server.length())
+            {
+                playing = parsed[0];
+                connect_to_stream(0,I_DIRECT);
+            }
+        }
     }
 
     g_running = true;
     g_reloading_skin = false;
 
+    // Main loop
     while(g_running)
     {
 
