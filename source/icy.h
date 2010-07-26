@@ -194,6 +194,9 @@ public:
                         break;
                     case 2:
                         memcpy(icy_name,start,(end-start < SMALL_MEM-1 ? end-start : SMALL_MEM-1));
+                        // In case the track title is never set, preset it here to the
+                        // station name
+                        snprintf(track_title, SMALL_MEM-1, "%s", icy_name);
                         break;
                     case 3:
                         memcpy(icy_genre,start,(end-start < SMALL_MEM-1 ? end-start : SMALL_MEM-1));
@@ -309,19 +312,21 @@ public:
             title_end = strstr(title_start,"';");
             if (title_end)
             {
-                int sizeof_tile = title_end-title_start;
-                if (sizeof_tile >= SMALL_MEM) sizeof_tile = SMALL_MEM;
+                int sizeof_title = title_end-title_start;
+                if (sizeof_title >= SMALL_MEM) sizeof_title = SMALL_MEM;
 
                 // If an empty title is sent, use the station name as title
                 memset(track_title,0,SMALL_MEM);
 
                 if (title_start == title_end)
                 {
-                    strcpy(track_title, "Unknown Track");
+                    snprintf(track_title, SMALL_MEM-1, "%s", icy_name);
                 }
                 else
                 {
-                    strncpy(track_title, title_start, sizeof_tile);
+                    *title_end='\0';
+                    snprintf(track_title, SMALL_MEM-1, "%s - %s", icy_name, title_start);
+                    *title_end='\'';
                 }
                 // Make sure the title string is complete
                 track_title[SMALL_MEM-1] = '\0';
