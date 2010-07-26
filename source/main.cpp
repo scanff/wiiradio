@@ -38,7 +38,7 @@ network*            net;
 gui*                ui;
 fft*                fourier;
 favorites*          favs;
-station             playing; // make now playing as fav struct so we can access the ip/name quickly
+station             playing; // make now playing as station class so we can access the ip/name quickly
 visualizer*         visuals;
 langs*              lang;
 skins*              sk;
