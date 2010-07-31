@@ -1090,11 +1090,13 @@ _reload:
         if (g_startfromlast != 0)
         {
             FILE * file = fopen(make_path("current.pls"),"r");
-            vector<favorite> parsed = favs->parse_items_pls(file,make_path("current.pls"));
-            if (parsed.size() && parsed[0].server.length())
-            {
-                playing = parsed[0];
-                connect_to_stream(0,I_DIRECT);
+            if (file) {
+                vector<favorite> parsed = favs->parse_items_pls(file,make_path("current.pls"));
+                if (parsed.size() && parsed[0].server.length())
+                {
+                    playing = parsed[0];
+                    connect_to_stream(0,I_DIRECT);
+                }
             }
         }
     }
