@@ -2,6 +2,7 @@
 #define GUI_OPTIONS_H_INCLUDED
 
 #include "../globals.h"
+#include "../diskspace.h"
 #include "gui_button.h"
 #include "gui_toggle.h"
 #include "gui_group.h"
@@ -29,7 +30,12 @@ class gui_options : public gui_dlg
     gui_group*      saver_group;
     gui_group*      service_group;
 
-    gui_options(gui* g_) : logo(0)
+    // Used for disk space
+    char            freespace_str[50];
+    int             mb_free;
+    unsigned long   last_time_ds;
+
+    gui_options(gui* g_) : logo(0), mb_free(0), last_time_ds(0)
     {
         gui_dlg::fnts = g_->fnts;
         gui_dlg::dest = g_->guibuffer;
@@ -121,6 +127,9 @@ class gui_options : public gui_dlg
         g_owidescreen ? b_option_item[O_WIDESCREEN]->obj_state = B_ON : b_option_item[O_WIDESCREEN]->obj_state = B_OFF;
         g_oripmusic ? b_option_item[O_RIPMUSIC]->obj_state = B_ON : b_option_item[O_RIPMUSIC]->obj_state = B_OFF;
         g_startfromlast ? b_option_item[O_STARTFROMLAST]->obj_state = B_ON : b_option_item[O_STARTFROMLAST]->obj_state = B_OFF;
+
+        // Try calc. ds on construction
+        mb_free = get_mediasize_mb();
     };
 
     ~gui_options()
@@ -217,6 +226,25 @@ class gui_options : public gui_dlg
         y += 40;
         fnts->text(dest,"Play last at start :", 200,y,0,1); // -- TO DO Variable this
         fnts->text(dest,"Rip Music :",370,y,0,1); // -- TO DO Variable this
+
+        /*
+            Show the user how much free space they have left.
+            Only run this every few seconds as it my lag
+        */
+        if((SDL_GetTicks() - last_time_ds > 1000*10) && g_oripmusic)
+        {
+            last_time_ds = SDL_GetTicks();
+            mb_free = get_mediasize_mb();
+        }
+
+        if (mb_free > 0)
+        {
+            sprintf(freespace_str,"(Free space: %dMB)",mb_free);
+        }else{
+            sprintf(freespace_str,"(Free space: Unknown)");
+        }
+
+        fnts->text(dest,freespace_str,430,y,0,0);
 
         y += 60;
         // screen save
