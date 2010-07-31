@@ -2,7 +2,6 @@
 #define GUI_OPTIONS_H_INCLUDED
 
 #include "../globals.h"
-#include "../diskspace.h"
 #include "gui_button.h"
 #include "gui_toggle.h"
 #include "gui_group.h"
