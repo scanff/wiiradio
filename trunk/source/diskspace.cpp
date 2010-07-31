@@ -1,7 +1,6 @@
-#ifndef DISKSPACE_H_INCLUDED
-#define DISKSPACE_H_INCLUDED
+#include "globals.h"
 
-#ifndef _WIN32
+#ifdef _WII_
 
 #include <sys/statvfs.h>
 
@@ -34,5 +33,3 @@ int get_mediasize_mb()
 #else
 int get_mediasize_mb() { return 0;}
 #endif
-
-#endif // DISKSPACE_H_INCLUDED
