@@ -31,10 +31,10 @@ class gui_options : public gui_dlg
 
     // Used for disk space
     char            freespace_str[50];
-    int             mb_free;
+    string          media_free_space_desc;
     unsigned long   last_time_ds;
 
-    gui_options(gui* g_) : logo(0), mb_free(0), last_time_ds(0)
+    gui_options(gui* g_) : logo(0), media_free_space_desc("unknown"), last_time_ds(0)
     {
         gui_dlg::fnts = g_->fnts;
         gui_dlg::dest = g_->guibuffer;
@@ -128,7 +128,7 @@ class gui_options : public gui_dlg
         g_startfromlast ? b_option_item[O_STARTFROMLAST]->obj_state = B_ON : b_option_item[O_STARTFROMLAST]->obj_state = B_OFF;
 
         // Try calc. ds on construction
-        mb_free = get_mediasize_mb();
+        media_free_space_desc = get_media_free_space_desc();
     };
 
     ~gui_options()
@@ -233,17 +233,10 @@ class gui_options : public gui_dlg
         if((SDL_GetTicks() - last_time_ds > 1000*10) && g_oripmusic)
         {
             last_time_ds = SDL_GetTicks();
-            mb_free = get_mediasize_mb();
+            media_free_space_desc = get_media_free_space_desc();
         }
 
-        if (mb_free > 0)
-        {
-            sprintf(freespace_str,"(Free space: %dMB)",mb_free);
-        }else{
-            sprintf(freespace_str,"(Free space: Unknown)");
-        }
-
-        fnts->text(dest,freespace_str,430,y,0,0);
+        fnts->text(dest,("(Free space: "+media_free_space_desc+")").c_str(),430,y,0,0);
 
         y += 60;
         // screen save

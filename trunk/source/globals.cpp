@@ -160,3 +160,58 @@ Uint64 get_tick_count();
 bool refresh_genre_cache;
 bool sc_error;
 int  g_stream_source;
+
+#ifndef _WIN32
+
+#include <sys/statvfs.h>
+
+/* number of bytes free in current working directory */
+long get_media_free_space()
+{
+    long free = 0;
+    /* Thanks teknecal for this info */
+    struct statvfs fiData;
+
+    if (statvfs(".", &fiData) < 0) {
+        return -1;
+    }
+    else {
+        free = (fiData.f_bfree * fiData.f_bsize);
+    }
+
+    return free;
+}
+#else
+long get_media_free_space() { return -1; }
+#endif
+
+/* Human-readable desription of free space in working directory */
+string get_media_free_space_desc()
+{
+    char tmp[SMALL_MEM];
+    string unit;
+    ostringstream ret;
+    double bytes = get_media_free_space();
+    short expon = 0;
+    if (bytes < 0)
+        return "unknown";
+    while (bytes > 1024 && expon <= 4) {
+        bytes /= 1024;
+        expon++;
+    }
+    switch (expon) {
+      case 0: unit =   "B"; break;
+      case 1: unit = "kiB"; break;
+      case 2: unit = "MiB"; break;
+      case 3: unit = "GiB"; break;
+      case 4: unit = "TiB"; break;
+      default: return "unknown";
+    }
+    if (bytes < 10)
+        snprintf(tmp, SMALL_MEM-1, "%.1f ", bytes);
+    else
+        snprintf(tmp, SMALL_MEM-1, "%.0f ", bytes);
+    ret << tmp << unit;
+    return ret.str();
+}
+

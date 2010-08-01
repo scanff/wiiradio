@@ -251,7 +251,8 @@ extern void request_save_fav();
 extern void screen_saver();
 extern void fade(SDL_Surface*, Uint32, Uint8);
 
-extern int get_mediasize_mb();
+extern long   get_media_free_space();
+extern string get_media_free_space_desc();
 
 extern int display_idx; //holds the current displaying browser index
 extern int genre_display; //holds the genre list start display value
