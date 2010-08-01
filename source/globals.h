@@ -213,8 +213,8 @@ extern SDL_Surface*        screen;
 
 #define SCREEN_WIDTH    (640)
 #define SCREEN_HEIGHT   (480)
-#define SCREEN_WIDTH_BUFFER  (50)
-#define SCREEN_HEIGHT_BUFFER (50)
+#define SCREEN_WIDTH_BUFFER  (30)
+#define SCREEN_HEIGHT_BUFFER (30)
 #define FONT_SIZE       (40)
 #define VERSION_NUMBER  (0.6)
 #define BITDEPTH        (24)
@@ -240,8 +240,6 @@ extern SDL_Surface*        screen;
 #define CLIP(mx,x)  x>mx ? (mx) : x < 0 ? (0) : (x);
 #define MAX_Z_ORDERS (3)
 
-extern int X_OFFSET;
-extern int Y_OFFSET;
 extern int max_listings;
 
 extern void connect_to_stream(int,connect_info);

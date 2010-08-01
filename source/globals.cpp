@@ -3,8 +3,6 @@
 
 // --- anything in this file has global scope !!!!!!
 
-int         X_OFFSET;
-int         Y_OFFSET;
 int         max_listings;
 int         g_reloading_skin; // flag to see if we are loading a new skin!
 

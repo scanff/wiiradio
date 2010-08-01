@@ -1187,15 +1187,8 @@ _reload:
 
         draw_ui(0);
         if (cursor_visible && !visualize)
-        {
-#ifdef _WII_
             ui->draw_cursor(cursor_x, cursor_y, cursor_angle);
-#else
-            ui->draw_cursor(cursor_x - sk->get_value_int("cursor_x_off"),
-                            cursor_y - sk->get_value_int("cursor_y_off"),
-                            cursor_angle);
-#endif
-        }
+
         // flip to main screen buffer
         // SDL_Rect ds = { 100,100,640,480};
         SDL_BlitSurface(ui->guibuffer,0,screen,0);

@@ -43,20 +43,6 @@ class gui_toggle : public gui_object{
         }
     }
 
-
-   /* int hit_test(int x, int y, int current_z)
-    {
-        if (!test_zorder(current_z))
-            return B_OFF;
-
-        x+=X_OFFSET;
-        y+=Y_OFFSET;
-
-        if ((x > s_x && x < (s_x+s_w) && y > s_y && y < (s_y+s_h))) obj_state == B_ON ? obj_state = B_OFF : obj_state = B_ON;
-
-
-        return obj_state;
-    };*/
 };
 
 #endif
