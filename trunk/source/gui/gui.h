@@ -228,15 +228,6 @@ class gui {
 
         }
 
-        //cursor HIT offsets
-#ifdef _WII_
-        Y_OFFSET = sk->get_value_int("cursor_y_off");
-        X_OFFSET = sk->get_value_int("cursor_x_off");
-#else
-        Y_OFFSET = X_OFFSET = 0;
-#endif
-
-
         // -- background
         if (!sk->get_value_file("bgimg",s_value1,dir)) exit(0);
         if(!(guibackground = tx->texture_lookup(s_value1))) exit(0);
@@ -1293,15 +1284,12 @@ class gui {
 
     void inline draw_cursor(int x,int y, float angle)
     {
-        SDL_Rect r = { x,y,cursor->w,cursor->h };
-      /*
-         -- need to also adjust hotspot angle as the hit tests are off when rotated
+        /* Cursor rotation */
         SDL_Surface *rot = rotozoomSurface (cursor, angle, 1, 0);
         if(!rot) return; // don't count on rotozoomSurface to always allocate surface
-        SDL_BlitSurface(rot,0, guibuffer, &r);
+        SDL_Rect r = { x-rot->w/2, y-rot->h/2, rot->w, rot->h };
+        SDL_BlitSurface(rot, 0, guibuffer, &r);
         SDL_FreeSurface(rot); // free
-        */
-        SDL_BlitSurface(cursor,0, guibuffer, &r);
     };
 
     char* gui_gettext(char* t)

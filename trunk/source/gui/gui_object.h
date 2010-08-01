@@ -182,8 +182,6 @@ class gui_object {
             default:
                 return obj_state;
         }
-        x += X_OFFSET;
-        y += Y_OFFSET;
 
         if ((x > s_x && x < (s_x+s_w) && y > s_y && y < (s_y+s_h)))
         {
