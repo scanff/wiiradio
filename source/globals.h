@@ -34,6 +34,8 @@ using namespace std;
     #define Sleep(x) usleep(x*1000);//1000?
     //#include <errno.h>
 
+    extern short active_ir;
+    #define MAX_WPAD 4
 #else
 
     #ifdef _WIN32

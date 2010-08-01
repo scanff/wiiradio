@@ -43,7 +43,11 @@ visualizer*         visuals;
 langs*              lang;
 skins*              sk;
 
-#ifndef _WII_
+#ifdef _WII_
+
+short active_ir = 0;
+
+#else
 
 FMOD_SYSTEM             *fmod_system = 0;
 FMOD_SOUND              *sound1 = 0 ;
@@ -121,63 +125,62 @@ void translate_keys()
     if (GetScreenStatus() == S_SEARCHING)
         return;
 
-    if(WPAD_ButtonsHeld(0) & WPAD_BUTTON_HOME)
+    u16 buttonsHeld = 0;
+    loopi(MAX_WPAD) buttonsHeld |= WPAD_ButtonsHeld(i);
+
+    if(buttonsHeld & WPAD_BUTTON_HOME)
     {
         g_real_keys[SDLK_ESCAPE] = 1;
     }
 
-    if(WPAD_ButtonsHeld(0) & WPAD_BUTTON_LEFT)
+    if(buttonsHeld & WPAD_BUTTON_LEFT)
     {
         g_real_keys[SDLK_LEFT] = 1;
     }
-    if(WPAD_ButtonsHeld(0) & WPAD_BUTTON_RIGHT)
+
+    if(buttonsHeld & WPAD_BUTTON_RIGHT)
     {
         g_real_keys[SDLK_RIGHT] = 1;
     }
-    if(WPAD_ButtonsHeld(0) & WPAD_BUTTON_DOWN)
+
+    if(buttonsHeld & WPAD_BUTTON_DOWN)
     {
         g_real_keys[SDLK_DOWN] = 1;
     }
-    if(WPAD_ButtonsHeld(0) & WPAD_BUTTON_UP)
+
+    if(buttonsHeld & WPAD_BUTTON_UP)
     {
         g_real_keys[SDLK_UP] = 1;
     }
 
-    if(WPAD_ButtonsHeld(0) & WPAD_BUTTON_A)
+    if(buttonsHeld & WPAD_BUTTON_A)
     {
         g_real_keys[SDLK_RETURN] = 1;
-
     }
 
-
-    if(WPAD_ButtonsHeld(0) & WPAD_BUTTON_B)
+    if(buttonsHeld & WPAD_BUTTON_B)
     {
         g_real_keys[SDLK_b] = 1;
-
     }
 
-    if(WPAD_ButtonsHeld(0) & WPAD_BUTTON_PLUS)
+    if(buttonsHeld & WPAD_BUTTON_PLUS)
     {
         g_real_keys[SDLK_PLUS] = 1;
-
     }
 
-    if(WPAD_ButtonsHeld(0) & WPAD_BUTTON_MINUS)
+    if(buttonsHeld & WPAD_BUTTON_MINUS)
     {
         g_real_keys[SDLK_MINUS] = 1;
-
     }
 
-    if(WPAD_ButtonsHeld(0) & WPAD_BUTTON_1)
+    if(buttonsHeld & WPAD_BUTTON_1)
     {
         g_real_keys[SDLK_1] = 1;
-
     }
 
-    if(WPAD_ButtonsHeld(0) & WPAD_BUTTON_2)
+    if(buttonsHeld & WPAD_BUTTON_2)
     {
         g_real_keys[SDLK_2] = 1;
-
     }
 #endif
 
@@ -1120,14 +1123,27 @@ _reload:
         WPAD_ScanPads();
 
         u32 type;
-        WPADData *wd_one;
+        WPADData *wd[MAX_WPAD];
         WPAD_ReadPending(WPAD_CHAN_ALL, countevs);
         WPAD_Probe(WPAD_CHAN_ALL, &type);
 
-        wd_one = WPAD_Data(0);
+        // Get the data of all wpads
+        loopi(MAX_WPAD) wd[i] = WPAD_Data(i);
+
+        // Look for potential new active ir wpad to be used in wiiradio
+        if (!wd[active_ir]->ir.valid)
+        {
+            active_ir = 0;
+            while(active_ir < MAX_WPAD-1 &&
+                  (!wd[active_ir]->ir.valid ||
+                  wd[active_ir]->ir.x-  SCREEN_WIDTH_BUFFER  < 0 ||
+                  wd[active_ir]->ir.x+2*SCREEN_WIDTH_BUFFER  > SCREEN_WIDTH ||
+                  wd[active_ir]->ir.y-  SCREEN_HEIGHT_BUFFER < 0 ||
+                  wd[active_ir]->ir.y+2*SCREEN_HEIGHT_BUFFER > SCREEN_HEIGHT) )
+                active_ir++;
+        }
 
         translate_keys();
-
 
 #else
         SDL_PumpEvents();
@@ -1139,13 +1155,13 @@ _reload:
 
         // Some valid dummy value
         event.type = SDL_USEREVENT;
-        if (wd_one->ir.valid)
+        if (wd[active_ir]->ir.valid)
         {
-            cursor_angle = -wd_one->ir.angle;
+            cursor_angle = -wd[active_ir]->ir.angle;
 
             event.type = SDL_MOUSEMOTION;
-            event.motion.x = wd_one->ir.x-SCREEN_WIDTH_BUFFER;
-            event.motion.y = wd_one->ir.y-SCREEN_HEIGHT_BUFFER;
+            event.motion.x = wd[active_ir]->ir.x-SCREEN_WIDTH_BUFFER;
+            event.motion.y = wd[active_ir]->ir.y-SCREEN_HEIGHT_BUFFER;
             cursor_x = event.motion.x;
             cursor_y = event.motion.y;
             cursor_visible = 1;
