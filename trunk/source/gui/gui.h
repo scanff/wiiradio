@@ -1,6 +1,6 @@
 #ifndef _GUI_H_
 #define _GUI_H_
-
+#include "../application.h"
 #include "../genre_list.h"
 
 class gui {
@@ -123,11 +123,13 @@ class gui {
 
     unsigned long   gui_current_time;
 
-    gui(fonts* f,visualizer* v, char* dir) :
+    app_wiiradio*   theapp;
+
+    gui(app_wiiradio* _theapp, fonts* f,visualizer* v, char* dir) :
         fnts(f), vis(v), buttons_listing(0), buttons_genre(0),
         buttons_playlists(0), buttons_delete(0), genre_selected(0),
         vis_on_screen(0), dialog_text_color(0), rip_image_idx(0),
-        gui_last_time_rip(0), gui_current_time(0)
+        gui_last_time_rip(0), gui_current_time(0),theapp(_theapp)
     {
         ripping_img[GUI_IMG_FRAME_1] = ripping_img[GUI_IMG_FRAME_2] = 0;
 
@@ -794,6 +796,23 @@ class gui {
                     }
                 break;
 
+                case S_LOCALFILES:
+                    if ((obj_state = buttons_playlists[i]->hit_test(events,j)))
+                    {
+                        if (obj_state == B_CLICK)
+                        {
+                            int connect = i + pls_display;
+                            if (connect>= total_num_playlists || connect < 0)
+                                return 0;
+
+                            connect_to_stream(connect,I_LOCAL);
+                            reset_scrollings();
+                        }
+
+                        return 0;
+                    }
+                break;
+
                 case S_PLAYLISTS:
 
                     if ((obj_state = buttons_delete[i]->hit_test(events,j)))
@@ -974,6 +993,7 @@ class gui {
                     reset_scrollings();
                  break;
 
+
                  default:
                  break;
 
@@ -988,6 +1008,26 @@ class gui {
         return -1;
 
     };
+
+    void inline draw_local_files(localfiles* lf)
+    {
+        unsigned int i = 0;
+        unsigned int p = 0;
+
+        while(i<(unsigned int)max_listings && p<lf->list.size())
+        {
+            if (p >= (unsigned int)pls_display) {
+                buttons_playlists[i]->set_text(lf->list[p].name.c_str());
+                buttons_playlists[i]->draw();
+                // delete option
+                buttons_delete[i]->draw();
+
+                i++;
+            }
+            p++;
+        }
+
+    }
 
     void inline draw_favs(favorites *favs)
     {
@@ -1011,7 +1051,8 @@ class gui {
 
     unsigned long visual_show_title;
     char visual_last_track_title[SMALL_MEM];
-    void draw(station_list* current_list, icy* ic, favorites* favs)
+
+    void draw(station_list* current_list, icy* ic, favorites* favs, localfiles* localfs)
     {
         gui_current_time = SDL_GetTicks();
 
@@ -1022,7 +1063,12 @@ class gui {
             // TO DO ... add more
             black_screen_saver();
             if (visualize_number < MAX_VISUALS) {
-                vis->user_data = ic->track_title;
+                if(playback_type == AS_LOCAL)
+                {
+                  //  localpb->user_data = ic->track_title;
+                }else{
+                    vis->user_data = ic->track_title;
+                }
                 vis->draw_visuals(guibuffer,visualize_number);
 
                 if(get_tick_count() - visual_show_title < 60000) // -- hide after 1 min
@@ -1118,6 +1164,10 @@ class gui {
                         draw_favs(favs);
                     break;
 
+                    case S_LOCALFILES:
+                        draw_local_files(localfs);
+                    break;
+
                     case S_GENRES:
 
                     loopi(max_listings)
@@ -1138,6 +1188,7 @@ class gui {
                     case S_STREAM_INFO:
                         draw_stream_details(ic);
                     break;
+
 
                 } // switch
 

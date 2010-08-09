@@ -17,7 +17,7 @@ Uint8       g_keys_last_state[MAX_KEYS];
 bool        g_running;
 Uint64      g_vol_lasttime;
 enum_status status;
-
+audio_source playback_type = AS_SHOUTCAST;
 wiiradio_variables vars;
 
 // -- Functions
