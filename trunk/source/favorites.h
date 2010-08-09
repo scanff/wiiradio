@@ -17,14 +17,18 @@ favorite::favorite(string _name, string _url, string _filename) : station(_name,
     filename = _filename;
 }
 
+#include "application.h"
+
 class favorites {
     public:
+
+    app_wiiradio* theapp;
 
     #define F_PATH ("pls/")
 
     vector<favorite> list;
 
-    favorites() {};
+    favorites(app_wiiradio* _theapp) : theapp(_theapp) {};
     ~favorites() { clear_list(); };
 
     void delete_favorite(unsigned int item)

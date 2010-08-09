@@ -190,7 +190,7 @@ extern Uint64 get_tick_count();
 extern char* make_path(const char*);
 //extern SDL_Surface *screen;
 extern void draw_rect(SDL_Surface*,int,int,int,int,unsigned long);
-extern void delete_playlist(int);
+//extern void delete_playlist(int);
 extern char* make_string(char*,...);
 extern char* trim_string(char*, int);
 extern void next_skin();
@@ -246,10 +246,10 @@ extern SDL_Surface*        screen;
 
 extern int max_listings;
 
-extern void connect_to_stream(int,connect_info);
-extern void search_function(char*,int);
+//extern void connect_to_stream(int,connect_info);
+//extern void search_function(char*,int);
 extern void genre_nex_prev(bool,char*);
-extern void request_save_fav();
+//extern void request_save_fav();
 extern void screen_saver();
 extern void fade(SDL_Surface*, Uint32, Uint8);
 

@@ -34,19 +34,8 @@ int         errors = 0; // Network errors
 texture_cache*      tx;
 SDL_Surface*        screen;
 fonts*              fnts; //extern this to use everywhere
-icy*                icy_info;
-shoutcast_browser*  scb;
-playlists*          playlst;
-network*            net;
-gui*                ui;
-fft*                fourier;
-favorites*          favs;
-station             playing; // make now playing as station class so we can access the ip/name quickly
-visualizer*         visuals;
 langs*              lang;
 skins*              sk;
-local_player*       localpb;
-localfiles*         localfs;
 
 #ifdef _WII_
 
@@ -70,6 +59,9 @@ SDL_Thread* connectthread = 0;
 int search_thread (void *arg); // -- thread for genre searches
 SDL_Thread* searchthread = 0;
 
+app_wiiradio* pAppWiiRadio; // hack for now ... store a pointer to our app class for static threads
+
+
 // local storage of audio data
 /*
     Using callbacks to call a class function seem to create unusual problems??? BUG ??? WTF IDK?
@@ -83,6 +75,17 @@ struct _so
     int     search_type;
 };
 _so search_options;
+
+
+app_wiiradio::app_wiiradio()
+{
+    pAppWiiRadio = this;
+}
+
+app_wiiradio::~app_wiiradio()
+{
+}
+
 
 #ifdef _WII_
 
@@ -192,16 +195,16 @@ void translate_keys()
 
 }
 
-void draw_ui(char* info)
+void app_wiiradio::draw_ui(char* info)
 {
     //SetScreenStatus(S_LOCALFILES);
     // drawing stuff
-    ui->draw(scb->sl_first,icy_info,favs,localfs);
+    ui->draw();//scb->sl_first,icy_info,favs,localfs);
     if (info) ui->draw_info(info);
 }
 
 
-void station_lister(const char* path,char* gen)
+void app_wiiradio::station_lister(const char* path,char* gen)
 {
     // rest gui pointer
     //ui->select_pos = 0;
@@ -213,7 +216,7 @@ void station_lister(const char* path,char* gen)
 }
 
 
-void stop_playback()
+void app_wiiradio::stop_playback()
 {
 #ifdef _WII_
     if(MP3Player_IsPlaying()) MP3Player_Stop();
@@ -225,8 +228,7 @@ void stop_playback()
 #endif
 }
 
-void delete_playlist(int);
-void delete_playlist(int value)
+void app_wiiradio::delete_playlist(int value)
 {
     favs->delete_favorite(value);
 }
@@ -257,7 +259,7 @@ int search_thread(void* arg)
     }
     // bring down upto 1k of stations per genre.  We will then cache them incase of shoutcast DB problems
     // sprintf(path,"/sbin/newxml.phtml?service=winamp2&no_compress=1&genre=%s&limit=1000",selected);
-    station_lister(path,s->buf);
+    pAppWiiRadio->station_lister(path,s->buf);
 
     SetScreenStatus(S_BROWSER); // default to browser as results will be here
 
@@ -267,10 +269,12 @@ int search_thread(void* arg)
 // -- Connect thread
 int connect_thread(void* arg)
 {
-    char* server = (char*)(playing.server.c_str());
-    int port = playing.port;
-    char* path = (char*)(playing.path.c_str());
-    bool islocal =  playing.local;
+    app_wiiradio* app = (app_wiiradio*)arg;
+
+    char* server = (char*)(app->playing.server.c_str());
+    int port = app->playing.port;
+    char* path = (char*)(app->playing.path.c_str());
+    bool islocal =  app->playing.local;
 
     char* host = 0;
     char request[1024] = {0};
@@ -279,26 +283,26 @@ int connect_thread(void* arg)
     if (connected)
     {
         connected = 0;
-        net->client_close();
+        app->net->client_close();
     }
 
     // stop mp3 if currently playing.
-    stop_playback();
+    app->stop_playback();
 
     if (!islocal)
     {
 
         // connect to new stream
-        int connect_try = net->client_connect(server,port,TCP,false);
+        int connect_try = app->net->client_connect(server,port,TCP,false);
 
         if (status != CONNECTING) return 0; // cancelled !
 
-        icy_info->icy_reset(); // reset icy state
+        app->icy_info->icy_reset(); // reset icy state
 
         if (connect_try) // send stream request to the server
         {
 
-            host = net->get_local_ip();
+            host = app->net->get_local_ip();
 
             //create the server request (to get the stream)
             sprintf(request,
@@ -310,7 +314,7 @@ int connect_thread(void* arg)
                     !(*path) ? "/" : path,host);
 
             int len_req = strlen(request);
-            len_req = net->client_send(request,len_req);
+            len_req = app->net->client_send(request,len_req);
             if (len_req < 0)
             {
                 status = FAILED;
@@ -328,7 +332,7 @@ int connect_thread(void* arg)
     }
     else
     { // local file
-        localpb->reset();
+        app->localpb->reset();
         playback_type = AS_LOCAL;
     }
     return 0;
@@ -384,16 +388,15 @@ void split_url(char* o_url, char* o_path, int* o_port, char* url)
     }
 }
 
-void connect_direct(char* typed);
-void connect_direct(char* typed)
+void app_wiiradio::connect_direct(char* typed)
 {
     playing = station(typed);
 
     connect_to_stream(0,I_DIRECT);
 };
 
-void connect_to_stream(int,connect_info); //extern'd
-void connect_to_stream(int value, connect_info info)
+
+void app_wiiradio::connect_to_stream(int value, connect_info info)
 {
     if (info != I_LOCAL)
     {
@@ -485,7 +488,7 @@ void connect_to_stream(int value, connect_info info)
     favs->save_current(playing);
 
     // start a new connection thread
-    connectthread = SDL_CreateThread(connect_thread,0);
+    connectthread = SDL_CreateThread(connect_thread,this);
 
 }
 
@@ -539,7 +542,7 @@ void screen_timeout()
     }
 }
 
-void check_keys()
+void app_wiiradio::check_keys()
 {
 
     // -- keys that always perform the same action go first!!!
@@ -723,8 +726,8 @@ void check_keys()
 }
 
 
-void search_function(char*,int); //global extern
-void search_function(char* value,int search_type)
+
+void app_wiiradio::search_function(char* value,int search_type)
 {
     refresh_genre_cache = true; // everytime we search for a new genre let's refresh the cache
     display_idx = 0;
@@ -775,7 +778,7 @@ static void cb_fft(unsigned char* in, int max)
 
     if (g_reloading_skin || !g_running) return; // -- bad ui is loading
 
-    if (visualize || ui->vis_on_screen) // Only update if viewing
+    if (visualize || pAppWiiRadio->ui->vis_on_screen) // Only update if viewing
     {
         loopi(max) audio_data[i] = in[i];
         //fourier->setAudioData(in,max);
@@ -784,13 +787,12 @@ static void cb_fft(unsigned char* in, int max)
 }
 #endif
 
-void get_favorites()
+void app_wiiradio::get_favorites()
 {
     favs->load_favorites();
 }
 
-void request_save_fav(); // extern'd
-void request_save_fav()
+void app_wiiradio::request_save_fav()
 {
     favs->save_fav(playing); // save to file then reload
     favs->load_favorites();
@@ -805,18 +807,18 @@ s32 reader_callback(void *usr_data,void *cb,s32 len)
     switch(playback_type)
     {
         case AS_LOCAL:
-            return localpb->get_buffer(cb,len);
+            return pAppWiiRadio->localpb->get_buffer(cb,len);
         break;
 
         case AS_SHOUTCAST:
         case AS_ICECAST:
-            return icy_info->get_buffer(cb,len);
+            return pAppWiiRadio->icy_info->get_buffer(cb,len);
         break;
     }
     return 0;
 }
 
-void inline network_playback(char* net_buffer)
+void inline app_wiiradio::network_playback(char* net_buffer)
 {
     int len = 0;
     // stream handler
@@ -902,7 +904,7 @@ void inline network_playback(char* net_buffer)
 
 }
 
-void inline local_playback()
+void inline app_wiiradio::local_playback()
 {
     status = PLAYING;
     localpb->local_read(playing.path.c_str());
@@ -950,6 +952,7 @@ void inline local_playback()
 
 int critical_thread(void *arg)
 {
+    app_wiiradio* app = (app_wiiradio*)arg;
 
     char* net_buffer = 0;
 
@@ -965,12 +968,12 @@ int critical_thread(void *arg)
             switch(playback_type)
             {
                 case AS_LOCAL:
-                    local_playback();
+                    app->local_playback();
                 break;
 
                 case AS_SHOUTCAST:
                 case AS_ICECAST:
-                    if (connected) network_playback(net_buffer);
+                    if (connected) app->network_playback(net_buffer);
                 break;
             }
         }
@@ -987,7 +990,7 @@ int critical_thread(void *arg)
 
     free(net_buffer);
     net_buffer =0;
-    if (connected) net->client_close();
+    if (connected) app->net->client_close();
 
     return 0;
 }
@@ -1095,12 +1098,13 @@ int app_wiiradio::wii_radio_main(int argc, char **argv)
     fourier         = new fft;
     visuals         = new visualizer(fourier);
     icy_info        = new icy;
-    favs            = new favorites;
+    favs            = new favorites(this);
     sk              = new skins;
     lang            = new langs;
     localpb         = new local_player();
     localfs         = new localfiles();
-localfs->directory_list();
+
+    localfs->directory_list();
     get_favorites();
 
 
@@ -1125,7 +1129,7 @@ localfs->directory_list();
 
 // create a new reader thread
     g_running = true;
-    mainthread = SDL_CreateThread(critical_thread,0);
+    mainthread = SDL_CreateThread(critical_thread,this);
     if (!mainthread) exit(0);
 
     SetScreenStatus(S_BROWSER);

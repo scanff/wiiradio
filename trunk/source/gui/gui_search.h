@@ -51,7 +51,7 @@ class gui_search : public gui_dlg
     {
         gui_search* p = (gui_search*)u;
 
-        search_function(buf,p->s_type);
+        p->parent->theapp->search_function(buf,p->s_type);
 
     };
 
