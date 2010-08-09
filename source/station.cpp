@@ -5,36 +5,43 @@
 
 /* Class for radio stations. */
 
-station::station()
+station::station() : local(0)
 {
     name = "Uninitialized";
     split_url("");
 }
 
-station::station(const char *c_url)
+station::station(const char *c_url) : local(0)
 {
     name = "Uninitialized";
     string url = c_url;
     split_url(url);
 }
 
-station::station(const char *c_name, const char *c_url)
+station::station(const char *c_name, const char *c_url) : local(0)
 {
     name = c_name;
     string url = c_url;
     split_url(url);
 }
 
-station::station(string url)
+station::station(string url) : local(0)
 {
     name = "Uninitialized";
     split_url(url);
 }
 
-station::station(string _name, string url)
+station::station(string _name, string url) : local(0)
 {
     name = _name;
     split_url(url);
+}
+
+station::station(string _name, string _path,bool _local)
+{
+    name = _name;
+    path = _path;
+    local = _local;
 }
 
 void station::split_url(string url)

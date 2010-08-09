@@ -91,13 +91,14 @@ using namespace std;
 #define MAX_KEYS 300
 
 // -- audio source !
-enum
+enum audio_source
 {
     AS_SHOUTCAST = 0,
     AS_ICECAST,
-    AS_SD,
-    AS_USB,
-    AS_MAX
+    AS_LOCAL,
+    //AS_SD,
+   // AS_USB,
+  //  AS_MAX
 };
 
 enum enum_status
@@ -119,7 +120,7 @@ enum
   S_CANCEL_CON_BUF,
   S_SEARCHING,
   S_SEARCHGENRE,
-//  S_USERCONNECT,
+  S_LOCALFILES,
   S_MAX,
   S_LOG
 };
@@ -150,7 +151,8 @@ enum connect_info
   I_STATION = 0,
   I_PLAYLIST,
   I_DIRECT, // User has typed IP or address
-  I_HASBEENSET
+  I_HASBEENSET,
+  I_LOCAL
 };
 
 enum
@@ -261,6 +263,7 @@ extern int total_num_playlists;
 extern SDL_Event event;
 extern bool refresh_genre_cache;
 extern bool sc_error;
+extern audio_source playback_type;
 #include "variables.h"
 extern wiiradio_variables vars;
 #include "fonts.h"

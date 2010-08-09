@@ -11,12 +11,14 @@ class station {
     string       server;
     string       path;
     unsigned int port;
+    bool         local;
 
     station();
     station(const char *url);
     station(const char *name, const char *url);
     station(string url);
     station(string name, string url);
+    station(string name, string path,bool local);
 
     string url();
     void debug_print();
