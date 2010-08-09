@@ -789,7 +789,7 @@ class gui {
                         if (obj_state == B_CLICK)
                         {
                             reset_scrollings();
-                            connect_to_stream(i,I_STATION);
+                            theapp->connect_to_stream(i,I_STATION);
                         }
 
                         return 0;
@@ -805,7 +805,7 @@ class gui {
                             if (connect>= total_num_playlists || connect < 0)
                                 return 0;
 
-                            connect_to_stream(connect,I_LOCAL);
+                            theapp->connect_to_stream(connect,I_LOCAL);
                             reset_scrollings();
                         }
 
@@ -823,7 +823,7 @@ class gui {
                             if (list >= total_num_playlists)
                                 return 0;
 
-                            delete_playlist(list);
+                            theapp->delete_playlist(list);
                             reset_scrollings();
                         }
                         return 0;
@@ -837,7 +837,7 @@ class gui {
                             if (connect>= total_num_playlists || connect < 0)
                                 return 0;
 
-                            connect_to_stream(connect,I_PLAYLIST);
+                            theapp->connect_to_stream(connect,I_PLAYLIST);
                             reset_scrollings();
                         }
 
@@ -858,7 +858,7 @@ class gui {
                         if (!g) return 0;
 
 
-                        search_function(g,SEARCH_GENRE); // do the search .. switch to browser
+                        theapp->search_function(g,SEARCH_GENRE); // do the search .. switch to browser
                         reset_scrollings();
                         return 0;
                     }
@@ -872,7 +872,7 @@ class gui {
             {
                 if (buttons[BTN_ADD]->hit_test(events,j)==B_CLICK) {
                     if (status == PLAYING)
-                        request_save_fav(); // save the pls
+                        theapp->request_save_fav(); // save the pls
 
                     return 0;
                 }
@@ -1052,8 +1052,13 @@ class gui {
     unsigned long visual_show_title;
     char visual_last_track_title[SMALL_MEM];
 
-    void draw(station_list* current_list, icy* ic, favorites* favs, localfiles* localfs)
+    void draw()//station_list* current_list, icy* ic, favorites* favs, localfiles* localfs)
     {
+        station_list* current_list  = theapp->scb->sl_first;
+        icy* ic                     = theapp->icy_info;
+        favorites* favs             = theapp->favs;
+        localfiles* localfs         = theapp->localfs;
+
         gui_current_time = SDL_GetTicks();
 
         draw_rect(guibuffer,0,0,SCREEN_WIDTH,SCREEN_HEIGHT,0); // clear the buffer
