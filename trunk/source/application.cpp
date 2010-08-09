@@ -1365,6 +1365,5 @@ _reload:
     delete fnts;
     delete icy_info;
 
-
-
+    return 0;
 }
