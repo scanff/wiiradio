@@ -37,9 +37,11 @@ class shoutcast_browser
     int         total_items;
     int         type; // shoutcast, icecast .. other?
 
-    shoutcast_browser() :  sl_first(0), sl(0), net(0), total_items(0), type(0)
+    app_wiiradio*   theapp;
+
+    shoutcast_browser(app_wiiradio* _theapp) :  sl_first(0), sl(0), net(0), total_items(0), type(0), theapp(_theapp)
     {
-        net = new network;
+        net = new network(theapp);
     };
     ~shoutcast_browser()
     {

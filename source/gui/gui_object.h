@@ -55,6 +55,8 @@ class gui_object {
     int             pad_x;
     int             pad_y;
 
+    app_wiiradio*   theapp;
+
     gui_object() :
         obj_type(0),
         s_x(0), s_y(0), s_h(0), s_w(0), text_color(0), text_color_over(0),
@@ -74,6 +76,8 @@ class gui_object {
     // -- set the images for this gui object
     void set_images(char* out, char* over,char* off, char* on)
     {
+        texture_cache* tx = theapp->tx;
+
         switch(obj_type)
         {
             case GUI_TEXTBOX:

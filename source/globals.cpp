@@ -22,22 +22,7 @@ wiiradio_variables vars;
 
 // -- Functions
 
-void next_lang()
-{
-    lang->goto_next_lang();
-    lang->load_lang(lang->current_name);
-    strcpy(g_currentlang,lang->current_name);
-    // sorry have to reload skin right now as all button text needs updating
-    g_reloading_skin = true;
-    g_running = false;
-}
 
-void next_skin()
-{
-    sk->goto_next_skin();
-    g_reloading_skin = true;
-    g_running = false;
-}
 
 void fade(SDL_Surface *screen2, Uint32 rgb, Uint8 a)
 {

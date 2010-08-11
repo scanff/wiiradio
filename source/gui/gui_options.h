@@ -2,6 +2,7 @@
 #define GUI_OPTIONS_H_INCLUDED
 
 #include "../globals.h"
+#include "../application.h"
 #include "gui_button.h"
 #include "gui_toggle.h"
 #include "gui_group.h"
@@ -34,16 +35,21 @@ class gui_options : public gui_dlg
     string          media_free_space_desc;
     unsigned long   last_time_ds;
 
-    gui_options(gui* g_) : logo(0), media_free_space_desc("unknown"), last_time_ds(0)
+
+    gui_options(app_wiiradio* _theapp) :
+        logo(0),
+        media_free_space_desc("unknown"),
+        last_time_ds(0)
     {
-        gui_dlg::fnts = g_->fnts;
-        gui_dlg::dest = g_->guibuffer;
+        theapp = _theapp;
+        gui_dlg::fnts = theapp->fnts;
+        gui_dlg::dest =  theapp->ui->guibuffer;
 
         logo = IMG_Load(make_path("imgs/def_logo.png"));
 
         loopi(O_MAX) b_option_item[i] = 0;
         //quit
-        b_quit = new gui_button(gui_dlg::dest,gui_dlg::fnts,270,410,0,0,false);
+        b_quit = new gui_button(theapp, 270,410,0,0,false);
         b_quit->set_images((char*)"imgs/button_out.png",(char*)"imgs/button_out.png",0,0);
         b_quit->set_text(vars.search_var("$LANG_TXT_QUIT_LOADER"));
         b_quit->pad_y = 5;
@@ -54,7 +60,7 @@ class gui_options : public gui_dlg
         b_quit->bind_screen = S_OPTIONS;
 
         //return
-        b_return = new gui_button(gui_dlg::dest,gui_dlg::fnts,400,410,0,0,false);
+        b_return = new gui_button(theapp,400,410,0,0,false);
         b_return->set_images((char*)"imgs/button_out.png",(char*)"imgs/button_out.png",0,0);
         b_return->set_text(vars.search_var("$LANG_TXT_OK"));
         b_return->pad_y = 5;
@@ -66,38 +72,38 @@ class gui_options : public gui_dlg
 
         int y = 110;
 
-        service_group = new gui_group(2,220,y,41,26,120,gui_dlg::dest,gui_dlg::fnts);
+        service_group = new gui_group(theapp,2,220,y,41,26,120);
         service_group->set_on(g_servicetype);
 
         y += 40;
 
-        b_option_item[O_SCROLL_TEXT] = new gui_toggle(gui_dlg::dest,gui_dlg::fnts,220,y,41,26,0,0);
+        b_option_item[O_SCROLL_TEXT] = new gui_toggle(theapp,220,y,41,26,0,0);
         b_option_item[O_SCROLL_TEXT]->set_images(0,0,(char*)"imgs/toggle_out.png",(char*)"imgs/toggle_on.png");
         b_option_item[O_SCROLL_TEXT]->bind_screen = S_OPTIONS;
 
-        b_option_item[O_WIDESCREEN] = new gui_toggle(gui_dlg::dest,gui_dlg::fnts,380,y,41,26,0,0);
+        b_option_item[O_WIDESCREEN] = new gui_toggle(theapp,380,y,41,26,0,0);
         b_option_item[O_WIDESCREEN]->set_images(0,0,(char*)"imgs/toggle_out.png",(char*)"imgs/toggle_on.png");
         b_option_item[O_WIDESCREEN]->bind_screen = S_OPTIONS;
 
         y += 40;
 
-        b_option_item[O_STARTFROMLAST] = new gui_toggle(gui_dlg::dest,gui_dlg::fnts,220,y,41,26,0,0);
+        b_option_item[O_STARTFROMLAST] = new gui_toggle(theapp,220,y,41,26,0,0);
         b_option_item[O_STARTFROMLAST]->set_images(0,0,(char*)"imgs/toggle_out.png",(char*)"imgs/toggle_on.png");
         b_option_item[O_STARTFROMLAST]->bind_screen = S_OPTIONS;
 
-        b_option_item[O_RIPMUSIC] = new gui_toggle(gui_dlg::dest,gui_dlg::fnts,380,y,41,26,0,0);
+        b_option_item[O_RIPMUSIC] = new gui_toggle(theapp,380,y,41,26,0,0);
         b_option_item[O_RIPMUSIC]->set_images(0,0,(char*)"imgs/toggle_out.png",(char*)"imgs/toggle_on.png");
         b_option_item[O_RIPMUSIC]->bind_screen = S_OPTIONS;
 
         y += 60;
 
-        saver_group = new gui_group(4,220,y,41,26,20,gui_dlg::dest,gui_dlg::fnts);
+        saver_group = new gui_group(theapp,4,220,y,41,26,20);
         saver_group->set_on(g_screensavetime);
 
         y += 44;
 
         // next skin
-        b_next_skin = new gui_button(gui_dlg::dest,gui_dlg::fnts,420,y,0,0,false);
+        b_next_skin = new gui_button(theapp, 420,y,0,0,false);
         b_next_skin->set_images((char*)"imgs/button_out.png",(char*)"imgs/button_out.png",0,0);
         b_next_skin->set_text(vars.search_var("$LANG_TXT_NEXT_SKIN"));
         b_next_skin->pad_y = 5;
@@ -110,7 +116,7 @@ class gui_options : public gui_dlg
         y += 60;
 
         // next lang
-        b_next_lang = new gui_button(gui_dlg::dest,gui_dlg::fnts,420,y,0,0,false);
+        b_next_lang = new gui_button(theapp,420,y,0,0,false);
         b_next_lang->set_images((char*)"imgs/button_out.png",(char*)"imgs/button_out.png",0,0);
         b_next_lang->set_text(vars.search_var("$LANG_TXT_NEXT_LANG"));
         b_next_lang->pad_y = 5;
@@ -160,8 +166,8 @@ class gui_options : public gui_dlg
         {
             if(b_quit->hit_test(events,j)==B_CLICK) g_running = false;
             if(b_return->hit_test(events,j)==B_CLICK) SetLastScreenStatus();
-            if(b_next_skin->hit_test(events,j)==B_CLICK) next_skin();
-            if(b_next_lang->hit_test(events,j)==B_CLICK) next_lang();
+            if(b_next_skin->hit_test(events,j)==B_CLICK) theapp->next_skin();
+            if(b_next_lang->hit_test(events,j)==B_CLICK) theapp->next_lang();
 
             loopi(O_MAX) b_option_item[i]->hit_test(events,j);
 
@@ -194,6 +200,8 @@ class gui_options : public gui_dlg
 
     void output_options()
     {
+        fonts* fnts = theapp->fnts;
+
         int x = 0;
         ostringstream str;
 

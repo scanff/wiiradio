@@ -12,20 +12,21 @@ class gui_group : public gui_object
 
     gui_toggle**  items;
 
-    gui_group(int _num,int _x, int _y, int _w, int _h, int _spacing, SDL_Surface* _g,fonts* _f) :
-    number(_num)
+    gui_group(app_wiiradio* _theapp, int _num,int _x, int _y, int _w, int _h, int _spacing) :
+        number(_num)
     {
+        theapp = _theapp;
         s_x = _x;
         s_y = _y;
-        guibuffer = _g;
-        fnts = _f;
+        guibuffer = theapp->ui->guibuffer;
+        fnts = theapp->fnts;
         obj_type = GUI_GROUP;
 
         items = new gui_toggle*[_num];
 
         loopi(_num)
         {
-            items[i] = new gui_toggle(_g,_f, s_x + (_w * i) + (i*_spacing) ,s_y ,_w,_h,0,0) ;
+            items[i] = new gui_toggle(theapp, s_x + (_w * i) + (i*_spacing) ,s_y ,_w,_h,0,0) ;
             items[i]->set_images(0,0,(char*)"imgs/toggle_out.png",(char*)"imgs/toggle_on.png");
             items[i]->bind_screen = S_OPTIONS;
         }

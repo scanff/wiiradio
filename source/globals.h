@@ -182,7 +182,7 @@ extern int          visualize_number;
 extern int          volume;
 extern Uint64       g_vol_lasttime;
 extern bool         mute;
-extern bool         screen_sleeping;
+//extern bool         screen_sleeping;
 extern int          g_reloading_skin;
 extern char         g_storage_media[8];
 
@@ -193,15 +193,14 @@ extern void draw_rect(SDL_Surface*,int,int,int,int,unsigned long);
 //extern void delete_playlist(int);
 extern char* make_string(char*,...);
 extern char* trim_string(char*, int);
-extern void next_skin();
-extern void next_lang();
+//extern void next_skin();
+//extern void next_lang();
 extern void SetWidescreen();
 // screen status
 extern int GetScreenStatus();
 extern void SetScreenStatus(int);
 extern void SetLastScreenStatus();
 
-extern SDL_Surface*        screen;
 #define K_UP_1      SDLK_UP
 #define K_DOWN_1    SDLK_DOWN
 #define K_LEFT_1    SDLK_LEFT
@@ -266,14 +265,7 @@ extern bool sc_error;
 extern audio_source playback_type;
 #include "variables.h"
 extern wiiradio_variables vars;
-#include "fonts.h"
-extern fonts* fnts;
-#include "textures.h"
-extern texture_cache* tx;
-#include "skins.h"
-extern skins* sk;
-#include "lang.h"
-extern langs* lang;
+
 #endif
 
 

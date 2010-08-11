@@ -20,12 +20,15 @@ class gui_search : public gui_dlg
     gui_group*      search_group;
     int             s_type;
 
-    gui_search(gui* _ui) : parent(_ui), keyboard(0), add_genre(0)
+    gui_search(app_wiiradio* _theapp) :  keyboard(0), add_genre(0)
     {
-        keyboard = new gui_keyboard(this,_ui->fnts,_ui->guibuffer,50,70,&gui_search_ok,&gui_search_cancel,vars.search_var("$LANG_SEARCH"),vars.search_var("$LANG_CLOSE"));
+        theapp = _theapp;
+        parent = theapp->ui;
+
+        keyboard = new gui_keyboard(theapp,this,50,70,&gui_search_ok,&gui_search_cancel,vars.search_var("$LANG_SEARCH"),vars.search_var("$LANG_CLOSE"));
 
         // button to add typed text to genre list
-        add_genre = new gui_button(_ui->guibuffer,_ui->fnts,280,370,0,0,false);
+        add_genre = new gui_button(theapp,280,370,0,0,false);
         add_genre->set_images((char*)"imgs/button_out.png",(char*)"imgs/button_out.png",0,0);
         add_genre->set_text(vars.search_var("$LANG_ADDGENRE"));
         add_genre->pad_y = 5;
@@ -35,7 +38,7 @@ class gui_search : public gui_dlg
         add_genre->center_text = true;
         add_genre->bind_screen = S_ALL;
 
-        search_group = new gui_group(SEARCH_MAX,140,80,41,26,120,_ui->guibuffer,_ui->fnts);
+        search_group = new gui_group(theapp,SEARCH_MAX,140,80,41,26,120);
         search_group->set_on(0);
 
     };

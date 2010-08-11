@@ -1,7 +1,9 @@
 #include "globals.h"
-#include "application.h"
+#include "fonts.h"
+#include "textures.h"
+#include "skins.h"
+#include "lang.h"
 #include "options.h"
-//#include "fonts.h"
 #include "client.h"
 #include "browser.h"
 #include "playlists.h"
@@ -14,6 +16,7 @@
 #include "gui/gui.h"
 #include "station.h"
 
+#include "application.h"
 // ---------------------
 // Variables:
 // ---------------------
@@ -25,17 +28,11 @@ int         favs_idx;
 int         genre_display = 0;
 int         total_num_playlists = 0;
 int         pls_display = 0;
-bool        unsaved_volume_change = false;
 
-Uint64      last_button_time;
+
 bool        g_critical_running;
 int         errors = 0; // Network errors
 
-texture_cache*      tx;
-SDL_Surface*        screen;
-fonts*              fnts; //extern this to use everywhere
-langs*              lang;
-skins*              sk;
 
 #ifdef _WII_
 
@@ -77,7 +74,9 @@ struct _so
 _so search_options;
 
 
-app_wiiradio::app_wiiradio()
+app_wiiradio::app_wiiradio() :
+    unsaved_volume_change(false),
+    screen_sleeping(false)
 {
     pAppWiiRadio = this;
 }
@@ -492,8 +491,8 @@ void app_wiiradio::connect_to_stream(int value, connect_info info)
 
 }
 
-bool screen_sleeping = false;
-void screen_timeout()
+
+void app_wiiradio::screen_timeout()
 {
     if (!visualize)
 
@@ -995,6 +994,23 @@ int critical_thread(void *arg)
     return 0;
 }
 
+void app_wiiradio::next_skin()
+{
+    sk->goto_next_skin();
+    g_reloading_skin = true;
+    g_running = false;
+}
+
+void app_wiiradio::next_lang()
+{
+    lang->goto_next_lang();
+    lang->load_lang(lang->current_name);
+    strcpy(g_currentlang,lang->current_name);
+    // sorry have to reload skin right now as all button text needs updating
+    g_reloading_skin = true;
+    g_running = false;
+}
+
 #ifdef _WII_
 
 int evctr = 0;
@@ -1092,11 +1108,11 @@ int app_wiiradio::wii_radio_main(int argc, char **argv)
     SDL_Flip(screen);
     fnts->text(screen,"Setting Up Network...",30,90,0);
     SDL_Flip(screen);
-    net             = new network;
-    scb             = new shoutcast_browser;
-    playlst         = new playlists;
+    net             = new network(this);
+    scb             = new shoutcast_browser(this);
+    playlst         = new playlists(this);
     fourier         = new fft;
-    visuals         = new visualizer(fourier);
+    visuals         = new visualizer(this);
     icy_info        = new icy;
     favs            = new favorites(this);
     sk              = new skins;

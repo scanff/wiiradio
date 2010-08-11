@@ -14,6 +14,10 @@ class station;
 class visualizer;
 class local_player;
 class localfiles;
+class fonts;
+class langs;
+class skins;
+class texture_cache;
 enum connect_info;
 
 class app_wiiradio
@@ -33,10 +37,16 @@ class app_wiiradio
     station             playing; // make now playing as station class so we can access the ip/name quickly
     visualizer*         visuals;
     langs*              lang;
-    skins*              sk;
     local_player*       localpb;
     localfiles*         localfs;
+    texture_cache*      tx;
+    fonts*              fnts; //extern this to use everywhere
+    skins*              sk;
 
+    SDL_Surface*        screen;
+    Uint64              last_button_time;
+    bool                unsaved_volume_change;
+    bool                screen_sleeping;
 
     int wii_radio_main(int argc, char **argv);
     void draw_ui(char* info);
@@ -53,6 +63,9 @@ class app_wiiradio
     void inline local_playback();
 
     void stop_playback();
+    void screen_timeout();
+    void next_lang();
+    void next_skin();
 };
 
 #endif // APPLICATION_H_INCLUDED

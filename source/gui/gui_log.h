@@ -10,16 +10,16 @@ class gui_log : public gui_dlg
 
     gui_button*     b_return;
 
-    gui_log(gui* g_)
+    gui_log(app_wiiradio* _theapp)
     {
 
-        gui_dlg::fnts = g_->fnts;
-        gui_dlg::dest = g_->guibuffer;
+        gui_dlg::fnts = _theapp->fnts;
+        gui_dlg::dest = _theapp->ui->guibuffer;
 
         strcpy(text, "");
 
         //return
-        b_return = new gui_button(gui_dlg::dest,gui_dlg::fnts,400,410,0,0,false);
+        b_return = new gui_button(_theapp,400,410,0,0,false);
         b_return->set_images((char*)"imgs/button_out.png",(char*)"imgs/button_out.png",0,0);
         b_return->set_text(vars.search_var("$LANG_TXT_OK"));
         b_return->pad_y = 5;
