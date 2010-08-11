@@ -2,6 +2,7 @@
 #define VISUAL_OBJECT_H_INCLUDED
 
 #include "../globals.h"
+#include "../application.h"
 
 class visual_object {
     public:
@@ -16,6 +17,9 @@ class visual_object {
     int             fft_results[MAX_FFT_RES];
 
     int             layer;
+
+    app_wiiradio*   theapp;
+
     visual_object(){ layer = 0; };
     virtual ~visual_object(){};
 

@@ -12,7 +12,8 @@ class gui_textbox : public gui_object{
     int             scroll_speed;
     bool            can_scroll;
 
-    gui_textbox(SDL_Surface* g,fonts* f,int x,int y,char* t,long tc,bool scroll) :
+
+    gui_textbox(app_wiiradio* _theapp,int x,int y,char* t,long tc,bool scroll) :
         scroll_area(0),
         scroll_x(0),
         auto_scroll_text(false),
@@ -20,13 +21,15 @@ class gui_textbox : public gui_object{
         can_scroll(true)
 
     {
+       theapp = _theapp;
+
         s_x = x;
         s_y = y;
         pad_x = 30;
         pad_y = 12;
         text_color = tc;
-        fnts = f;
-        guibuffer = g;
+        fnts = theapp->fnts;
+        guibuffer = theapp->ui->guibuffer;
         obj_state = B_OUT;
         obj_type = GUI_TEXTBOX;
 

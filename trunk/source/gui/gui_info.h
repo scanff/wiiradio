@@ -10,9 +10,9 @@ class gui_info : public gui_dlg
     public:
 
 
-    gui_info(gui* _g)
+    gui_info(app_wiiradio* _theapp)
     {
-        thegui = _g;
+        theapp = _theapp;
     };
 
     ~gui_info()
@@ -32,18 +32,18 @@ class gui_info : public gui_dlg
 
         char* txt = (char*)user_data;
 
-        thegui->fnts->set_size(thegui->info_text_size);
-        thegui->fnts->change_color((thegui->dialog_text_color >> 16), ((thegui->dialog_text_color >> 8) & 0xff),(thegui->dialog_text_color & 0xff));
-        fade(thegui->guibuffer,SDL_MapRGB(thegui->guibuffer->format,0,0,0),100);
-        SDL_Rect t = {(SCREEN_WIDTH/2)-(thegui->info_dlg->w / 2),(440 / 2) - (thegui->info_dlg->h / 2),thegui->info_dlg->w,thegui->info_dlg->h};
-        SDL_BlitSurface(thegui->info_dlg,0, thegui->guibuffer,&t);
-        thegui->fnts->text(thegui->guibuffer,txt,t.x + thegui->info_text_x,t.y + thegui->info_text_y,0);
+        theapp->fnts->set_size(theapp->ui->info_text_size);
+        theapp->fnts->change_color((theapp->ui->dialog_text_color >> 16), ((theapp->ui->dialog_text_color >> 8) & 0xff),(theapp->ui->dialog_text_color & 0xff));
+        fade(theapp->ui->guibuffer,SDL_MapRGB(theapp->ui->guibuffer->format,0,0,0),100);
+        SDL_Rect t = {(SCREEN_WIDTH/2)-(theapp->ui->info_dlg->w / 2),(440 / 2) - (theapp->ui->info_dlg->h / 2),theapp->ui->info_dlg->w,theapp->ui->info_dlg->h};
+        SDL_BlitSurface(theapp->ui->info_dlg,0, theapp->ui->guibuffer,&t);
+        theapp->fnts->text(theapp->ui->guibuffer,txt,t.x + theapp->ui->info_text_x,t.y + theapp->ui->info_text_y,0);
 
         if (status == BUFFERING || status == CONNECTING)
         {
-            thegui->fnts->set_size(FS_MED);
-            cancel->s_x = t.x + thegui->info_cancel_x;
-            cancel->s_y = t.y + thegui->info_cancel_y;
+            theapp->fnts->set_size(FS_MED);
+            cancel->s_x = t.x + theapp->ui->info_cancel_x;
+            cancel->s_y = t.y + theapp->ui->info_cancel_y;
             cancel->draw();
         }
     };

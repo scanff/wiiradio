@@ -25,7 +25,9 @@ class playlists
 
     station_playlist*   first_entry;
 
-    playlists()
+    app_wiiradio*       theapp;
+
+    playlists(app_wiiradio* _theapp) : theapp(_theapp)
     {
         first_entry     = new station_playlist;
     };
@@ -104,7 +106,7 @@ class playlists
         char* current_page = 0;
        // unsigned long content_size = 0;
 
-        net = new network;
+        net = new network(theapp);
         if (!net) {
             return -1000;
         }

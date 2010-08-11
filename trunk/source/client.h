@@ -1,4 +1,5 @@
 #include "globals.h"
+#include "application.h"
 #include <errno.h>
 #define MAX_INIT_RETRIES 20
 
@@ -42,7 +43,9 @@ class network : public dns
 {
     public:
 
-    network()
+    app_wiiradio*   theapp;
+
+    network(app_wiiradio* _theapp)
     {
         client_connected = false;
         mode = -1;
@@ -55,11 +58,11 @@ class network : public dns
               {
                   if (if_config ( localip, netmask, gateway, TRUE) < 0)
                   {
-                      fnts->text(screen,"if_config() failed.",30,150,0);SDL_Flip(screen);
+                      theapp->fnts->text(theapp->screen,"if_config() failed.",30,150,0);SDL_Flip(theapp->screen);
                       return;
                   }
               }else{
-                  fnts->text(screen,"net_init() failed.",30,150,0);SDL_Flip(screen);
+                  theapp->fnts->text(theapp->screen,"net_init() failed.",30,150,0);SDL_Flip(theapp->screen);
                   return;
               }
 

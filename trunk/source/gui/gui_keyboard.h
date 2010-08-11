@@ -34,14 +34,17 @@ class gui_keyboard
     int             caps;
     int             shift;
 
+    app_wiiradio*   theapp;
 
     // -- callbacks
     void (*ok_click)(void*,char*);
     void (*cancel_click)();
 
-    gui_keyboard(void* _u,fonts* _f, SDL_Surface* _d, int _ix, int _iy,void (*_ok_click)(void*,char*),void (*_cancel_click)(),char* _ok_text, char* _close_text) :
-        userdata(_u), dest(_d), pos_x(_ix), pos_y(_iy), caps(0), shift(0)
+    gui_keyboard(app_wiiradio* _theapp, void* _u, int _ix, int _iy,void (*_ok_click)(void*,char*),void (*_cancel_click)(),char* _ok_text, char* _close_text) :
+        userdata(_u), pos_x(_ix), pos_y(_iy), caps(0), shift(0)
     {
+        theapp = _theapp;
+
         ok_click = _ok_click;
         cancel_click = _cancel_click;
 
@@ -118,7 +121,7 @@ class gui_keyboard
 
                     txt[0] = keys[i][j].ch;
                     key_buttons[i][j] = 0;
-                    key_buttons[i][j] = new gui_button(_d,_f,pos_x+(j*42+21*i+40), pos_y+(i*42+80),0,0,false);
+                    key_buttons[i][j] = new gui_button(theapp,pos_x+(j*42+21*i+40), pos_y+(i*42+80),0,0,false);
                     key_buttons[i][j]->set_images((char*)"imgs/keyboard_key.png",(char*)"imgs/keyboard_key_over.png",0,0);
                     key_buttons[i][j]->set_text(txt);
                     key_buttons[i][j]->pad_y = 5;
@@ -133,7 +136,7 @@ class gui_keyboard
         }
 
         key_space = 0;
-        key_space = new gui_button(_d,_f,pos_x+0, pos_y+(4*42+80),0,0,false);
+        key_space = new gui_button(theapp,pos_x+0, pos_y+(4*42+80),0,0,false);
         key_space->set_images((char*)"imgs/space_out.png",(char*)"imgs/space_out.png",0,0);
         key_space->pad_y = 0;
         key_space->s_x = (SCREEN_WIDTH/2)-(key_space->s_w/2);
@@ -145,7 +148,7 @@ class gui_keyboard
 
 
         key_backspace = 0;
-        key_backspace = new gui_button(_d,_f,pos_x+(10*42+40), pos_y+(0*42+80),0,0,false);
+        key_backspace = new gui_button(theapp,pos_x+(10*42+40), pos_y+(0*42+80),0,0,false);
         key_backspace->set_images((char*)"imgs/keyboard_mediumkey_over.png",(char*)"imgs/keyboard_mediumkey.png",0,0);
         key_backspace->pad_y = 5;
         key_backspace->set_text("Back");
@@ -156,7 +159,7 @@ class gui_keyboard
         key_backspace->bind_screen = S_ALL;
 
         key_caps = 0;
-        key_caps = new gui_button(_d,_f,pos_x+0, pos_y+(2*42+80),0,0,false);
+        key_caps = new gui_button(theapp,pos_x+0, pos_y+(2*42+80),0,0,false);
         key_caps->set_images((char*)"imgs/keyboard_mediumkey_over.png",(char*)"imgs/keyboard_mediumkey.png",0,0);
         key_caps->pad_y = 5;
         key_caps->set_text("Caps");
@@ -168,7 +171,7 @@ class gui_keyboard
 
 
         key_shift = 0;
-        key_shift = new gui_button(_d,_f,pos_x+21, pos_y+(3*42+80),0,0,false);
+        key_shift = new gui_button(theapp,pos_x+21, pos_y+(3*42+80),0,0,false);
         key_shift->set_images((char*)"imgs/keyboard_mediumkey_over.png",(char*)"imgs/keyboard_mediumkey.png",0,0);
         key_shift->pad_y = 5;
         key_shift->set_text("Shift");
@@ -181,7 +184,7 @@ class gui_keyboard
 
 
         text_out = 0;
-        text_out = new gui_textbox(_d,_f,pos_x+(0), pos_y+(35),0,0,false);
+        text_out = new gui_textbox(theapp,pos_x+(0), pos_y+(35),0,0,false);
         text_out->set_images((char*)"imgs/space_out.png",(char*)"imgs/space_out.png",0,0);
         text_out->pad_y = 5;
         text_out->s_x = (SCREEN_WIDTH/2)-(key_space->s_w/2);
@@ -194,7 +197,7 @@ class gui_keyboard
         dest_buffer = text_out->text_l1;
 
         ok = 0;
-        ok = new gui_button(_d,_f,pos_x+(400), pos_y+(300),0,0,false);
+        ok = new gui_button(theapp,pos_x+(400), pos_y+(300),0,0,false);
         ok->set_images((char*)"imgs/button_out.png",(char*)"imgs/button_out.png",0,0);
         ok->set_text((char*)_ok_text);
         ok->pad_y = 5;
@@ -206,7 +209,7 @@ class gui_keyboard
 
 
         cancel = 0;
-        cancel = new gui_button(_d,_f,pos_x+(70),pos_y+(300),0,0,false);
+        cancel = new gui_button(theapp,pos_x+(70),pos_y+(300),0,0,false);
         cancel->set_images((char*)"imgs/button_out.png",(char*)"imgs/button_out.png",0,0);
         cancel->set_text((char*)_close_text);
         cancel->pad_y = 5;

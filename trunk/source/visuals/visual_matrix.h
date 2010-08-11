@@ -10,9 +10,10 @@ class vis_matrix : public visual_object
 
     int matrix_map[200][200];
     unsigned long startt;
-    vis_matrix(fft* _f)
+    vis_matrix(app_wiiradio* _theapp)
     {
-        f = _f;
+        theapp = _theapp;
+        f = theapp->fourier;
         loaded = false;
         layer = 1;
 
@@ -49,7 +50,7 @@ class vis_matrix : public visual_object
         text[0] = (rand() % 255);
         text[1] = 0;
 
-        int sizeoffont = fnts->get_length_px(text,FS_SYSTEM);
+        int sizeoffont = theapp->fnts->get_length_px(text,FS_SYSTEM);
         int divy = sizeoffont+10;
         for(int y = 0; y < DRAW_HEIGHT / divy; y++)
         {
@@ -65,15 +66,15 @@ class vis_matrix : public visual_object
                         color = rand() % 100;
                         color+=155;
 
-                        fnts->change_color(0,color,0);
-                        fnts->text(s,text,x*divy ,y*divy ,640);
+                        theapp->fnts->change_color(0,color,0);
+                        theapp->fnts->text(s,text,x*divy ,y*divy ,640);
                         matrix_map[x][y] = color;
                     }
 
                 }else{
                     color = matrix_map[x][y]--;
-                    fnts->change_color(0,color,0);
-                    fnts->text(s,text,x*divy ,y*divy ,640);
+                    theapp->fnts->change_color(0,color,0);
+                    theapp->fnts->text(s,text,x*divy ,y*divy ,640);
 
                 }
 

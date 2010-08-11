@@ -6,15 +6,16 @@
 class gui_toggle : public gui_object{
     public:
 
-    gui_toggle(SDL_Surface* g,fonts* f,int x,int y,int w,int h,char* t,long tc)
+    gui_toggle(app_wiiradio* _theapp,int x,int y,int w,int h,char* t,long tc)
     {
+        theapp = _theapp;
         s_x = x;
         s_y = y;
         pad_x = 30;
         pad_y = 12;
         text_color = tc;
-        fnts = f;
-        guibuffer = g;
+        fnts = theapp->fnts;
+        guibuffer = theapp->ui->guibuffer;
         obj_state = B_OFF;
         obj_type = GUI_TOGGLE;
         if (t) strcpy(text_l1,t);

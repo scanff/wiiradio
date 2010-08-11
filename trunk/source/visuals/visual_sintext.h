@@ -12,10 +12,11 @@ class vis_sintext : public visual_object
     int xoffsets[255];
     int p;
 
-    vis_sintext(fft* _f)
+    vis_sintext(app_wiiradio* _theapp)
     {
+        theapp = _theapp;
         loaded = false;
-        f = _f;
+        f = theapp->fourier;
         p = pos_x = 0;
         layer = 1;
 
@@ -58,8 +59,8 @@ class vis_sintext : public visual_object
 
         int peak = f->getPeak();
 
-        fnts->set_size(FS_LARGE);
-        fnts->change_color(200,0,0);
+        theapp->fnts->set_size(FS_LARGE);
+        theapp->fnts->change_color(200,0,0);
 
         char single[2] = {0};
         loopi(strlen(a))
@@ -70,24 +71,24 @@ class vis_sintext : public visual_object
             g = color >> 8 & 0xff;
             b = color & 0xff;
 
-            fnts->change_color(r,g,b);
+            theapp->fnts->change_color(r,g,b);
 
             single[0] = a[i];
             single[1] = 0;
 
-            xoffsets[i] = fnts->get_length_px(single,FS_LARGE);
+            xoffsets[i] = theapp->fnts->get_length_px(single,FS_LARGE);
             int x = 0;
             loopj(i) x += xoffsets[j];
 
             x += pos_x;
-            fnts->text(s,single,x,aSin[(p + i) % 360],640);
+            theapp->fnts->text(s,single,x,aSin[(p + i) % 360],640);
 
         }
 
         p += 8;
         pos_x-=8;
 
-        if (pos_x < (-fnts->get_length_px(a,FS_LARGE))) pos_x = 640;
+        if (pos_x < (-theapp->fnts->get_length_px(a,FS_LARGE))) pos_x = 640;
     }
 };
 

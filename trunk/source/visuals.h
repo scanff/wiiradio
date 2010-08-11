@@ -174,7 +174,9 @@ class visualizer
     unsigned long   vt;
     int             mode;
 
-    visualizer(fft* p_f) : f(p_f), mode(1)
+    app_wiiradio*   theapp;
+
+    visualizer(app_wiiradio* _theapp) : mode(1),theapp(_theapp)
     {
         r1 = r2 = vt = 0;
         loopi(MAX_FFT_RES)
@@ -204,22 +206,22 @@ class visualizer
 
 
         // create all visuals
-        visuals_ptr[V_BARS]     = new vis_bars(f);
-        visuals_ptr[V_OSC]      = new vis_osc(f);
-        visuals_ptr[V_TUNNEL]   = new vis_tunnel(f);
-        visuals_ptr[V_FIRE]     = new vis_fire(f);
-        visuals_ptr[V_MIST]     = new vis_mist(f);
-        visuals_ptr[V_CIRCLES]  = new vis_circles(f);
-        visuals_ptr[V_PLASMA]   = new vis_plasma(f);
-        visuals_ptr[V_SINTEXT]  = new vis_sintext(f);
-        visuals_ptr[V_ROTZOOM]  = new vis_rotzoom(f);
-        visuals_ptr[V_BOBS]     = new vis_bobs(f);
-        visuals_ptr[V_LASERS]   = new vis_lasers(f);
-        visuals_ptr[V_RAYCASTER]= new vis_raycaster(f);
-        visuals_ptr[V_MATRIX]   = new vis_matrix(f);
-        visuals_ptr[V_STARS]    = new vis_stars(f);
-        visuals_ptr[V_WATER]    = new vis_water(f);
-        visuals_ptr[V_EXPLODE]  = new vis_explode(f);
+        visuals_ptr[V_BARS]     = new vis_bars(theapp->fourier);
+        visuals_ptr[V_OSC]      = new vis_osc(theapp->fourier);
+        visuals_ptr[V_TUNNEL]   = new vis_tunnel(theapp->fourier);
+        visuals_ptr[V_FIRE]     = new vis_fire(theapp->fourier);
+        visuals_ptr[V_MIST]     = new vis_mist(theapp->fourier);
+        visuals_ptr[V_CIRCLES]  = new vis_circles(theapp->fourier);
+        visuals_ptr[V_PLASMA]   = new vis_plasma(theapp->fourier);
+        visuals_ptr[V_SINTEXT]  = new vis_sintext(theapp);
+        visuals_ptr[V_ROTZOOM]  = new vis_rotzoom(theapp->fourier);
+        visuals_ptr[V_BOBS]     = new vis_bobs(theapp->fourier);
+        visuals_ptr[V_LASERS]   = new vis_lasers(theapp->fourier);
+        visuals_ptr[V_RAYCASTER]= new vis_raycaster(theapp->fourier);
+        visuals_ptr[V_MATRIX]   = new vis_matrix(theapp);
+        visuals_ptr[V_STARS]    = new vis_stars(theapp->fourier);
+        visuals_ptr[V_WATER]    = new vis_water(theapp->fourier);
+        visuals_ptr[V_EXPLODE]  = new vis_explode(theapp->fourier);
 
 
         srand ( get_tick_count() );

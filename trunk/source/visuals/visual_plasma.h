@@ -83,7 +83,7 @@ class vis_plasma : public visual_object
 
         image = (unsigned char*)s->pixels;
 
-        loopi(screen->h)
+        loopi(DRAW_HEIGHT)
         {
             tpos1 = pos1 + 5;
             tpos2 = pos2 + 3;
@@ -91,7 +91,7 @@ class vis_plasma : public visual_object
             tpos3 &= 511;
             tpos4 &= 511;
 
-            loopj(screen->w)
+            loopj(DRAW_WIDTH)
             {
               tpos1 &= 511;
               tpos2 &= 511;

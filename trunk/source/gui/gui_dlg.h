@@ -16,6 +16,8 @@ class gui_dlg
     fonts*         fnts;
     char           text[1025];
 
+    app_wiiradio*   theapp;
+
     virtual void init(){};
     virtual void draw(){};
     virtual void draw(void*){};
