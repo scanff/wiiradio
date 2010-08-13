@@ -32,6 +32,7 @@ $LANG_TXT_QUIT_SYS=Stoppé - Système
 $LANG_TXT_OK=OK
 $LANG_SCROLL_STATIONTEXT=Texte de rouleau:
 $LANG_SCREEN_SAVE=L'écran économisent:
+$LANG_SLEEP_TIMER=Court-circuiter après:
 $LANG_CHANGE_SKIN=Changez la peau:
 $LANG_ABOUT=Au sujet de:
 $LANG_VERSION=Version

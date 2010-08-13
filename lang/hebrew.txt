@@ -32,6 +32,7 @@ $LANG_TXT_QUIT_SYS=יציאה למערכת
 $LANG_TXT_OK=אישור
 $LANG_SCROLL_STATIONTEXT=גלול שם תחנה:
 $LANG_SCREEN_SAVE=Screen Save After:
+$LANG_SLEEP_TIMER=Shutdown After:
 $LANG_CHANGE_SKIN=שנה סקין:
 $LANG_ABOUT=אודות:
 $LANG_VERSION=גרסה

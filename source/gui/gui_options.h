@@ -7,6 +7,11 @@
 #include "gui_toggle.h"
 #include "gui_group.h"
 
+static void sleep_timer_callback(app_wiiradio* theapp)
+{
+    theapp->sleep_time_start = get_tick_count();
+}
+
 class gui_options : public gui_dlg
 {
     public:
@@ -29,6 +34,7 @@ class gui_options : public gui_dlg
 
     gui_group*      saver_group;
     gui_group*      service_group;
+    gui_group*      sleep_timer_group;
 
     // Used for disk space
     char            freespace_str[50];
@@ -70,37 +76,42 @@ class gui_options : public gui_dlg
         b_return->center_text = true;
         b_return->bind_screen = S_OPTIONS;
 
-        int y = 110;
+        int y = 90;
 
-        service_group = new gui_group(theapp,2,220,y,41,26,120);
+        service_group = new gui_group(theapp,2,220,y,41,26,143,NULL);
         service_group->set_on(g_servicetype);
 
-        y += 40;
+        y += 35;
 
         b_option_item[O_SCROLL_TEXT] = new gui_toggle(theapp,220,y,41,26,0,0);
         b_option_item[O_SCROLL_TEXT]->set_images(0,0,(char*)"imgs/toggle_out.png",(char*)"imgs/toggle_on.png");
         b_option_item[O_SCROLL_TEXT]->bind_screen = S_OPTIONS;
 
-        b_option_item[O_WIDESCREEN] = new gui_toggle(theapp,380,y,41,26,0,0);
+        b_option_item[O_WIDESCREEN] = new gui_toggle(theapp,403,y,41,26,0,0);
         b_option_item[O_WIDESCREEN]->set_images(0,0,(char*)"imgs/toggle_out.png",(char*)"imgs/toggle_on.png");
         b_option_item[O_WIDESCREEN]->bind_screen = S_OPTIONS;
 
-        y += 40;
+        y += 35;
 
         b_option_item[O_STARTFROMLAST] = new gui_toggle(theapp,220,y,41,26,0,0);
         b_option_item[O_STARTFROMLAST]->set_images(0,0,(char*)"imgs/toggle_out.png",(char*)"imgs/toggle_on.png");
         b_option_item[O_STARTFROMLAST]->bind_screen = S_OPTIONS;
 
-        b_option_item[O_RIPMUSIC] = new gui_toggle(theapp,380,y,41,26,0,0);
+        b_option_item[O_RIPMUSIC] = new gui_toggle(theapp,403,y,41,26,0,0);
         b_option_item[O_RIPMUSIC]->set_images(0,0,(char*)"imgs/toggle_out.png",(char*)"imgs/toggle_on.png");
         b_option_item[O_RIPMUSIC]->bind_screen = S_OPTIONS;
 
-        y += 60;
+        y += 50;
 
-        saver_group = new gui_group(theapp,4,220,y,41,26,20);
+        saver_group = new gui_group(theapp,4,220,y,41,26,20,NULL);
         saver_group->set_on(g_screensavetime);
 
-        y += 44;
+        y += 45;
+
+        sleep_timer_group = new gui_group(theapp,6,220,y,41,26,20,&sleep_timer_callback);
+        sleep_timer_group->set_on(g_sleep_timer_time);
+
+        y += 35;
 
         // next skin
         b_next_skin = new gui_button(theapp, 420,y,0,0,false);
@@ -113,7 +124,7 @@ class gui_options : public gui_dlg
         b_next_skin->center_text = true;
         b_next_skin->bind_screen = S_OPTIONS;
 
-        y += 60;
+        y += 50;
 
         // next lang
         b_next_lang = new gui_button(theapp,420,y,0,0,false);
@@ -145,6 +156,9 @@ class gui_options : public gui_dlg
         delete saver_group;
         saver_group = 0;
 
+        delete sleep_timer_group;
+        sleep_timer_group = 0;
+
         loopi(O_MAX)
         {
             delete b_option_item[i];
@@ -172,6 +186,7 @@ class gui_options : public gui_dlg
             loopi(O_MAX) b_option_item[i]->hit_test(events,j);
 
             g_screensavetime = saver_group->hit_test(events,j);
+            g_sleep_timer_time = sleep_timer_group->hit_test(events,j);
             g_servicetype = service_group->hit_test(events,j);
 
             b_option_item[O_SCROLL_TEXT]->obj_state == B_OFF ? g_oscrolltext = 0 : g_oscrolltext = 1;
@@ -219,20 +234,20 @@ class gui_options : public gui_dlg
             << " Scanff, TiMeBoMb " << vars.search_var("$LANG_AND") << " Knarrff";
         fnts->text(dest, str.str().c_str(), 200, 50, 0, 0);
 
-        int y = 110;
+        int y = 90;
 
         // for service type
-        fnts->text(dest,"SHOUTcast :",200,110,0,1);
-        fnts->text(dest,"Icecast :",370,110,0,1);
+        fnts->text(dest,"SHOUTcast :",200,y,0,1);
+        fnts->text(dest,"Icecast :",393,y,0,1);
 
-        y += 40;
+        y += 35;
         // Scrolltext, Widescreen, Rip Music
         fnts->text(dest,vars.search_var("$LANG_SCROLL_STATIONTEXT"),200,y,0,1);
-        fnts->text(dest,"Widescreen :",370,y,0,1); // -- TO DO Variable this
+        fnts->text(dest,"Widescreen :",393,y,0,1); // -- TO DO Variable this
 
-        y += 40;
+        y += 35;
         fnts->text(dest,"Play last at start :", 200,y,0,1); // -- TO DO Variable this
-        fnts->text(dest,"Rip Music :",370,y,0,1); // -- TO DO Variable this
+        fnts->text(dest,"Rip Music :",393,y,0,1); // -- TO DO Variable this
 
         /*
             Show the user how much free space they have left.
@@ -244,14 +259,19 @@ class gui_options : public gui_dlg
             media_free_space_desc = get_media_free_space_desc();
         }
 
-        fnts->text(dest,("(Free space: "+media_free_space_desc+")").c_str(),430,y,0,0);
-
-        y += 60;
-        // screen save
-        fnts->text(dest,vars.search_var("$LANG_SCREEN_SAVE"),200,y,0,1);
-        fnts->text(dest,"1min        5min      10min       Off",220,y-30,0,0);
+        fnts->text(dest,("(Free space: "+media_free_space_desc+")").c_str(),450,y,0,0);
 
         y += 50;
+        // screen save
+        fnts->text(dest,vars.search_var("$LANG_SCREEN_SAVE"),200,y,0,1);
+        fnts->text(dest,"  Off         1min       5min      10min",220,y-20,0,0);
+
+        y += 45;
+        // sleep timer
+        fnts->text(dest,vars.search_var("$LANG_SLEEP_TIMER"),200,y,0,1);
+        fnts->text(dest,"  Off         5min      15min     30min        1h           3h",220,y-20,0,0);
+
+        y += 35;
         // -- skin changer
         fnts->change_color(100,100,100);
         fnts->text(dest,vars.search_var("$LANG_CHANGE_SKIN"),200,y,0,1);
@@ -262,7 +282,7 @@ class gui_options : public gui_dlg
         x += fnts->text(dest,": ",220+x,y+20,0);
         fnts->text(dest,vars.search_var("skinauthor"),220+x,y+20,0);
 
-        y += 60;
+        y += 50;
         // -- language selection
         fnts->change_color(100,100,100);
         fnts->text(dest,vars.search_var("$LANG_CHANGE_LANG"),200,y,0,1);
@@ -277,6 +297,7 @@ class gui_options : public gui_dlg
         b_next_lang->draw();
         b_next_skin->draw();
         saver_group->draw();
+        sleep_timer_group->draw();
         service_group->draw();
     };
 

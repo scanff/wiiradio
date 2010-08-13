@@ -12,6 +12,7 @@ char g_currentlang[SMALL_MEM];
 int g_servicetype;
 int g_oripmusic;
 int g_startfromlast;
+unsigned int g_sleep_timer_time;
 
 void set_defaults()
 {
@@ -20,6 +21,7 @@ void set_defaults()
     g_screensavetime = 0;
     g_servicetype = SERVICE_SHOUTCAST;
     g_oripmusic = 0;
+    g_sleep_timer_time = 0;
 }
 
 bool load_options()
@@ -74,16 +76,17 @@ void save_options()
     f = fopen(make_path("options.dat"),"w");
     if (!f) return;
 
-    fprintf(f,"ws %d\nst %d\nss %d\nskin %s\nlang %s\nservice %d\nripmusic %d\nstartfromlast %d\nvolume %d\n",
-        g_owidescreen,
-        g_oscrolltext,
-        g_screensavetime,
-        g_currentskin,
-        g_currentlang,
-        g_servicetype,
-        g_oripmusic,
-        g_startfromlast,
-        volume);
+    fprintf(f,"ws %d\nst %d\nss %d\nskin %s\nlang %s\nservice %d\nripmusic %d\nstartfromlast %d\nvolume %d\n"
+        ,g_owidescreen
+        ,g_oscrolltext
+        ,g_screensavetime
+        ,g_currentskin
+        ,g_currentlang
+        ,g_servicetype
+        ,g_oripmusic
+        ,g_startfromlast
+        ,volume
+        );
 
     fclose(f);
 }
