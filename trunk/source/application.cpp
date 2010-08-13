@@ -22,6 +22,7 @@
 // ---------------------
 
 int         fullscreen;
+int         exit_mode = 0; // 0: normal exit, 1: shutdown Wii
 int         connected = 0;
 int         display_idx;
 int         favs_idx;
@@ -508,20 +509,16 @@ void app_wiiradio::screen_timeout()
     switch (g_screensavetime)
     {
     case 0:
+        return;
+    case 1:
         calc_timeout = (1000*60); //1 mins
         break;
-
-    case 1:
+    case 2:
         calc_timeout = (1000*300); //5 mins
         break;
-
-    case 2:
+    case 3:
         calc_timeout = (1000*600); //10 mins
         break;
-
-    case 3:
-        return;
-
     };
 
     if (get_tick_count() - last_button_time > calc_timeout)
@@ -725,6 +722,27 @@ void app_wiiradio::check_keys()
 }
 
 
+void app_wiiradio::check_sleep_timer()
+{
+    // Check if sleep timer is enabled
+    if (!g_sleep_timer_time)
+        return;
+    Uint64 seconds;
+    switch(g_sleep_timer_time)
+    {
+      case 1: seconds =    5*60; break;
+      case 2: seconds =   15*60; break;
+      case 3: seconds =   30*60; break;
+      case 4: seconds =   60*00; break;
+      case 5: seconds = 3*60*60; break;
+      default:seconds =      10; break;
+    }
+    if (get_tick_count() - sleep_time_start > seconds * 1000)
+    {
+        exit_mode = 1;
+        g_running = false;
+    }
+}
 
 void app_wiiradio::search_function(char* value,int search_type)
 {
@@ -1316,6 +1334,7 @@ _reload:
 #endif
 
         check_keys();
+        check_sleep_timer();
 
         draw_ui(0);
         if (cursor_visible && !visualize)
@@ -1385,5 +1404,9 @@ _reload:
     delete fnts;
     delete icy_info;
 
+#ifdef _WII_
+    if (exit_mode == 1)
+        SYS_ResetSystem(SYS_POWEROFF,0,0);
+#endif
     return 0;
 }

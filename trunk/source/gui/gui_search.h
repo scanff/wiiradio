@@ -38,7 +38,7 @@ class gui_search : public gui_dlg
         add_genre->center_text = true;
         add_genre->bind_screen = S_ALL;
 
-        search_group = new gui_group(theapp,SEARCH_MAX,140,80,41,26,120);
+        search_group = new gui_group(theapp,SEARCH_MAX,140,80,41,26,120,NULL);
         search_group->set_on(0);
 
     };

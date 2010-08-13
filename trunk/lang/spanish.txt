@@ -33,6 +33,7 @@ $LANG_TXT_QUIT_SYS=Salir (sistema)
 $LANG_TXT_OK=OK
 $LANG_SCROLL_STATIONTEXT=Deslizar nombre de emisora:
 $LANG_SCREEN_SAVE=Salvapantallas en:
+$LANG_SLEEP_TIMER=Apagar algo al cabo de:
 $LANG_CHANGE_SKIN=Cambiar Skin:
 $LANG_ABOUT=Acerca:
 $LANG_VERSION=Version

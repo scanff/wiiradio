@@ -45,6 +45,7 @@ class app_wiiradio
 
     SDL_Surface*        screen;
     Uint64              last_button_time;
+    Uint64              sleep_time_start;
     bool                unsaved_volume_change;
     bool                screen_sleeping;
 
@@ -55,6 +56,7 @@ class app_wiiradio
     void connect_to_stream(int value, connect_info info);
     void connect_direct(char* typed);
     void check_keys();
+    void check_sleep_timer();
     void search_function(char* value,int search_type);
     void get_favorites();
     void request_save_fav();

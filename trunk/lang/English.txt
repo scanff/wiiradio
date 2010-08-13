@@ -34,6 +34,7 @@ $LANG_TXT_QUIT_SYS=Quit (system)
 $LANG_TXT_OK=OK
 $LANG_SCROLL_STATIONTEXT=Scroll Station Text:
 $LANG_SCREEN_SAVE=Screen Save After:
+$LANG_SLEEP_TIMER=Shutdown After:
 $LANG_CHANGE_SKIN=Change Skin:
 $LANG_ABOUT=About:
 $LANG_VERSION=Version

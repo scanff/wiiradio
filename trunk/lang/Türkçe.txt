@@ -32,6 +32,7 @@ $LANG_TXT_QUIT_SYS=Sisteme dön
 $LANG_TXT_OK=OK
 $LANG_SCROLL_STATIONTEXT=Kayan istasyon metni:
 $LANG_SCREEN_SAVE=Screen Save After:
+$LANG_SLEEP_TIMER=Shutdown After:
 $LANG_CHANGE_SKIN=Skin değiştir:
 $LANG_ABOUT=Hakkında:
 $LANG_VERSION=Versiyon

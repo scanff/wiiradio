@@ -11,4 +11,5 @@ extern char g_currentlang[SMALL_MEM];
 extern int g_servicetype;
 extern int g_oripmusic;
 extern int g_startfromlast;
+extern unsigned int g_sleep_timer_time; // sleep timer time, intentionally not saved
 #endif // OPTIONS_H_INCLUDED

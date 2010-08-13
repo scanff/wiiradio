@@ -12,7 +12,9 @@ class gui_group : public gui_object
 
     gui_toggle**  items;
 
-    gui_group(app_wiiradio* _theapp, int _num,int _x, int _y, int _w, int _h, int _spacing) :
+    void (*callback)(app_wiiradio*);
+
+    gui_group(app_wiiradio* _theapp, int _num,int _x, int _y, int _w, int _h, int _spacing, void(*cb)(app_wiiradio*)) :
         number(_num)
     {
         theapp = _theapp;
@@ -21,6 +23,7 @@ class gui_group : public gui_object
         guibuffer = theapp->ui->guibuffer;
         fnts = theapp->fnts;
         obj_type = GUI_GROUP;
+        callback = cb;
 
         items = new gui_toggle*[_num];
 
@@ -65,6 +68,8 @@ class gui_group : public gui_object
         {
             if (items[h]->hit_test(event,current_z) == B_ON)
             {
+               if (callback)
+                   (*callback)(this->theapp);
                return h;
             }
         }
