@@ -177,3 +177,15 @@ next_x=405
 next_y=350
 next_out=right_out.png
 next_over=right_over.png
+
+// -- local browser (optional)
+localbrowser_y=39
+localbrowser_x=135
+localbrowser_text=$LANG_TXT_LB
+localbrowser_text_color=#FFBA34
+localbrowser_text_color_over=#dddddd
+localbrowser_text_size=2
+localbrowser_pad_y=5
+localbrowser_pad_x=0
+localbrowser_over=playlists_over.png
+localbrowser_out=playlists_out.png
