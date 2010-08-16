@@ -5,6 +5,7 @@ $LANG_TXT_PLAYLISTS=רשימת שירים
 $LANG_TXT_GENRE=ז'אנר
 $LANG_TXT_BROWSER=דפדפן
 $LANG_TXT_EXIT=יציאה
+$LANG_TXT_LB=Files
 
 //-- for statuses
 $LANG_TXT_BUFFERING=מוריד...
