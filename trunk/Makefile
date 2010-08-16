@@ -18,8 +18,7 @@ include $(DEVKITPPC)/wii_rules
 
 TARGET		:=	$(notdir $(CURDIR))
 BUILD		:=	build
-SOURCES		:=	source libmp3player_wiiradio 
-#source/lib/libpng/pngu
+SOURCES		:=	source libmp3player_wiiradio source/lib/libpng/pngu
 DATA		:=	data  
 INCLUDES	:=
 
@@ -29,8 +28,6 @@ INCLUDES	:=
 
 #CFLAGS	= -Wno-write-strings -g -D_WII_ -O3 -Wall -fsigned-char $(MACHDEP) $(INCLUDE) -DLOG_ENABLED
 CFLAGS	= -Wno-write-strings -g -D_WII_ -O3 -Wall -fsigned-char $(MACHDEP) $(INCLUDE)
-#CFLAGS	= -save-temps -Xassembler -aln=$@.lst -Wno-write-strings -g -D_WII_ -O3 -Wall -fsigned-char $(MACHDEP) $(INCLUDE)
-
 CXXFLAGS	=	$(CFLAGS)
 
 LDFLAGS	=	-g $(MACHDEP) -Wl,-Map,$(notdir $@).map
@@ -141,3 +138,4 @@ $(OUTPUT).elf: $(OFILES)
 #---------------------------------------------------------------------------------
 endif
 #---------------------------------------------------------------------------------
+
