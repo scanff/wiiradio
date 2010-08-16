@@ -35,6 +35,7 @@ class gui {
         BTN_VISUALS, // -- optional Show Visuals ... Shows the visuals screen
         BTN_SEARCH, // -- optional Show search screen ... Shows the search screen
         BTN_NX_SKIN, // -- optional next skin ... Load the next skin
+        BTN_LOCAL_BROWSER, // -- optional local browser button
         BTN_MAX
     };
 
@@ -585,6 +586,25 @@ class gui {
         }
 
 
+    // -- optional -local browser button
+
+        sk->get_value_file("localbrowser_out",s_value1,dir);
+        sk->get_value_file("localbrowser_over",s_value2,dir);
+        x = sk->get_value_int("localbrowser_x");
+        y = sk->get_value_int("localbrowser_y");
+        if (*s_value1 && *s_value2)
+        {
+            buttons[BTN_LOCAL_BROWSER] = new gui_button(theapp,x,y,NULL,0,false);
+            buttons[BTN_LOCAL_BROWSER]->set_images(s_value1,s_value2,0,0);
+            if (sk->get_value_string("localbrowser_text",s_value1)) buttons[BTN_LOCAL_BROWSER]->set_text(gui_gettext(s_value1));
+            buttons[BTN_LOCAL_BROWSER]->text_color = sk->get_value_color("localbrowser_text_color");
+            buttons[BTN_LOCAL_BROWSER]->text_color_over = sk->get_value_color("localbrowser_text_color_over");
+            buttons[BTN_LOCAL_BROWSER]->font_sz = sk->get_value_int("localbrowser_text_size");
+            buttons[BTN_LOCAL_BROWSER]->pad_y = sk->get_value_int("localbrowser_pad_y");
+            buttons[BTN_LOCAL_BROWSER]->pad_x = sk->get_value_int("localbrowser_pad_x");
+
+        }
+
         // --- other stuff
 
         info_text_x = sk->get_value_int("info_txt_x");
@@ -936,6 +956,15 @@ class gui {
                 }
             }
 
+            if(buttons[BTN_LOCAL_BROWSER]) // -- optional local browser button
+            {
+                if (buttons[BTN_LOCAL_BROWSER]->hit_test(events,j)==B_CLICK)
+                {
+                    SetScreenStatus(S_LOCALFILES);
+                    return 0;
+                }
+            }
+
              if (buttons[BTN_NEXT]->hit_test(events,j)==B_CLICK)
              {
                 if (GetScreenStatus() == S_BROWSER) {
@@ -1215,6 +1244,7 @@ class gui {
                     if (buttons[BTN_VISUALS]) buttons[BTN_VISUALS]->draw(); // -- optional button
                     if (buttons[BTN_SEARCH]) buttons[BTN_SEARCH]->draw(); // -- optional button
                     if (buttons[BTN_NX_SKIN]) buttons[BTN_NX_SKIN]->draw(); // -- optional button
+                    if (buttons[BTN_LOCAL_BROWSER]) buttons[BTN_LOCAL_BROWSER]->draw(); // -- optional button
                     //genre select
                     buttons[BTN_GENRES_SELECT]->draw();
                     // playlists
