@@ -7,6 +7,7 @@ $LANG_TXT_PLAYLISTS=Playlist
 $LANG_TXT_GENRE=Genero
 $LANG_TXT_BROWSER=Explorar
 $LANG_TXT_EXIT=Salir
+$LANG_TXT_LB=Archivos
 
 //-- for statuses
 $LANG_TXT_BUFFERING=Cargando Bufer...

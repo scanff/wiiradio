@@ -5,6 +5,7 @@ $LANG_TXT_PLAYLISTS=Çalma listeleri
 $LANG_TXT_GENRE=Tür
 $LANG_TXT_BROWSER=Tarayıcı
 $LANG_TXT_EXIT=Çıkış
+$LANG_TXT_LB=Files
 
 //-- for statuses
 $LANG_TXT_BUFFERING=Depolanıyor...

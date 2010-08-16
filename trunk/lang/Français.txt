@@ -5,6 +5,7 @@ $LANG_TXT_PLAYLISTS=Playlists
 $LANG_TXT_GENRE=Genre
 $LANG_TXT_BROWSER=Navigateur
 $LANG_TXT_EXIT=Stoppé
+$LANG_TXT_LB=Dossiers
 
 //-- for statuses
 $LANG_TXT_BUFFERING=Téléchargement...
