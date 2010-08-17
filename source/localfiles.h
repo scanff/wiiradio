@@ -2,19 +2,22 @@
 #define _LOCALFILES_H_
 
 #include <dirent.h>
+#include <sys/stat.h>
 #include <vector>
 #include "station.h"
 
 class localfile : public station {
   public:
     string      filename;
+    bool        isfolder;
 
-    localfile(string name, string path, string filename);
+    localfile(string name, string path, string filename, bool folder);
 };
 
-localfile::localfile(string _name, string _path, string _filename) : station(_name, _path, true)
+localfile::localfile(string _name, string _path, string _filename, bool _isfolder) : station(_name, _path, true)
 {
     filename = _filename;
+    isfolder = isfolder;
 }
 
 class localfiles {
@@ -25,8 +28,9 @@ class localfiles {
     vector<localfile>   list;
     int                 total_num_files;
     string              current_path;
+    int                 current_position;
 
-    localfiles() : total_num_files(0)
+    localfiles() : total_num_files(0), current_position(0)
     {
         current_path = make_path(F_PATH_LOCAL);
     };
@@ -55,17 +59,30 @@ class localfiles {
         list.clear();
     };
 
-    void add_file(const char* filename,const char* path)
+    bool add_file(const char* filename,const char* path,const bool folder)
     {
+
+        if (!folder)
+        {
+            int len = strlen(filename) - 1;
+            if (filename[len]   != '3' ||
+                filename[len-1] != 'p' ||
+                filename[len-2] != 'm' ||
+                filename[len-3] != '.')
+                return false;
+
+        }
+
         string displayname = friendly_name(filename);
         string nameandpath;
 
         nameandpath = path;
         nameandpath += filename;
 
-        localfile finfo(displayname, nameandpath, filename);
+        localfile finfo(displayname, nameandpath, filename,folder);
         list.push_back(finfo);
 
+        return true;
     }
 
 
@@ -122,6 +139,10 @@ class localfiles {
 
         DIR *dir;
         struct dirent *ent;
+        struct stat fstat; //mingwin does not have a d_type (folder/file) have to use stat to see if folder or file on windoze
+        bool isfolder;
+        string fullname;
+
         dir = opendir (current_path.c_str());
 
         if (dir != NULL) {
@@ -130,8 +151,16 @@ class localfiles {
             if(strcmp(".", ent->d_name) == 0 || strcmp("..", ent->d_name) == 0)
                 continue;
 
-            add_file(ent->d_name,current_path.c_str()); // adds a file to the list
-            total_num_files++;
+            isfolder = false;
+            fullname = current_path.c_str();
+            fullname += ent->d_name;
+
+            stat(fullname.c_str(),&fstat);
+
+            if (fstat.st_mode & S_IFDIR) isfolder = true;
+
+            if(add_file(ent->d_name,current_path.c_str(),isfolder)) // adds a file to the list
+                total_num_files++;
           }
           closedir (dir);
 
