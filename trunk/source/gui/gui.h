@@ -826,8 +826,8 @@ class gui {
                     {
                         if (obj_state == B_CLICK)
                         {
-                            int connect = i + pls_display;
-                            if (connect>= total_num_playlists || connect < 0)
+                            int connect = i + theapp->localfs->current_position;
+                            if (connect>= theapp->localfs->total_num_files || connect < 0)
                                 return 0;
 
                             theapp->connect_to_stream(connect,I_LOCAL);
@@ -960,6 +960,8 @@ class gui {
             {
                 if (buttons[BTN_LOCAL_BROWSER]->hit_test(events,j)==B_CLICK)
                 {
+                    // Run search
+                    theapp->localfs->directory_list();
                     SetScreenStatus(S_LOCALFILES);
                     return 0;
                 }
@@ -967,35 +969,41 @@ class gui {
 
              if (buttons[BTN_NEXT]->hit_test(events,j)==B_CLICK)
              {
-                if (GetScreenStatus() == S_BROWSER) {
-                    char* g = gl.get_genre(genre_selected);
-                    genre_nex_prev(true,g);//(char*)genres[genre_selected]);
+                    char* g;
+                    switch(GetScreenStatus())
+                    {
+                        case S_BROWSER:
+                            g = gl.get_genre(genre_selected);
+                            genre_nex_prev(true,g);//(char*)genres[genre_selected]);
+                        break;
 
-                    reset_scrollings();
+                        case S_GENRES:
+                            if (genre_display + max_listings  >= gl.total) return 0;
+                                genre_display += max_listings;
 
-                    return 0;
+                        break;
+
+                        case S_PLAYLISTS:
+                            if (pls_display + max_listings  >= total_num_playlists) return 0;
+
+                            pls_display += max_listings;
+
+
+                        break;
+
+                        case S_LOCALFILES:
+                            if (theapp->localfs->current_position + max_listings  >= theapp->localfs->total_num_files) return 0;
+
+                            theapp->localfs->current_position += max_listings;
+                            reset_scrollings();
+
+                        break;
+
+                        default:
+                        break;
                 }
-
-                if (GetScreenStatus() == S_GENRES) {
-
-                  //  if (genre_display + max_listings  >= MAX_GENRE) return 0;
-                  //  else genre_display += max_listings;
-                    if (genre_display + max_listings  >= gl.total) return 0;
-                    genre_display += max_listings;
-
                     reset_scrollings();
                     return 0;
-                }
-
-                if (GetScreenStatus() == S_PLAYLISTS) {
-
-                    if (pls_display + max_listings  >= total_num_playlists) return 0;
-                    pls_display += max_listings;
-
-                    reset_scrollings();
-                    return 0;
-                }
-
              }
 
             if(buttons[BTN_PRIOR]->hit_test(events,j)==B_CLICK)
@@ -1007,7 +1015,6 @@ class gui {
                     g = gl.get_genre(genre_selected);
                     if (display_idx>1) genre_nex_prev(false,g);
                     //if (display_idx>1) genre_nex_prev(false,(char*)genres[genre_selected]);
-                    reset_scrollings();
                 break;
 
                 case S_PLAYLISTS:
@@ -1016,7 +1023,6 @@ class gui {
                         pls_display = 0;
                     }
 
-                    reset_scrollings();
                 break;
 
                  case S_GENRES:
@@ -1024,7 +1030,13 @@ class gui {
                     if (genre_display < 0)
                         genre_display = 0;
 
-                    reset_scrollings();
+                 break;
+
+                 case S_LOCALFILES:
+                    theapp->localfs->current_position -= max_listings;
+                    if (theapp->localfs->current_position < 0)
+                        theapp->localfs->current_position = 0;
+
                  break;
 
 
@@ -1033,7 +1045,7 @@ class gui {
 
 
                 }
-
+                reset_scrollings();
 				return 0;
             }
         } //z-order loop
@@ -1043,18 +1055,21 @@ class gui {
 
     };
 
-    void inline draw_local_files(localfiles* lf)
+    void inline draw_local_files()
     {
         unsigned int i = 0;
         unsigned int p = 0;
 
+        localfiles* lf = theapp->localfs;
+
         while(i<(unsigned int)max_listings && p<lf->list.size())
         {
-            if (p >= (unsigned int)pls_display) {
+            if (p >= (unsigned int)lf->current_position) {
                 buttons_playlists[i]->set_text(lf->list[p].name.c_str());
                 buttons_playlists[i]->draw();
                 // delete option
-                buttons_delete[i]->draw();
+                //buttons_delete[i]->draw();
+                // need to add icon to show if file or directory !!!
 
                 i++;
             }
@@ -1204,7 +1219,7 @@ class gui {
                     break;
 
                     case S_LOCALFILES:
-                        draw_local_files(localfs);
+                        draw_local_files();
                     break;
 
                     case S_GENRES:

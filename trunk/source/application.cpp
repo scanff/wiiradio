@@ -1138,7 +1138,6 @@ int app_wiiradio::wii_radio_main(int argc, char **argv)
     localpb         = new local_player();
     localfs         = new localfiles();
 
-    localfs->directory_list();
     get_favorites();
 
 
