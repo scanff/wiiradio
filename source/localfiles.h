@@ -17,7 +17,7 @@ class localfile : public station {
 localfile::localfile(string _name, string _path, string _filename, bool _isfolder) : station(_name, _path, true)
 {
     filename = _filename;
-    isfolder = isfolder;
+    isfolder = _isfolder;
 }
 
 class localfiles {
@@ -32,7 +32,6 @@ class localfiles {
 
     localfiles() : total_num_files(0), current_position(0)
     {
-        current_path = make_path(F_PATH_LOCAL);
     };
     ~localfiles() { clear_list(); };
 
@@ -78,6 +77,7 @@ class localfiles {
 
         nameandpath = path;
         nameandpath += filename;
+        if(folder) nameandpath += "/";
 
         localfile finfo(displayname, nameandpath, filename,folder);
         list.push_back(finfo);
@@ -130,12 +130,15 @@ class localfiles {
 
     }
 #else
-    void directory_list()
+    void directory_list(const char* new_path)
     {
+        if (!new_path) current_path = make_path(F_PATH_LOCAL);
+        else current_path = make_path(new_path);
+
         clear_list(); //remove anything in list
 
         //rest the total playlist var
-        total_num_files = 0;
+        current_position = total_num_files = 0;
 
         DIR *dir;
         struct dirent *ent;
@@ -157,7 +160,8 @@ class localfiles {
 
             stat(fullname.c_str(),&fstat);
 
-            if (fstat.st_mode & S_IFDIR) isfolder = true;
+            if (fstat.st_mode & S_IFDIR)
+                isfolder = true;
 
             if(add_file(ent->d_name,current_path.c_str(),isfolder)) // adds a file to the list
                 total_num_files++;
