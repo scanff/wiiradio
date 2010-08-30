@@ -36,6 +36,7 @@ class gui {
         BTN_SEARCH, // -- optional Show search screen ... Shows the search screen
         BTN_NX_SKIN, // -- optional next skin ... Load the next skin
         BTN_LOCAL_BROWSER, // -- optional local browser button
+
         BTN_MAX
     };
 
@@ -91,6 +92,8 @@ class gui {
     SDL_Surface*    dialog;
     SDL_Surface*    mute_img;
     SDL_Surface*    ripping_img[GUI_IMG_FRAME_MAX];
+    SDL_Surface*    folder_img;
+    SDL_Surface*    file_img;
 
    // gui_search*     search_gui;
 
@@ -272,6 +275,14 @@ class gui {
 
         if (!ripping_img[GUI_IMG_FRAME_2])
             ripping_img[GUI_IMG_FRAME_2] = tx->texture_lookup("imgs/record-blink.png");
+
+
+        // --- folder image
+        folder_img = 0;
+        folder_img = tx->texture_lookup("imgs/folder.png");
+
+        file_img = 0;
+        file_img = tx->texture_lookup("imgs/file.png");
 
         //more
         if (!sk->get_value_file("next_out",s_value1,dir)) exit(0);
@@ -803,6 +814,8 @@ class gui {
             }
 
             // screen buttons
+            localfiles* lf = theapp->localfs;
+
             loopi(max_listings)
             {
                 switch(GetScreenStatus())
@@ -826,11 +839,19 @@ class gui {
                     {
                         if (obj_state == B_CLICK)
                         {
-                            int connect = i + theapp->localfs->current_position;
-                            if (connect>= theapp->localfs->total_num_files || connect < 0)
+                            int connect = i + lf->current_position;
+                            if (connect>= lf->total_num_files || connect < 0)
                                 return 0;
 
-                            theapp->connect_to_stream(connect,I_LOCAL);
+                            if (lf->list[connect].isfolder)
+                            {
+                                lf->directory_list(lf->list[connect].path.c_str());
+                            }
+                            else
+                            {
+                                theapp->connect_to_stream(connect,I_LOCAL);
+                            }
+
                             reset_scrollings();
                         }
 
@@ -961,7 +982,7 @@ class gui {
                 if (buttons[BTN_LOCAL_BROWSER]->hit_test(events,j)==B_CLICK)
                 {
                     // Run search
-                    theapp->localfs->directory_list();
+                    theapp->localfs->directory_list(0);
                     SetScreenStatus(S_LOCALFILES);
                     return 0;
                 }
@@ -1055,6 +1076,19 @@ class gui {
 
     };
 
+
+    void inline draw_folder(int x, int y)
+    {
+        SDL_Rect dr = {x,y,folder_img->w,folder_img->h};
+        SDL_BlitSurface(folder_img,0,guibuffer,&dr);
+    };
+
+    void inline draw_file(int x, int y)
+    {
+        SDL_Rect dr = {x,y,file_img->w,file_img->h};
+        SDL_BlitSurface(file_img,0,guibuffer,&dr);
+    };
+
     void inline draw_local_files()
     {
         unsigned int i = 0;
@@ -1067,9 +1101,11 @@ class gui {
             if (p >= (unsigned int)lf->current_position) {
                 buttons_playlists[i]->set_text(lf->list[p].name.c_str());
                 buttons_playlists[i]->draw();
-                // delete option
-                //buttons_delete[i]->draw();
-                // need to add icon to show if file or directory !!!
+
+                if (lf->list[p].isfolder)
+                    draw_folder(buttons_playlists[i]->s_w, buttons_playlists[i]->s_y + buttons_playlists[i]->pad_y);
+                else
+                    draw_file(buttons_playlists[i]->s_w, buttons_playlists[i]->s_y + buttons_playlists[i]->pad_y);
 
                 i++;
             }
