@@ -40,20 +40,9 @@ class gui {
         BTN_MAX
     };
 
-    // -- General text items - All Optional
-    enum {
-        TXT_ONE = 0,
-        TXT_TWO,
-        TXT_THREE,
-        TXT_FOUR,
-        TXT_FIVE,
-        TXT_SIX,
-        TXT_SEVEN,
-        TXT_EIGHT,
-        TXT_NINE,
-        TXT_TEN,
-        TXT_MAX
-    };
+    // -- format txt1..10
+    #define TXT_MAX (10)
+
 
     enum // gui's
     {
@@ -75,7 +64,8 @@ class gui {
     fonts*          fnts;
     visualizer*     vis;
 
-    gui_textbox*    text_areas[TXT_MAX];
+    vector<gui_textbox*>    text_areas;
+
     gui_button*     buttons[BTN_MAX];
     gui_button**    buttons_listing;
     gui_button**    buttons_genre;
@@ -151,8 +141,7 @@ class gui {
 
         gl.load_file();
 
-        loopi(TXT_MAX) text_areas[i] = 0; // clear
-
+        text_areas.clear();
 
         unsigned long rmask, gmask, bmask, amask, color, color2;
 
@@ -370,7 +359,7 @@ class gui {
 
         }
 
-        // cancel ... bind to another screen though
+        // cancel ... bind to another screen though ... why thgis this here? I can't remember
         if (!sk->get_value_file("info_cancel_out",s_value1,dir)) exit(0);
         if (!sk->get_value_file("info_cancel_over",s_value2,dir)) exit(0);
         guis[GUI_INFO]->cancel = new gui_button(theapp,0,25,NULL,0,false);
@@ -405,50 +394,20 @@ class gui {
         info_cancel_y = sk->get_value_int("info_cancel_y");
 
         // -- general text items
-        char tmp[SMALL_MEM];
         loopi(TXT_MAX)
         {
-            sprintf(tmp,"txt%d",i+1);
-            text_areas[i] = new_textbox(tmp);
+            sprintf(s_value1,"txt%d",i+1);
+            gui_textbox* x = new_textbox(s_value1);
+            if(x) text_areas.push_back(x);
+            else break; // no point in continuing .. text areas should use the next free value ..i.e. txt1,txt2 ...
         }
-           /* char txt_tmp[SMALL_MEM] = {0};
 
-            sprintf(txt_tmp,"txt%d_x",i+1);
-            x = sk->get_value_int(txt_tmp);
-            sprintf(txt_tmp,"txt%d_y",i+1);
-            y = sk->get_value_int(txt_tmp);
-
-            sprintf(txt_tmp,"txt%d_text",i+1);
-            sk->get_value_string(txt_tmp,s_value1);
-
-            if (*s_value1)
-            {
-                text_areas[i] = new gui_textbox(theapp,x,y,NULL,0,false);
-                text_areas[i]->set_text(gui_gettext(s_value1));
-                sprintf(txt_tmp,"txt%d_text_color",i+1);
-                text_areas[i]->text_color = sk->get_value_color(txt_tmp);
-                sprintf(txt_tmp,"txt%d_text_size",i+1);
-                text_areas[i]->font_sz = sk->get_value_int(txt_tmp);
-
-                sprintf(txt_tmp,"txt%d_bind",i+1); // the screen to bind to e.g. 0,1,2
-                text_areas[i]->bind_screen = sk->get_value_int(txt_tmp);
-
-                sprintf(txt_tmp,"txt%d_pad_x",i+1);
-                text_areas[i]->pad_x = sk->get_value_int(txt_tmp);
-
-                sprintf(txt_tmp,"txt%d_pad_y",i+1);
-                text_areas[i]->pad_y = sk->get_value_int(txt_tmp);
-
-                sprintf(txt_tmp,"txt%d_nocentertext",i+1);
-                text_areas[i]->center_text = !sk->get_value_int(txt_tmp);
-            }
-        }*/
 
     };
 
     ~gui()
     {
-        loopi(TXT_MAX)
+        loopi(text_areas.size())
         {
             if(text_areas[i])
             {
@@ -1103,7 +1062,7 @@ class gui {
             buttons[BTN_LOGO]->draw(); // title
 
             // Text that can be defined in the skin
-            loopi(TXT_MAX)
+            loopi(text_areas.size())
                 if(text_areas[i] && (GetScreenStatus()==text_areas[i]->bind_screen))
                     text_areas[i]->draw();
 
