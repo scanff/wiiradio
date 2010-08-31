@@ -55,6 +55,8 @@ class gui_object {
     int             pad_x;
     int             pad_y;
 
+    bool            isvariable; // is the text a variable ?
+
     app_wiiradio*   theapp;
 
     gui_object() :
@@ -62,7 +64,7 @@ class gui_object {
         s_x(0), s_y(0), s_h(0), s_w(0), text_color(0), text_color_over(0),
         bnt_down(0), bnt_out(0), bnt_over(0), bnt_on(0), bnt_off(0),
         font_sz(0), z_order(0), bind_screen(0), center_text(true), limit_text(0),
-        obj_state(B_OUT), pad_x(0), pad_y(0)
+        obj_state(B_OUT), pad_x(0), pad_y(0), isvariable(false)
     {
         text_l1 = new char[SMALL_MEM + 1];
         memset(text_l1,0,SMALL_MEM + 1);

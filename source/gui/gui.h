@@ -36,7 +36,7 @@ class gui {
         BTN_SEARCH, // -- optional Show search screen ... Shows the search screen
         BTN_NX_SKIN, // -- optional next skin ... Load the next skin
         BTN_LOCAL_BROWSER, // -- optional local browser button
-
+        BTN_DIRUP, // --- optiona; dir up
         BTN_MAX
     };
 
@@ -94,6 +94,7 @@ class gui {
     SDL_Surface*    ripping_img[GUI_IMG_FRAME_MAX];
     SDL_Surface*    folder_img;
     SDL_Surface*    file_img;
+    SDL_Surface*    dirup_img;
 
    // gui_search*     search_gui;
 
@@ -129,8 +130,10 @@ class gui {
 
     app_wiiradio*   theapp;
 
-    gui(app_wiiradio* _theapp, fonts* f,visualizer* v, char* dir) :
-        fnts(f), vis(v), buttons_listing(0), buttons_genre(0),
+    string          skin_path;
+
+    gui(app_wiiradio* _theapp, char* dir) :
+        buttons_listing(0), buttons_genre(0),
         buttons_playlists(0), buttons_delete(0), genre_selected(0),
         vis_on_screen(0), dialog_text_color(0), rip_image_idx(0),
         gui_last_time_rip(0), gui_current_time(0),theapp(_theapp)
@@ -140,6 +143,10 @@ class gui {
         texture_cache*  tx = theapp->tx;
         skins*          sk = theapp->sk;
 
+        fnts        = theapp->fnts;
+        vis         = theapp->visuals;
+        skin_path   = dir;
+
         ripping_img[GUI_IMG_FRAME_1] = ripping_img[GUI_IMG_FRAME_2] = 0;
 
         gl.load_file();
@@ -148,7 +155,6 @@ class gui {
 
 
         unsigned long rmask, gmask, bmask, amask, color, color2;
-        int x,y;
 
         visbuffer = 0;
         vis_rect.x = vis_rect.y = vis_rect.w = vis_rect.h = 0;
@@ -247,8 +253,6 @@ class gui {
         if (!sk->get_value_file("cursor",s_value1,dir)) exit(0);
         cursor = tx->texture_lookup(s_value1);
 
-
-
         // --- info
         if (!sk->get_value_file("info",s_value1,dir)) exit(0);
         info_dlg = tx->texture_lookup(s_value1);
@@ -284,65 +288,6 @@ class gui {
         file_img = 0;
         file_img = tx->texture_lookup("imgs/file.png");
 
-        //more
-        if (!sk->get_value_file("next_out",s_value1,dir)) exit(0);
-        if (!sk->get_value_file("next_over",s_value2,dir)) exit(0);
-        x = sk->get_value_int("next_x");
-        y = sk->get_value_int("next_y");
-        buttons[BTN_NEXT] = new gui_button(theapp,x,y,NULL,0,false);
-        buttons[BTN_NEXT]->set_images(s_value1,s_value2,0,0);
-        if (sk->get_value_string("next_text",s_value1)) buttons[BTN_NEXT]->set_text(gui_gettext(s_value1));
-        buttons[BTN_NEXT]->text_color = sk->get_value_color("next_text_color");
-        buttons[BTN_NEXT]->text_color_over = sk->get_value_color("next_text_color_over");
-        buttons[BTN_NEXT]->font_sz = sk->get_value_int("next_text_size");
-        buttons[BTN_NEXT]->pad_y = sk->get_value_int("next_pad_y");
-        buttons[BTN_NEXT]->pad_x = sk->get_value_int("next_pad_x");
-
-        //back
-        if (!sk->get_value_file("back_out",s_value1,dir)) exit(0);
-        if (!sk->get_value_file("back_over",s_value2,dir)) exit(0);
-        x = sk->get_value_int("back_x");
-        y = sk->get_value_int("back_y");
-        buttons[BTN_PRIOR] = new gui_button(theapp,x,y,NULL,0,false);
-        buttons[BTN_PRIOR]->set_images(s_value1,s_value2,0,0);
-        if (sk->get_value_string("back_text",s_value1)) buttons[BTN_PRIOR]->set_text(gui_gettext(s_value1));
-        buttons[BTN_PRIOR]->text_color = sk->get_value_color("back_text_color");
-        buttons[BTN_PRIOR]->text_color_over = sk->get_value_color("back_text_color_over");
-        buttons[BTN_PRIOR]->font_sz = sk->get_value_int("back_text_size");
-        buttons[BTN_PRIOR]->pad_y = sk->get_value_int("back_pad_y");
-        buttons[BTN_PRIOR]->pad_x = sk->get_value_int("back_pad_x");
-
-
-        //genre sel
-        if (!sk->get_value_file("genres_out",s_value1,dir)) exit(0);
-        if (!sk->get_value_file("genres_over",s_value2,dir)) exit(0);
-        x = sk->get_value_int("genres_x");
-        y = sk->get_value_int("genres_y");
-        buttons[BTN_GENRES_SELECT] = new gui_button(theapp,x,y,NULL,0,false);
-        buttons[BTN_GENRES_SELECT]->set_images(s_value1,s_value2,0,0);
-        if (sk->get_value_string("genres_text",s_value1)) buttons[BTN_GENRES_SELECT]->set_text(gui_gettext(s_value1));
-        buttons[BTN_GENRES_SELECT]->font_sz = sk->get_value_int("genres_text_size");
-        buttons[BTN_GENRES_SELECT]->pad_y = sk->get_value_int("genres_pad_y");
-        buttons[BTN_GENRES_SELECT]->pad_x = sk->get_value_int("genres_pad_x");
-        buttons[BTN_GENRES_SELECT]->text_color = sk->get_value_color("genres_text_color");
-        buttons[BTN_GENRES_SELECT]->text_color_over = sk->get_value_color("genres_text_color_over");
-
-        //playlists sel
-        if (!sk->get_value_file("pls_out",s_value1,dir)) exit(0);
-        if (!sk->get_value_file("pls_over",s_value2,dir)) exit(0);
-        x = sk->get_value_int("pls_x");
-        y = sk->get_value_int("pls_y");
-
-        buttons[BTN_PLAYLISTS] = new gui_button(theapp,x,y,NULL,0,false);
-        buttons[BTN_PLAYLISTS]->set_images(s_value1,s_value2,0,0);
-        if (sk->get_value_string("pls_text",s_value1)) buttons[BTN_PLAYLISTS]->set_text(gui_gettext(s_value1));
-        buttons[BTN_PLAYLISTS]->font_sz = sk->get_value_int("pls_text_size");
-        buttons[BTN_PLAYLISTS]->pad_y = sk->get_value_int("pls_pad_y");
-        buttons[BTN_PLAYLISTS]->pad_x = sk->get_value_int("pls_pad_x");
-        buttons[BTN_PLAYLISTS]->text_color = sk->get_value_color("pls_text_color");
-        buttons[BTN_PLAYLISTS]->text_color_over = sk->get_value_color("pls_text_color_over");
-
-
         int height, y_offset, x_offset;
 
         // list buttons
@@ -372,8 +317,6 @@ class gui {
             color = sk->get_value_color("listing_font_color");
             color2 = sk->get_value_color("listing_font_color_over");
             // stations
-
-
 
             buttons_listing[i] = new gui_button(theapp,x_offset,y_offset+i*height,NULL,color,true);
             buttons_listing[i]->set_images(s_value1,s_value2,0,0);
@@ -427,34 +370,7 @@ class gui {
 
         }
 
-        // -- playing area
-        if (!sk->get_value_file("playing_out",s_value1,dir)) exit(0);
-        if (!sk->get_value_file("playing_over",s_value2,dir)) exit(0);
-        x = sk->get_value_int("playing_x");
-        y = sk->get_value_int("playing_y");
-        buttons[BTN_PLAYING] = new gui_button(theapp,x,y,NULL,0,true);
-        buttons[BTN_PLAYING]->set_images(s_value1,s_value2,0,0);
-        buttons[BTN_PLAYING]->limit_text = sk->get_value_int("playing_limit_text");
-        buttons[BTN_PLAYING]->auto_scroll_text = true;
-        buttons[BTN_PLAYING]->center_text = false;
-        buttons[BTN_PLAYING]->font_sz = sk->get_value_int("playing_text_size");
-        buttons[BTN_PLAYING]->pad_y = sk->get_value_int("playing_pad_text_y");
-        buttons[BTN_PLAYING]->pad_x = sk->get_value_int("playing_pad_text_x");
-        buttons[BTN_PLAYING]->text_color = sk->get_value_color("playing_text_color");
-        buttons[BTN_PLAYING]->text_color_over = sk->get_value_color("playing_text_color_over");
-        // --------
-
-
-        // logo
-        if (!sk->get_value_file("logo_out",s_value1,dir)) exit(0);
-        if (!sk->get_value_file("logo_over",s_value2,dir)) exit(0);
-        x = sk->get_value_int("logo_x");
-        y = sk->get_value_int("logo_y");
-        buttons[BTN_LOGO] = new gui_button(theapp,x,y,NULL,0,false);
-        buttons[BTN_LOGO]->set_images(s_value1,s_value2,0,0);
-        // --------
-
-        // cancel
+        // cancel ... bind to another screen though
         if (!sk->get_value_file("info_cancel_out",s_value1,dir)) exit(0);
         if (!sk->get_value_file("info_cancel_over",s_value2,dir)) exit(0);
         guis[GUI_INFO]->cancel = new gui_button(theapp,0,25,NULL,0,false);
@@ -467,157 +383,21 @@ class gui {
         guis[GUI_INFO]->cancel->font_sz = sk->get_value_int("info_cancel_text_size");
         guis[GUI_INFO]->cancel->pad_y = sk->get_value_int("info_cancel_text_pad_y");
 
-        // --- optional skin buttons
-        // add to pls
-        if (!sk->get_value_file("add_out",s_value1,dir));
-        if (!sk->get_value_file("add_over",s_value2,dir));
-        x = sk->get_value_int("add_x");
-        y = sk->get_value_int("add_y");
-        if (*s_value1 && *s_value2)
+
+        /*
+            All the skinable buttons
+        */
+
+        const char* btn_descripts[] = {   "next","back","pls","genres","playing","logo","add","stop",
+                                    "exit","browser","showvisuals","search","nextskin","localbrowser","dirup"
+                                };
+
+        loopi(BTN_MAX)
         {
-            buttons[BTN_ADD] = new gui_button(theapp,x,y,NULL,0,false);
-            buttons[BTN_ADD]->set_images(s_value1,s_value2,0,0);
-            if (sk->get_value_string("add_text",s_value1)) buttons[BTN_ADD]->set_text(gui_gettext(s_value1));
-            buttons[BTN_ADD]->text_color = sk->get_value_color("add_text_color");
-            buttons[BTN_ADD]->text_color_over = sk->get_value_color("add_text_color_over");
-            buttons[BTN_ADD]->font_sz = sk->get_value_int("add_text_size");
-            buttons[BTN_ADD]->pad_y = sk->get_value_int("add_pad_y");
-            buttons[BTN_ADD]->pad_x = sk->get_value_int("add_pad_x");
-        }
-
-        // stop button
-        if (!sk->get_value_file("stop_out",s_value1,dir));
-        if (!sk->get_value_file("stop_over",s_value2,dir));
-        x = sk->get_value_int("stop_x");
-        y = sk->get_value_int("stop_y");
-        if (*s_value1 && *s_value2)
-        {
-            buttons[BTN_STOP] = new gui_button(theapp,x,y,NULL,0,false);
-            buttons[BTN_STOP]->set_images(s_value1,s_value2,0,0);
-            if (sk->get_value_string("stop_text",s_value1)) buttons[BTN_STOP]->set_text(gui_gettext(s_value1));
-            buttons[BTN_STOP]->text_color = sk->get_value_color("stop_text_color");
-            buttons[BTN_STOP]->text_color_over = sk->get_value_color("stop_text_color_over");
-            buttons[BTN_STOP]->font_sz = sk->get_value_int("stop_text_size");
-            buttons[BTN_STOP]->pad_y = sk->get_value_int("stop_pad_y");
-            buttons[BTN_STOP]->pad_x = sk->get_value_int("stop_pad_x");
-        }
-
-        // an exit button
-        if (!sk->get_value_file("exit_out",s_value1,dir));
-        if (!sk->get_value_file("exit_over",s_value2,dir));
-        x = sk->get_value_int("exit_x");
-        y = sk->get_value_int("exit_y");
-        if (*s_value1 && *s_value2)
-        {
-            buttons[BTN_EXIT] = new gui_button(theapp,x,y,NULL,0,false);
-            buttons[BTN_EXIT]->set_images(s_value1,s_value2,0,0);
-            if (sk->get_value_string("exit_text",s_value1)) buttons[BTN_EXIT]->set_text(gui_gettext(s_value1));
-            buttons[BTN_EXIT]->text_color = sk->get_value_color("exit_text_color");
-            buttons[BTN_EXIT]->text_color_over = sk->get_value_color("exit_text_color_over");
-            buttons[BTN_EXIT]->font_sz = sk->get_value_int("exit_text_size");
-            buttons[BTN_EXIT]->pad_y = sk->get_value_int("exit_pad_y");
-            buttons[BTN_EXIT]->pad_x = sk->get_value_int("exit_pad_x");
-
-        }
-
-        // browser button (optional)
-        if (!sk->get_value_file("browser_out",s_value1,dir));
-        if (!sk->get_value_file("browser_over",s_value2,dir));
-        x = sk->get_value_int("browser_x");
-        y = sk->get_value_int("browser_y");
-        if (*s_value1 && *s_value2)
-        {
-            buttons[BTN_BROWSER] = new gui_button(theapp,x,y,NULL,0,false);
-            buttons[BTN_BROWSER]->set_images(s_value1,s_value2,0,0);
-            if (sk->get_value_string("browser_text",s_value1)) buttons[BTN_BROWSER]->set_text(gui_gettext(s_value1));
-            buttons[BTN_BROWSER]->text_color = sk->get_value_color("browser_text_color");
-            buttons[BTN_BROWSER]->text_color_over = sk->get_value_color("browser_text_color_over");
-            buttons[BTN_BROWSER]->font_sz = sk->get_value_int("browser_text_size");
-            buttons[BTN_BROWSER]->pad_y = sk->get_value_int("browser_pad_y");
-            buttons[BTN_BROWSER]->pad_x = sk->get_value_int("browser_pad_x");
-
-        }
-
-        // -- show visuals button
-
-        if (!sk->get_value_file("showvisuals_out",s_value1,dir));
-        if (!sk->get_value_file("showvisuals_over",s_value2,dir));
-        x = sk->get_value_int("showvisuals_x");
-        y = sk->get_value_int("showvisuals_y");
-        if (*s_value1 && *s_value2)
-        {
-            buttons[BTN_VISUALS] = new gui_button(theapp,x,y,NULL,0,false);
-            buttons[BTN_VISUALS]->set_images(s_value1,s_value2,0,0);
-            if (sk->get_value_string("showvisuals_text",s_value1)) buttons[BTN_VISUALS]->set_text(gui_gettext(s_value1));
-            buttons[BTN_VISUALS]->text_color = sk->get_value_color("showvisuals_text_color");
-            buttons[BTN_VISUALS]->text_color_over = sk->get_value_color("showvisuals_text_color_over");
-            buttons[BTN_VISUALS]->font_sz = sk->get_value_int("showvisuals_text_size");
-            buttons[BTN_VISUALS]->pad_y = sk->get_value_int("showvisuals_pad_y");
-            buttons[BTN_VISUALS]->pad_x = sk->get_value_int("showvisuals_pad_x");
-
-        }
-
-        // -- show search button
-
-        if (!sk->get_value_file("search_out",s_value1,dir));
-        if (!sk->get_value_file("search_over",s_value2,dir));
-        x = sk->get_value_int("search_x");
-        y = sk->get_value_int("search_y");
-        if (*s_value1 && *s_value2)
-        {
-            buttons[BTN_SEARCH] = new gui_button(theapp,x,y,NULL,0,false);
-            buttons[BTN_SEARCH]->set_images(s_value1,s_value2,0,0);
-            if (sk->get_value_string("search_text",s_value1)) buttons[BTN_SEARCH]->set_text(gui_gettext(s_value1));
-            buttons[BTN_SEARCH]->text_color = sk->get_value_color("search_text_color");
-            buttons[BTN_SEARCH]->text_color_over = sk->get_value_color("search_text_color_over");
-            buttons[BTN_SEARCH]->font_sz = sk->get_value_int("search_text_size");
-            buttons[BTN_SEARCH]->pad_y = sk->get_value_int("search_pad_y");
-            buttons[BTN_SEARCH]->pad_x = sk->get_value_int("search_pad_x");
-
-        }
-
-
-        // -- optional - next skin button
-
-        if (!sk->get_value_file("nextskin_out",s_value1,dir));
-        if (!sk->get_value_file("nextskin_over",s_value2,dir));
-        x = sk->get_value_int("nextskin_x");
-        y = sk->get_value_int("nextskin_y");
-        if (*s_value1 && *s_value2)
-        {
-            buttons[BTN_NX_SKIN] = new gui_button(theapp,x,y,NULL,0,false);
-            buttons[BTN_NX_SKIN]->set_images(s_value1,s_value2,0,0);
-            if (sk->get_value_string("nextskin_text",s_value1)) buttons[BTN_NX_SKIN]->set_text(gui_gettext(s_value1));
-            buttons[BTN_NX_SKIN]->text_color = sk->get_value_color("nextskin_text_color");
-            buttons[BTN_NX_SKIN]->text_color_over = sk->get_value_color("nextskin_text_color_over");
-            buttons[BTN_NX_SKIN]->font_sz = sk->get_value_int("nextskin_text_size");
-            buttons[BTN_NX_SKIN]->pad_y = sk->get_value_int("nextskin_pad_y");
-            buttons[BTN_NX_SKIN]->pad_x = sk->get_value_int("nextskin_pad_x");
-
-        }
-
-
-    // -- optional -local browser button
-
-        sk->get_value_file("localbrowser_out",s_value1,dir);
-        sk->get_value_file("localbrowser_over",s_value2,dir);
-        x = sk->get_value_int("localbrowser_x");
-        y = sk->get_value_int("localbrowser_y");
-        if (*s_value1 && *s_value2)
-        {
-            buttons[BTN_LOCAL_BROWSER] = new gui_button(theapp,x,y,NULL,0,false);
-            buttons[BTN_LOCAL_BROWSER]->set_images(s_value1,s_value2,0,0);
-            if (sk->get_value_string("localbrowser_text",s_value1)) buttons[BTN_LOCAL_BROWSER]->set_text(gui_gettext(s_value1));
-            buttons[BTN_LOCAL_BROWSER]->text_color = sk->get_value_color("localbrowser_text_color");
-            buttons[BTN_LOCAL_BROWSER]->text_color_over = sk->get_value_color("localbrowser_text_color_over");
-            buttons[BTN_LOCAL_BROWSER]->font_sz = sk->get_value_int("localbrowser_text_size");
-            buttons[BTN_LOCAL_BROWSER]->pad_y = sk->get_value_int("localbrowser_pad_y");
-            buttons[BTN_LOCAL_BROWSER]->pad_x = sk->get_value_int("localbrowser_pad_x");
-
+             buttons[i] = new_button(btn_descripts[i]);
         }
 
         // --- other stuff
-
         info_text_x = sk->get_value_int("info_txt_x");
         info_text_y = sk->get_value_int("info_txt_y");
         info_text_size = sk->get_value_int("info_txt_size");
@@ -625,9 +405,13 @@ class gui {
         info_cancel_y = sk->get_value_int("info_cancel_y");
 
         // -- general text items
+        char tmp[SMALL_MEM];
         loopi(TXT_MAX)
         {
-            char txt_tmp[SMALL_MEM] = {0};
+            sprintf(tmp,"txt%d",i+1);
+            text_areas[i] = new_textbox(tmp);
+        }
+           /* char txt_tmp[SMALL_MEM] = {0};
 
             sprintf(txt_tmp,"txt%d_x",i+1);
             x = sk->get_value_int(txt_tmp);
@@ -641,15 +425,24 @@ class gui {
             {
                 text_areas[i] = new gui_textbox(theapp,x,y,NULL,0,false);
                 text_areas[i]->set_text(gui_gettext(s_value1));
-                sprintf(txt_tmp,"txt%d_font_color",i+1);
+                sprintf(txt_tmp,"txt%d_text_color",i+1);
                 text_areas[i]->text_color = sk->get_value_color(txt_tmp);
-                sprintf(txt_tmp,"txt%d_font_size",i+1);
+                sprintf(txt_tmp,"txt%d_text_size",i+1);
                 text_areas[i]->font_sz = sk->get_value_int(txt_tmp);
+
+                sprintf(txt_tmp,"txt%d_bind",i+1); // the screen to bind to e.g. 0,1,2
+                text_areas[i]->bind_screen = sk->get_value_int(txt_tmp);
+
+                sprintf(txt_tmp,"txt%d_pad_x",i+1);
+                text_areas[i]->pad_x = sk->get_value_int(txt_tmp);
+
+                sprintf(txt_tmp,"txt%d_pad_y",i+1);
+                text_areas[i]->pad_y = sk->get_value_int(txt_tmp);
+
+                sprintf(txt_tmp,"txt%d_nocentertext",i+1);
+                text_areas[i]->center_text = !sk->get_value_int(txt_tmp);
             }
-        }
-
-
-
+        }*/
 
     };
 
@@ -707,6 +500,118 @@ class gui {
             }
         }
 
+    };
+
+    gui_textbox* new_textbox(const char* name)
+    {
+        char txt_tmp[SMALL_MEM];
+        char s_value1[SMALL_MEM];
+        int x, y;
+        gui_textbox* textarea = 0;
+        skins* sk = theapp->sk;
+
+        sprintf(txt_tmp,"%s_x",name);
+        x = sk->get_value_int(txt_tmp);
+        sprintf(txt_tmp,"%s_y",name);
+        y = sk->get_value_int(txt_tmp);
+
+        sprintf(txt_tmp,"%s_text",name);
+        sk->get_value_string(txt_tmp,s_value1);
+
+        if (*s_value1)
+        {
+            textarea = new gui_textbox(theapp,x,y,NULL,0,false);
+            textarea->set_text(gui_gettext(s_value1));
+
+            if(s_value1[0] == '$')
+                textarea->isvariable = true; // the value should be filled with a variable
+
+            sprintf(txt_tmp,"%s_text_color",name);
+            textarea->text_color = sk->get_value_color(txt_tmp);
+
+            sprintf(txt_tmp,"%s_text_size",name);
+            textarea->font_sz = sk->get_value_int(txt_tmp);
+
+            sprintf(txt_tmp,"%s_bind",name); // the screen to bind to e.g. 0,1,2
+            textarea->bind_screen = sk->get_value_int(txt_tmp);
+
+            sprintf(txt_tmp,"%s_pad_x",name);
+            textarea->pad_x = sk->get_value_int(txt_tmp);
+
+            sprintf(txt_tmp,"%s_pad_y",name);
+            textarea->pad_y = sk->get_value_int(txt_tmp);
+
+            sprintf(txt_tmp,"%s_nocentertext",name);
+            textarea->center_text = !sk->get_value_int(txt_tmp);
+
+
+        }
+
+        return textarea;
+    }
+
+    gui_button* new_button(const char* name)
+    {
+        char item[SMALL_MEM];
+        char s_value1[SMALL_MEM];
+        char s_value2[SMALL_MEM];
+        int x, y;
+        char* dir = (char*)skin_path.c_str();
+
+        gui_button* thebutton = 0;
+
+        skins* sk = theapp->sk;
+
+        sprintf(item,"%s_out",name);
+        sk->get_value_file(item,s_value1,dir);
+
+        sprintf(item,"%s_over",name);
+        sk->get_value_file(item,s_value2,dir);
+
+        sprintf(item,"%s_x",name);
+        x = sk->get_value_int(item);
+
+        sprintf(item,"%s_y",name);
+        y = sk->get_value_int(item);
+
+        if (*s_value1 && *s_value2)
+        {
+            int scroll_text = 0;
+            sprintf(item,"%s_scroll",name);
+            scroll_text = sk->get_value_int(item);
+
+            thebutton = new gui_button(theapp,x,y,NULL,0,(bool)scroll_text);
+            thebutton->set_images(s_value1,s_value2,0,0);
+
+            sprintf(item,"%s_text",name);
+            if (sk->get_value_string(item,s_value1)) thebutton->set_text(gui_gettext(s_value1));
+
+            sprintf(item,"%s_limit_text",name);
+            thebutton->limit_text = sk->get_value_int(item);
+
+            sprintf(item,"%s_text_color",name);
+            thebutton->text_color = sk->get_value_color(item);
+
+            sprintf(item,"%s_text_color_over",name);
+            thebutton->text_color_over = sk->get_value_color(item);
+
+            sprintf(item,"%s_text_size",name);
+            thebutton->font_sz = sk->get_value_int(item);
+
+            sprintf(item,"%s_pad_y",name);
+            thebutton->pad_y = sk->get_value_int(item);
+
+            sprintf(item,"%s_pad_x",name);
+            thebutton->pad_x = sk->get_value_int(item);
+
+            sprintf(item,"%s_autoscroll",name);
+            thebutton->auto_scroll_text = sk->get_value_int(item);
+
+            sprintf(item,"%s_nocentertext",name);
+            thebutton->center_text = !sk->get_value_int(item);
+        }
+
+        return thebutton;
     };
 
     void reset_scrollings()
@@ -835,6 +740,14 @@ class gui {
                 break;
 
                 case S_LOCALFILES:
+
+                    // dir up select
+                    if(buttons[BTN_DIRUP]->hit_test(events,j)==B_CLICK)
+                    {
+                        lf->dirup();
+                        return 0;
+                    }
+
                     if ((obj_state = buttons_playlists[i]->hit_test(events,j)))
                     {
                         if (obj_state == B_CLICK)
@@ -1089,12 +1002,19 @@ class gui {
         SDL_BlitSurface(file_img,0,guibuffer,&dr);
     };
 
+    void inline dir_up()
+    {
+        if (buttons[BTN_DIRUP]) buttons[BTN_DIRUP]->draw();
+    };
+
     void inline draw_local_files()
     {
         unsigned int i = 0;
         unsigned int p = 0;
 
         localfiles* lf = theapp->localfs;
+
+        dir_up();
 
         while(i<(unsigned int)max_listings && p<lf->list.size())
         {
@@ -1142,7 +1062,7 @@ class gui {
         station_list* current_list  = theapp->scb->sl_first;
         icy* ic                     = theapp->icy_info;
         favorites* favs             = theapp->favs;
-        localfiles* localfs         = theapp->localfs;
+       // localfiles* localfs         = theapp->localfs;
 
         gui_current_time = SDL_GetTicks();
 
@@ -1181,6 +1101,12 @@ class gui {
 
             SDL_BlitSurface(guibackground,0, guibuffer,0); //background
             buttons[BTN_LOGO]->draw(); // title
+
+            // Text that can be defined in the skin
+            loopi(TXT_MAX)
+                if(text_areas[i] && (GetScreenStatus()==text_areas[i]->bind_screen))
+                    text_areas[i]->draw();
+
 
             if (GetScreenStatus() != S_OPTIONS && GetScreenStatus() != S_SEARCHGENRE &&
                 GetScreenStatus() != S_LOG)

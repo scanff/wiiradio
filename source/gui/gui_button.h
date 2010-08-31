@@ -39,28 +39,7 @@ class gui_button : public gui_object
 
         if (t) strcpy(text_l1,t);
 
-        // ------
-
-        Uint32 rmask, gmask, bmask, amask;
-
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-        rmask = 0x00ff0000;
-        gmask = 0x0000ff00;
-        bmask = 0x000000ff;
-        amask = 0x00000000;
-#else
-        rmask = 0x000000ff;
-        gmask = 0x0000ff00;
-        bmask = 0x00ff0000;
-        amask = 0x00000000;
-#endif
-
-
-        if (scroll)
-        {
-            scroll_area = SDL_CreateRGBSurface(SDL_SWSURFACE,SCREEN_WIDTH,FONT_SIZE,BITDEPTH, rmask, gmask, bmask,amask);
-            SDL_SetColorKey(scroll_area,SDL_SRCCOLORKEY, SDL_MapRGB(scroll_area->format,200,200,200));
-        }
+        set_scroll(scroll);
 
     }
 
@@ -69,6 +48,33 @@ class gui_button : public gui_object
         if (scroll_area) SDL_FreeSurface(scroll_area);
     };
 
+
+    void set_scroll(bool set)
+    {
+        if(set && !scroll_area)
+        {
+
+        // ------
+
+            Uint32 rmask, gmask, bmask, amask;
+
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+            rmask = 0x00ff0000;
+            gmask = 0x0000ff00;
+            bmask = 0x000000ff;
+            amask = 0x00000000;
+#else
+            rmask = 0x000000ff;
+            gmask = 0x0000ff00;
+            bmask = 0x00ff0000;
+            amask = 0x00000000;
+#endif
+            scroll_area = SDL_CreateRGBSurface(SDL_SWSURFACE,SCREEN_WIDTH,FONT_SIZE,BITDEPTH, rmask, gmask, bmask,amask);
+            SDL_SetColorKey(scroll_area,SDL_SRCCOLORKEY, SDL_MapRGB(scroll_area->format,200,200,200));
+
+        }
+
+    };
 
     void scroll_reset() { scroll_x = 0; };
 
