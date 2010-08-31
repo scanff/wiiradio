@@ -100,14 +100,8 @@ class gui {
     // gui's and pop-ups
     gui_dlg*    guis[GUI_MAX];
 
+
     unsigned long   dialog_text_color;
-
-    int             info_text_x;
-    int             info_text_y;
-    int             info_text_size;
-    int             info_cancel_x;
-    int             info_cancel_y;
-
 
     genre_list      gl; // - genre list
 
@@ -374,12 +368,6 @@ class gui {
              buttons[i] = new_button(btn_descripts[i]);
         }
 
-        // --- other stuff
-        info_text_x = sk->get_value_int("info_txt_x");
-        info_text_y = sk->get_value_int("info_txt_y");
-        info_text_size = sk->get_value_int("info_txt_size");
-        info_cancel_x = sk->get_value_int("info_cancel_x");
-        info_cancel_y = sk->get_value_int("info_cancel_y");
 
         // -- general text items
         loopi(TXT_MAX)
@@ -389,8 +377,6 @@ class gui {
             if(x) text_areas.push_back(x);
             else break; // no point in continuing .. text areas should use the next free value ..i.e. txt1,txt2 ...
         }
-
-
     };
 
     ~gui()
