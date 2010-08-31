@@ -85,12 +85,25 @@ class localfiles {
         return true;
     }
 
+    void dirup()
+    {
+        // This string should contain a / at the end so remove it so our find last will find the prior /
+        string new_path = (current_path.c_str());
+        new_path.erase (new_path.end()-1, new_path.end());
 
+        int found = new_path.find_last_of("/\\");
+        if(found == -1) // Must be at root
+            return;
 
-#ifdef _WII_
+        new_path = new_path.substr(0,found);
+        new_path += "/"; // add the path slash back
+        directory_list(new_path.c_str());
+    }
+
+/*
     void directory_list()
     {
-      /* TODO
+       TODO
 
 		clear_list(); //remove anything in list
         //rest the total playlist var
@@ -125,15 +138,19 @@ class localfiles {
             //}
         }
 
-        closedir(pdir);*/
+        closedir(pdir);
 
 
     }
-#else
+*/
     void directory_list(const char* new_path)
     {
+
         if (!new_path) current_path = make_path(F_PATH_LOCAL);
-        else current_path = make_path(new_path);
+        else current_path = new_path; // make_path already done if !new path
+
+        // save as system variable
+        vars.add_var("$LOCAL_FILE_PATH", (char*)current_path.c_str());
 
         clear_list(); //remove anything in list
 
@@ -171,7 +188,7 @@ class localfiles {
         } else { return; }
 
     };
-#endif
+
 };
 
 #endif //_FAVORITES_H_

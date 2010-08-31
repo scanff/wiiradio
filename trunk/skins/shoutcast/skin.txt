@@ -1,11 +1,5 @@
 skinname=SHOUTcast
 skinauthor=Scanff
-// text defs
-txt1_text=abcdef
-txt1_x=27
-txt1_y=27
-txt1_font_size=2
-txt1_font_color=#dddddd
 
 // -- general images (required)
 bgimg=bg.png
@@ -62,11 +56,14 @@ playing_y=416
 playing_text_color=#dddddd
 playing_text_color_over=#FDEAB3
 playing_text_size=2
-playing_pad_text_y=0
-playing_pad_text_x=0
+playing_pad_y=0
+playing_pad_x=0
 playing_limit_text=270
 playing_out=playing.png
 playing_over=playing.png
+playing_scroll = 1
+playing_autoscroll = 1
+playing_nocentertext = 1
 
 // -- info dialog ... (dialog showing stream inf.) (required)
 dialog_text_color=#dddddd
@@ -189,3 +186,27 @@ localbrowser_pad_y=5
 localbrowser_pad_x=0
 localbrowser_over=playlists_over.png
 localbrowser_out=playlists_out.png
+
+// -- dir up for local files
+dirup_y=108
+dirup_x=30
+dirup_text=
+dirup_text_color=#FFBA34
+dirup_text_color_over=#dddddd
+dirup_text_size=2
+dirup_pad_y=5
+dirup_pad_x=0
+dirup_over=dirup_over.png
+dirup_out=dirup_out.png
+
+// -- label for displaying current path (local browser)
+txt1_text=$LOCAL_FILE_PATH
+txt1_x=59
+txt1_y=106
+txt1_text_color=#cccccc
+txt1_text_size=3
+txt1_bind=9
+txt1_nocentertext = 1
+txt1_pad_x=0
+txt1_pad_y=0
+

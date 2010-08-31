@@ -93,18 +93,24 @@ class gui_textbox : public gui_object{
         if (*text_l1)
         {
             fnts->set_size(font_sz);
+            fnts->change_color((text_color >> 16)& 0xff,(text_color >> 8)& 0xff,text_color & 0xff);
 
             if (scroll_area && can_scroll)
             {
                 scroll_text();
             }else{
+                char* real_text;
+
+                if(isvariable) real_text = vars.search_var(text_l1);
+                else real_text = text_l1;
+
                 if (center_text) {
-                    int text_len = fnts->get_length_px(text_l1,font_sz);
+                    int text_len = fnts->get_length_px(real_text,font_sz);
                     int cx = 0;
                     text_len>0 ? cx = (int)((s_w-(text_len))/2): cx=1;
-                    fnts->text(guibuffer,text_l1,cx+s_x,s_y+pad_y,limit_text);
+                    fnts->text(guibuffer,real_text,cx+s_x,s_y+pad_y,limit_text);
                 }else{
-                    fnts->text(guibuffer,text_l1,s_x+pad_x,s_y+pad_y,limit_text);
+                    fnts->text(guibuffer,real_text,s_x+pad_x,s_y+pad_y,limit_text);
                 }
             }
         }

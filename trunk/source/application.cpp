@@ -1205,7 +1205,7 @@ _reload:
     SDL_Flip(screen);
 
     tx              = new texture_cache;
-    ui              = new gui(this,fnts,visuals,g_currentskin);
+    ui              = new gui(this,g_currentskin);
 
 
     if (!g_reloading_skin)
