@@ -13,10 +13,34 @@ class gui_info : public gui_dlg
     gui_info(app_wiiradio* _theapp)
     {
         theapp = _theapp;
+
+        skins*  sk = theapp->sk;
+        char*   dir = (char*)theapp->ui->skin_path.c_str();
+
+        char s_value1[SMALL_MEM];
+        char s_value2[SMALL_MEM];
+
+         // cancel ...
+        if (!sk->get_value_file("info_cancel_out",s_value1,dir)) exit(0);
+        if (!sk->get_value_file("info_cancel_over",s_value2,dir)) exit(0);
+        this->cancel = new gui_button(theapp,0,25,NULL,0,false);
+        this->cancel->set_images(s_value1,s_value2,0,0);
+        this->cancel->center_text = true;
+        this->cancel->z_order =  1;
+        if (sk->get_value_string("info_cancel_text",s_value1)) this->cancel->set_text(theapp->ui->gui_gettext(s_value1));
+        this->cancel->text_color = sk->get_value_color("info_cancel_text_color");
+        this->cancel->text_color_over = sk->get_value_color("info_cancel_text_color_over");
+        this->cancel->font_sz = sk->get_value_int("info_cancel_text_size");
+        this->cancel->pad_y = sk->get_value_int("info_cancel_text_pad_y");
     };
 
     ~gui_info()
     {
+        if (this->cancel)
+        {
+            delete this->cancel;
+            this->cancel = 0;
+        }
     };
 
     int handle_events(SDL_Event* events)
