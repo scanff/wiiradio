@@ -344,7 +344,7 @@ class gui {
             buttons_genre[i]->text_color_over = sk->get_value_color("listing_font_color_over");
 
             //delete buttons
-            x_offset = sk->get_value_int("delete_start_x");//530;
+            x_offset = sk->get_value_int("delete_start_x");
 
 
             if (!sk->get_value_file("delete_out",s_value1,dir)) exit(0);
@@ -359,18 +359,6 @@ class gui {
 
         }
 
-        // cancel ... bind to another screen though ... why thgis this here? I can't remember
-        if (!sk->get_value_file("info_cancel_out",s_value1,dir)) exit(0);
-        if (!sk->get_value_file("info_cancel_over",s_value2,dir)) exit(0);
-        guis[GUI_INFO]->cancel = new gui_button(theapp,0,25,NULL,0,false);
-        guis[GUI_INFO]->cancel->set_images(s_value1,s_value2,0,0);
-        guis[GUI_INFO]->cancel->center_text = true;
-        guis[GUI_INFO]->cancel->z_order =  1;
-        if (sk->get_value_string("info_cancel_text",s_value1)) guis[GUI_INFO]->cancel->set_text(gui_gettext(s_value1));
-        guis[GUI_INFO]->cancel->text_color = sk->get_value_color("info_cancel_text_color");
-        guis[GUI_INFO]->cancel->text_color_over = sk->get_value_color("info_cancel_text_color_over");
-        guis[GUI_INFO]->cancel->font_sz = sk->get_value_int("info_cancel_text_size");
-        guis[GUI_INFO]->cancel->pad_y = sk->get_value_int("info_cancel_text_pad_y");
 
 
         /*
