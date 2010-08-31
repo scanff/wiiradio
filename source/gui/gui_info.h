@@ -9,6 +9,11 @@ class gui_info : public gui_dlg
 {
     public:
 
+    int             info_text_x;
+    int             info_text_y;
+    int             info_text_size;
+    int             info_cancel_x;
+    int             info_cancel_y;
 
     gui_info(app_wiiradio* _theapp)
     {
@@ -23,7 +28,9 @@ class gui_info : public gui_dlg
          // cancel ...
         if (!sk->get_value_file("info_cancel_out",s_value1,dir)) exit(0);
         if (!sk->get_value_file("info_cancel_over",s_value2,dir)) exit(0);
+
         this->cancel = new gui_button(theapp,0,25,NULL,0,false);
+
         this->cancel->set_images(s_value1,s_value2,0,0);
         this->cancel->center_text = true;
         this->cancel->z_order =  1;
@@ -32,6 +39,13 @@ class gui_info : public gui_dlg
         this->cancel->text_color_over = sk->get_value_color("info_cancel_text_color_over");
         this->cancel->font_sz = sk->get_value_int("info_cancel_text_size");
         this->cancel->pad_y = sk->get_value_int("info_cancel_text_pad_y");
+
+        // --- other stuff
+        info_text_x = sk->get_value_int("info_txt_x");
+        info_text_y = sk->get_value_int("info_txt_y");
+        info_text_size = sk->get_value_int("info_txt_size");
+        info_cancel_x = sk->get_value_int("info_cancel_x");
+        info_cancel_y = sk->get_value_int("info_cancel_y");
     };
 
     ~gui_info()
@@ -56,18 +70,18 @@ class gui_info : public gui_dlg
 
         char* txt = (char*)user_data;
 
-        theapp->fnts->set_size(theapp->ui->info_text_size);
+        theapp->fnts->set_size(info_text_size);
         theapp->fnts->change_color((theapp->ui->dialog_text_color >> 16), ((theapp->ui->dialog_text_color >> 8) & 0xff),(theapp->ui->dialog_text_color & 0xff));
         fade(theapp->ui->guibuffer,SDL_MapRGB(theapp->ui->guibuffer->format,0,0,0),100);
         SDL_Rect t = {(SCREEN_WIDTH/2)-(theapp->ui->info_dlg->w / 2),(440 / 2) - (theapp->ui->info_dlg->h / 2),theapp->ui->info_dlg->w,theapp->ui->info_dlg->h};
         SDL_BlitSurface(theapp->ui->info_dlg,0, theapp->ui->guibuffer,&t);
-        theapp->fnts->text(theapp->ui->guibuffer,txt,t.x + theapp->ui->info_text_x,t.y + theapp->ui->info_text_y,0);
+        theapp->fnts->text(theapp->ui->guibuffer,txt,t.x + info_text_x,t.y + info_text_y,0);
 
         if (status == BUFFERING || status == CONNECTING)
         {
             theapp->fnts->set_size(FS_MED);
-            cancel->s_x = t.x + theapp->ui->info_cancel_x;
-            cancel->s_y = t.y + theapp->ui->info_cancel_y;
+            cancel->s_x = t.x + info_cancel_x;
+            cancel->s_y = t.y + info_cancel_y;
             cancel->draw();
         }
     };
