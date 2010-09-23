@@ -6,70 +6,66 @@ enum _font_sizes {
     FS_LARGE = 0,
     FS_MED,
     FS_SMALL,
-    FS_SYSTEM
+    // -- never delete system font
+    FS_SYSTEM,
+    FS_MAX
 };
 
-class fonts {
+class fonts
+{
     public:
 
-    int size;
-    TTF_Font* fontset_large;
-    TTF_Font* fontset_medium;
-    TTF_Font* fontset_small;
-    TTF_Font* fontset_system;
-    int color_r;
-    int color_g;
-    int color_b;
+    private:
 
+    int         size;
+    TTF_Font*   fontsets[FS_MAX];
+    int         color_r;
+    int         color_g;
+    int         color_b;
 
-    fonts() :  size(FS_SMALL), fontset_large(0), fontset_medium(0), fontset_small(0) , fontset_system(0)
+    public:
+
+    fonts() :  size(FS_SMALL)
     {
+        loopi(FS_MAX) fontsets[i] = 0;
 
         if (TTF_Init() == -1) return;
 
-        fontset_system = TTF_OpenFont(make_path((char*)"FreeSansBold.ttf"), 14);
-        if (!fontset_system) exit(0);
-
-
+        if (!(fontsets[FS_SYSTEM] = TTF_OpenFont(make_path((char*)"FreeSansBold.ttf"), 14)))
+            exit(0); // can't really continue ... probably should do better than exit tho.
     };
 
-    void reload_fonts(char* file,int s, int m, int l)
+    void reload_fonts(char* file,int* sizes)
     {
-        if(fontset_large) TTF_CloseFont(fontset_large);
-        if(fontset_medium) TTF_CloseFont(fontset_medium);
-        if(fontset_small) TTF_CloseFont(fontset_small);
+        loopi(FS_SYSTEM) // Don't include system font
+        {
+            if (fontsets[i])
+                TTF_CloseFont(fontsets[i]);
 
-        fontset_large = TTF_OpenFont(make_path(file), l);
-        if (!fontset_large) exit(0);
-
-        fontset_medium = TTF_OpenFont(make_path(file), m);
-        if (!fontset_medium) exit(0);
-
-        fontset_small = TTF_OpenFont(make_path(file), s);
-        if (!fontset_small) exit(0);
+            if(!(fontsets[i] = TTF_OpenFont(make_path(file), sizes[i])))
+               exit(0);
+        }
 
     };
 
 
     ~fonts()
     {
-        TTF_CloseFont(fontset_large);
-        TTF_CloseFont(fontset_medium);
-        TTF_CloseFont(fontset_small);
-
-        TTF_CloseFont(fontset_system);
+        loopi(FS_MAX)
+        {
+            if (fontsets[i])
+                TTF_CloseFont(fontsets[i]);
+        }
 
         TTF_Quit();
 
     };
 
-    void change_color(int r, int g, int b)
+    void change_color(const int r, const int g, const int b)
     {
-
         color_r = r;
         color_g = g;
         color_b = b;
-
     };
 
     // set the size of the font
@@ -82,21 +78,11 @@ class fonts {
     {
 
         int w,h;
-        TTF_Font* ft;
-        if (sizein == FS_LARGE){
-            ft = fontset_large;
-        }else if (sizein == FS_MED) {
-            ft = fontset_medium;
-        }else if (sizein == FS_SYSTEM) {
-            ft = fontset_system;
-        }else{ ft = fontset_small;}
 
-        //TTF_SizeText(ft, t, &w, &h);
-        TTF_SizeUTF8 (ft, t, &w, &h);
+        TTF_SizeUTF8 (fontsets[size], t, &w, &h);
 
         return w;
     };
-
 
     int text(SDL_Surface* s, const char* textin,int x, int y,int limit_width,int align = 0)
     {
@@ -107,18 +93,8 @@ class fonts {
 
         SDL_Surface *resulting_text = 0;
 
-        TTF_Font* ft;
-
-        if (size == FS_LARGE) {
-            ft = fontset_large;
-        }else if (size == FS_MED){
-            ft = fontset_medium;
-        }else if (size == FS_SYSTEM){
-            ft = fontset_system;
-        }else{ ft = fontset_small; }
-
         //resulting_text = TTF_RenderText_Blended(ft, textin, tmpfontcolor); //better/slower
-        resulting_text = TTF_RenderUTF8_Blended(ft, textin, tmpfontcolor); //better/slower
+        resulting_text = TTF_RenderUTF8_Blended(fontsets[size], textin, tmpfontcolor); //better/slower
 
 
         if (!resulting_text)
