@@ -80,13 +80,15 @@ class gui_button : public gui_object
 
     void scroll_text()
     {
-        draw_rect(scroll_area,0,0,SCREEN_WIDTH,FONT_SIZE,0xC8C8C8);
-        int fontwidth = fnts->text(scroll_area,text_l1,scroll_x,0,0);
+        SDL_Rect ds = {s_x+pad_x,s_y+pad_y,( limit_text ? limit_text : scroll_area->w ),scroll_area->h};
+        SDL_Rect sr = {0,0,( limit_text ? limit_text : scroll_area->w ),scroll_area->h};
+
+        draw_rect(scroll_area,0,0,sr.w,FONT_SIZE,0xC8C8C8); // the clear color
+
+        const int fontwidth = fnts->text(scroll_area,text_l1,scroll_x,0,0);
 
         if (obj_state == B_OVER || auto_scroll_text) scroll_x-=scroll_speed; //scroll speed
 
-        SDL_Rect ds = {s_x+pad_x,s_y+pad_y,( limit_text ? limit_text : scroll_area->w ),scroll_area->h};
-        SDL_Rect sr = {0,0,( limit_text ? limit_text : scroll_area->w ),scroll_area->h};
         SDL_BlitSurface( scroll_area,&sr , guibuffer,&ds );
 
         if (scroll_x < -(fontwidth)) scroll_x = limit_text;
@@ -109,10 +111,13 @@ class gui_button : public gui_object
                 scroll_text();
             }else{
                 if (center_text) {
-                    int text_len = fnts->get_length_px(text_l1,font_sz);
+
+                    const int text_len = fnts->get_length_px(text_l1,font_sz);
                     int cx = 0;
-                    text_len>0 ? cx = (int)((s_w-(text_len))/2): cx=1;
+
+                    text_len > 0 ? cx = (int)((s_w-(text_len))/2): cx=1;
                     fnts->text(guibuffer,text_l1,cx+s_x,s_y+pad_y,limit_text);
+
                 }else{
                     fnts->text(guibuffer,text_l1,s_x+pad_x,s_y+pad_y,limit_text);
                 }
