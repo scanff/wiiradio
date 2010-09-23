@@ -215,16 +215,18 @@ class gui {
         //fontset
         if(sk->get_value_file("fontset",s_value1,dir))
         {
-            int s = sk->get_value_int("fontsize_small");
-            int m = sk->get_value_int("fontsize_medium");
-            int l = sk->get_value_int("fontsize_large");
+            int fsizes[3];
+
+            fsizes[2] = sk->get_value_int("fontsize_small");
+            fsizes[1] = sk->get_value_int("fontsize_medium");
+            fsizes[0] = sk->get_value_int("fontsize_large");
 
             // - deafult sizes
-            if (s==0) s = 14;
-            if (m==0) m = 22;
-            if (l==0) l = 26;
+            if (!fsizes[0]) fsizes[0] = 14;
+            if (!fsizes[1]) fsizes[1] = 22;
+            if (!fsizes[2]) fsizes[2] = 26;
 
-            fnts->reload_fonts(s_value1,s,m,l);
+            fnts->reload_fonts(s_value1,fsizes);
 
         }
 
