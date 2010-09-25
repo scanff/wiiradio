@@ -270,7 +270,7 @@ class network : public dns
 
             while(1)
             {
-                if ((get_tick_count() - start_time) > 1000) // 1 sec timeout
+                if ((get_tick_count() - start_time) > 2000) // 2 sec timeout
                 {
                     net_close(connection_socket);
                     connection_socket = 0;
@@ -298,9 +298,9 @@ class network : public dns
 #endif
                     {
 #ifndef _WIN32
-                        usleep (10 * 1000);
+                        usleep (20 * 1000);
 #else
-                        Sleep(10);
+                        Sleep(20);
 #endif
                         continue;
                     }
