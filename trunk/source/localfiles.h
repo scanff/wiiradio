@@ -4,6 +4,7 @@
 #include <dirent.h>
 #include <sys/stat.h>
 #include <vector>
+#include <algorithm>
 #include "station.h"
 
 class localfile : public station {
@@ -11,6 +12,7 @@ class localfile : public station {
     string      filename;
     bool        isfolder;
 
+    localfile(){};
     localfile(string name, string path, string filename, bool folder);
 };
 
@@ -33,7 +35,17 @@ class localfiles {
     localfiles() : total_num_files(0), current_position(0)
     {
     };
-    ~localfiles() { clear_list(); };
+
+    static int sort_files(const localfile & a, const localfile & b)
+    {
+        if (a.isfolder && !b.isfolder)
+            return true;
+        else if (b.isfolder && !a.isfolder)
+            return false;
+
+        return stricmp((char *) a.filename.c_str(), (char *) b.filename.c_str());
+    }
+
 
     string friendly_name(string s)
     {
@@ -53,7 +65,7 @@ class localfiles {
         return s;
     };
 
-    void clear_list()
+    void inline clear_list()
     {
         list.clear();
     };
@@ -80,6 +92,10 @@ class localfiles {
         if(folder) nameandpath += "/";
 
         localfile finfo(displayname, nameandpath, filename,folder);
+
+        if((unsigned int)(total_num_files) >= list.max_size())
+            list.resize(total_num_files + 20);
+
         list.push_back(finfo);
 
         return true;
@@ -100,49 +116,6 @@ class localfiles {
         directory_list(new_path.c_str());
     }
 
-/*
-    void directory_list()
-    {
-       TODO
-
-		clear_list(); //remove anything in list
-        //rest the total playlist var
-        total_num_playlists = 0;
-
-        DIR *pdir;
-        struct dirent *pent;
-        struct stat statbuf;
-
-        pdir=opendir(make_path((char*)"music/"));
-
-        if (!pdir){
-            return;
-        }
-
-        while ((pent=readdir(pdir))!=NULL) {
-
-            stat(pent->d_name,&statbuf);
-            if(strcmp(".", pent->d_name) == 0 || strcmp("..", pent->d_name) == 0)
-            {
-                memset(pent->d_name,0,NAME_MAX+1);
-                continue;
-            }
-          //  if(S_ISDIR(statbuf.st_mode)) // no dirs sorry
-          //      continue; //printf("%s <dir>\n", pent->d_name);
-
-            //if(!(S_ISDIR(statbuf.st_mode))){
-
-                load_file(pent->d_name);
-
-                memset(pent->d_name,0,NAME_MAX+1);
-            //}
-        }
-
-        closedir(pdir);
-
-
-    }
-*/
     void directory_list(const char* new_path)
     {
 
@@ -187,6 +160,9 @@ class localfiles {
 
         } else { return; }
 
+        //re-sort
+        if (total_num_files > 1)
+            sort (list.begin(), list.end(),sort_files);
     };
 
 };

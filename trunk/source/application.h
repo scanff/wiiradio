@@ -49,6 +49,14 @@ class app_wiiradio
     bool                unsaved_volume_change;
     bool                screen_sleeping;
 
+    unsigned char       audio_data[8192];
+
+    int                 playing_item; // item that's currentlt playing
+
+    // -- threads
+    SDL_Thread*         connectthread;
+    SDL_mutex*          connect_mutex;
+
     int wii_radio_main(int argc, char **argv);
     void draw_ui(char* info);
     void station_lister(const char* path,char* gen);

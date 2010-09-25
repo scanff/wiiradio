@@ -9,13 +9,14 @@ class gui_group : public gui_object
     public:
 
     int number;
+    int selected;
 
     gui_toggle**  items;
 
     void (*callback)(app_wiiradio*);
 
     gui_group(app_wiiradio* _theapp, int _num,int _x, int _y, int _w, int _h, int _spacing, void(*cb)(app_wiiradio*)) :
-        number(_num)
+        number(_num),selected(0)
     {
         theapp = _theapp;
         s_x = _x;
@@ -49,35 +50,30 @@ class gui_group : public gui_object
 
     void draw()
     {
-        loopi(number) items[i]->draw();
+        loopi(number)
+            items[i]->draw();
     };
 
     int hit_test(SDL_Event *event, int current_z)
     {
-        int h = 0;
-        int on = 0;
-
-        // save current on
-        loopj(number) if (items[j]->obj_state == B_ON) on = j;
-
-        // turn all off
-        loopj(number) items[j]->obj_state = B_OFF;
-
         // test for a change
-        for(h=0;h<number;h++)
+        for(int h = 0; h < number; h++)
         {
             if (items[h]->hit_test(event,current_z) == B_ON)
             {
                if (callback)
                    (*callback)(this->theapp);
-               return h;
+
+                // turn off current
+                items[selected]->obj_state = B_OFF;
+                selected = h;
             }
         }
 
         // failed hit test, don't deactivate the one that's on!
-        items[on]->obj_state = B_ON;
+        items[selected]->obj_state = B_ON;
 
-        return on;
+        return selected;
     };
 
 

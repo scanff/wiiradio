@@ -10,10 +10,11 @@ class vis_circles : public visual_object
     int             shifter;
     int             direction;
 
-    vis_circles(fft* _f)
+    vis_circles(app_wiiradio*   _theapp)
     {
         loaded = false;
-        f = _f;
+        theapp = _theapp;
+        f = theapp->fourier;
         layer = 1;
 
         DRAW_WIDTH = SCREEN_WIDTH  ;

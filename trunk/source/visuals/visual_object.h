@@ -18,9 +18,11 @@ class visual_object {
 
     int             layer;
 
+    bool            noclearbg;
+
     app_wiiradio*   theapp;
 
-    visual_object(){ layer = 0; };
+    visual_object()  { layer = 0; noclearbg = false;};
     virtual ~visual_object(){};
 
     virtual void load(void*) {};

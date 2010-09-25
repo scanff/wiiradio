@@ -51,8 +51,7 @@ FMOD_CREATESOUNDEXINFO  exinfo;
 int critical_thread (void *arg); // -- main playback and net thread
 SDL_Thread* mainthread = 0;
 
-int connect_thread (void *arg); // -- thread for connection request
-SDL_Thread* connectthread = 0;
+
 
 int search_thread (void *arg); // -- thread for genre searches
 SDL_Thread* searchthread = 0;
@@ -64,7 +63,7 @@ app_wiiradio* pAppWiiRadio; // hack for now ... store a pointer to our app class
 /*
     Using callbacks to call a class function seem to create unusual problems??? BUG ??? WTF IDK?
 */
-unsigned char audio_data[8192];
+
 
 // search options
 struct _so
@@ -77,13 +76,19 @@ _so search_options;
 
 app_wiiradio::app_wiiradio() :
     unsaved_volume_change(false),
-    screen_sleeping(false)
+    screen_sleeping(false),
+    playing_item(-1),
+    connectthread(0),
+    connect_mutex(0)
 {
     pAppWiiRadio = this;
+
+    connect_mutex = SDL_CreateMutex();
 }
 
 app_wiiradio::~app_wiiradio()
 {
+    if(connect_mutex) SDL_DestroyMutex(connect_mutex);
 }
 
 
@@ -197,9 +202,8 @@ void translate_keys()
 
 void app_wiiradio::draw_ui(char* info)
 {
-    //SetScreenStatus(S_LOCALFILES);
     // drawing stuff
-    ui->draw();//scb->sl_first,icy_info,favs,localfs);
+    ui->draw();
     if (info) ui->draw_info(info);
 }
 
@@ -271,31 +275,39 @@ int connect_thread(void* arg)
 {
     app_wiiradio* app = (app_wiiradio*)arg;
 
-    char* server = (char*)(app->playing.server.c_str());
-    int port = app->playing.port;
-    char* path = (char*)(app->playing.path.c_str());
-    bool islocal =  app->playing.local;
+    SDL_mutexP(app->connect_mutex); // lock
+
+    char* server    = (char*)(app->playing.server.c_str());
+    int port        = app->playing.port;
+    char* path      = (char*)(app->playing.path.c_str());
+    bool islocal    =  app->playing.local;
 
     char* host = 0;
     char request[1024] = {0};
 
-    // -- close current connection
-    if (connected)
-    {
-        connected = 0;
-        app->net->client_close();
-    }
-
     // stop mp3 if currently playing.
-    app->stop_playback();
+
+    playback_type = AS_NULL;
 
     if (!islocal)
     {
+        // -- close current connection
+        if (connected)
+        {
+            connected = 0;
+            app->net->client_close();
+        }
+
+        app->stop_playback();
 
         // connect to new stream
         int connect_try = app->net->client_connect(server,port,TCP,false);
 
-        if (status != CONNECTING) return 0; // cancelled !
+        if (status != CONNECTING)
+        {
+            playback_type = AS_NULL;
+            goto unlock;
+        }
 
         app->icy_info->icy_reset(); // reset icy state
 
@@ -318,24 +330,34 @@ int connect_thread(void* arg)
             if (len_req < 0)
             {
                 status = FAILED;
-                return 0;
+
+                goto unlock;
             }
 
+            playback_type = AS_SHOUTCAST; // or icecast .. should rename to AS_NETWORK ?
             connected = connect_try;
 
         }
         else
         {
             status = FAILED;
+            playback_type = AS_NULL;
         }
-        playback_type = AS_SHOUTCAST;
+
     }
     else
     { // local file
+        app->stop_playback();
         app->localpb->reset();
         playback_type = AS_LOCAL;
     }
-    return 0;
+
+unlock:
+	SDL_mutexV(app->connect_mutex); // unlock
+
+	app->connectthread = 0;
+
+    return 1;
 }
 
 
@@ -398,17 +420,13 @@ void app_wiiradio::connect_direct(char* typed)
 
 void app_wiiradio::connect_to_stream(int value, connect_info info)
 {
-    if (info != I_LOCAL)
-    {
-
-        if (connectthread)
-        {
-            SDL_WaitThread(connectthread, NULL); // wait for it to stop
-            connectthread = 0;
-        }
-    }
-
     status = CONNECTING; // attempting a new connection
+
+    if (connectthread)
+    {   // ?? I gues if the user double clicks or clicks too fast
+        SDL_WaitThread(connectthread, NULL); // wait for it to stop
+        connectthread = 0;
+    }
 
     // Sort out data for stream to connect to
     switch (info)
@@ -442,17 +460,23 @@ void app_wiiradio::connect_to_stream(int value, connect_info info)
         }
 
         // get playlists
-        if (csl->service_type == SERVICE_SHOUTCAST)
+        switch(csl->service_type)
         {
-            playlst->get_playlist(csl->station_id);
-        }
-        else if (csl->service_type == SERVICE_ICECAST)
-        {
-            // no pls for ICEcast
-            playlst->split_url(csl->station_id);
+            case SERVICE_SHOUTCAST:
+            {
+                playlst->get_playlist(csl->station_id);
+            }
+            break;
+
+            case SERVICE_ICECAST:
+            {
+                // no pls for ICEcast
+                playlst->split_url(csl->station_id);
+            }
+            break;
         }
 
-        playing.server= playlst->first_entry->url;
+        playing.server = playlst->first_entry->url;
         playing.port = playlst->first_entry->port;
         playing.path = playlst->first_entry->path;
 
@@ -464,6 +488,7 @@ void app_wiiradio::connect_to_stream(int value, connect_info info)
 
         //save to the now playing mem
         playing.name = csl->station_name;
+
         break;
     }
     case I_PLAYLIST:
@@ -485,23 +510,25 @@ void app_wiiradio::connect_to_stream(int value, connect_info info)
     case I_HASBEENSET:
         break;
     }
-    favs->save_current(playing);
+
+    if (info != I_LOCAL) favs->save_current(playing);
 
     // start a new connection thread
     connectthread = SDL_CreateThread(connect_thread,this);
+
 
 }
 
 
 void app_wiiradio::screen_timeout()
 {
-    if (!visualize)
+    if (GetScreenStatus() != S_VISUALS)
 
         // auto burnin reducer if there not viewing a visual
         loopi(MAX_KEYS)
     {
         if (g_real_keys[i]) last_button_time = get_tick_count();
-    }
+    }else last_button_time = get_tick_count();
 
 
     unsigned int calc_timeout = 0;
@@ -526,15 +553,13 @@ void app_wiiradio::screen_timeout()
     else if (screen_sleeping)
     {
         screen_sleeping = false;
-        visualize = false;
         visualize_number = 0; //reset
     }
 
 
-    if (!visualize && screen_sleeping)
+    if (GetScreenStatus() != S_VISUALS && screen_sleeping)
     {
         visualize_number = MAX_VISUALS;
-        visualize = true;
     }
 }
 
@@ -543,8 +568,17 @@ void app_wiiradio::check_keys()
 
     // -- keys that always perform the same action go first!!!
     if (g_real_keys[SDLK_2] && ! g_keys_last_state[SDLK_2])
-        visualize = !visualize;
+    {
+        if (GetScreenStatus() != S_VISUALS)
+        {
+            SetScreenStatus(S_VISUALS);
+        }
+        else
+        {
+            SetLastScreenStatus();
+        }
 
+    }
     if (g_real_keys[SDLK_MINUS] && !g_keys_last_state[SDLK_MINUS])
     {
         mute ? mute = false : mute = true;
@@ -606,9 +640,9 @@ void app_wiiradio::check_keys()
     if (g_real_keys[SDLK_1] && !g_keys_last_state[SDLK_1])
     {
 
-        if (GetScreenStatus() != S_STREAM_INFO)
+        if (GetScreenStatus() != S_STREAM_INFO && GetScreenStatus() != S_VISUALS)
         {
-            if (!visualize) SetScreenStatus(S_STREAM_INFO);
+            SetScreenStatus(S_STREAM_INFO);
         }
         else if (GetScreenStatus() == S_STREAM_INFO)
         {
@@ -617,14 +651,17 @@ void app_wiiradio::check_keys()
 
     }
 
-    if (g_real_keys[SDLK_ESCAPE] && !g_keys_last_state[SDLK_ESCAPE] && !visualize)
+    if (g_real_keys[SDLK_ESCAPE] && !g_keys_last_state[SDLK_ESCAPE] && (GetScreenStatus() != S_VISUALS))
     {
         if (GetScreenStatus() != S_OPTIONS)
             SetScreenStatus(S_OPTIONS);
         else SetLastScreenStatus();
     }
 
-    if (g_real_keys[SDLK_b] && GetScreenStatus() != S_BROWSER) SetScreenStatus(S_BROWSER);
+    if (g_real_keys[SDLK_b] && GetScreenStatus() != S_BROWSER)
+    {
+        SetScreenStatus(S_BROWSER);
+    }
 
     if (g_real_keys[SDLK_PLUS] && status == PLAYING)
         request_save_fav(); // save playlist
@@ -632,10 +669,13 @@ void app_wiiradio::check_keys()
 
     if (g_real_keys[SDLK_RIGHT] && !g_keys_last_state[SDLK_RIGHT])
     {
-        if (visualize)
+        if (GetScreenStatus() == S_VISUALS)
         {
             if (visualize_number < MAX_VISUALS)
+            {
                 visualize_number++;
+            }
+
 
             return;
         }
@@ -659,11 +699,11 @@ void app_wiiradio::check_keys()
             ui->reset_scrollings();
             break;
 
-        case S_GENRES:
+        case S_LOCALFILES:
 
             //if (genre_display + max_listings  >= MAX_GENRE) return;
-            if (genre_display + max_listings  >= ui->gl.total) return;
-            else genre_display += max_listings;
+            if (localfs->current_position + max_listings  >= localfs->total_num_files) return;
+            else localfs->current_position += max_listings;
 
             ui->reset_scrollings();
 
@@ -678,7 +718,7 @@ void app_wiiradio::check_keys()
 
     if (g_real_keys[SDLK_LEFT] && !g_keys_last_state[SDLK_LEFT])
     {
-        if (visualize)
+        if ((GetScreenStatus() == S_VISUALS))
         {
             if (visualize_number > 0)
                 visualize_number--;
@@ -711,6 +751,17 @@ void app_wiiradio::check_keys()
 
             ui->reset_scrollings();
             break;
+
+        case S_LOCALFILES:
+
+            //if (genre_display + max_listings  >= MAX_GENRE) return;
+            if (localfs->current_position - max_listings  < 0) localfs->current_position = 0;
+            else localfs->current_position -= max_listings;
+
+            ui->reset_scrollings();
+
+            break;
+
 
         default:
             break;
@@ -795,9 +846,9 @@ static void cb_fft(unsigned char* in, int max)
 
     if (g_reloading_skin || !g_running) return; // -- bad ui is loading
 
-    if (visualize || pAppWiiRadio->ui->vis_on_screen) // Only update if viewing
+    if ((GetScreenStatus() == S_VISUALS) || pAppWiiRadio->ui->vis_on_screen) // Only update if viewing
     {
-        loopi(max) audio_data[i] = in[i];
+        loopi(max) pAppWiiRadio->audio_data[i] = in[i];
         //fourier->setAudioData(in,max);
         //fourier->getFFT(visuals->fft_results);
     }
@@ -819,8 +870,11 @@ void app_wiiradio::request_save_fav()
 called from libmad ....
 return the data from the buffer or a default zero stream if we are having problems keeping up!
 */
+#ifdef _WII_
 s32 reader_callback(void *usr_data,void *cb,s32 len)
 {
+    if (status == STOPPED) return 0;
+
     switch(playback_type)
     {
         case AS_LOCAL:
@@ -831,13 +885,20 @@ s32 reader_callback(void *usr_data,void *cb,s32 len)
         case AS_ICECAST:
             return pAppWiiRadio->icy_info->get_buffer(cb,len);
         break;
+		case AS_NULL:
+		return 0;
+
     }
     return 0;
 }
+#endif
 
 void inline app_wiiradio::network_playback(char* net_buffer)
 {
     int len = 0;
+
+    SDL_mutexP(connect_mutex); // lock
+
     // stream handler
     len = net->client_recv(net_buffer,MAX_NET_BUFFER);
     if(len > 0)
@@ -897,10 +958,15 @@ void inline app_wiiradio::network_playback(char* net_buffer)
             }
         }
 #else
+
         FMOD_BOOL is_playing = false;
         FMOD_Channel_IsPlaying(channel1,&is_playing);
         if (!is_playing)
         {
+            memset(&exinfo, 0, sizeof(FMOD_CREATESOUNDEXINFO));
+            exinfo.cbsize = sizeof(FMOD_CREATESOUNDEXINFO);
+            exinfo.length = icy_info->buffer_size;
+
             FMOD_System_CreateSound(fmod_system,(const char *)icy_info->buffer,FMOD_SOFTWARE | FMOD_OPENMEMORY_POINT | FMOD_CREATESTREAM | FMOD_CREATECOMPRESSEDSAMPLE,&exinfo, &sound1);
             FMOD_Sound_SetMode(sound1, FMOD_LOOP_OFF);
             FMOD_System_PlaySound(fmod_system,FMOD_CHANNEL_FREE, sound1, false, &channel1);
@@ -918,13 +984,26 @@ void inline app_wiiradio::network_playback(char* net_buffer)
         errors = 0;
     }
 
+     SDL_mutexV(connect_mutex); // unlock
+
 
 }
 
 void inline app_wiiradio::local_playback()
 {
-    status = PLAYING;
-    localpb->local_read(playing.path.c_str());
+    SDL_mutexP(connect_mutex); // lock .. still connecting
+
+    int res = localpb->local_read(playing.path.c_str());
+
+    if(localpb->at_end || res == -1)
+    {
+        status = STOPPED;
+        stop_playback(); // if playing stop!
+        playback_type = AS_NULL;
+
+        SDL_mutexV(connect_mutex); // unlock
+        return;
+    }
 
     if(!localpb->bufferring)
     {
@@ -947,9 +1026,15 @@ void inline app_wiiradio::local_playback()
         FMOD_Channel_IsPlaying(channel1,&is_playing);
         if (!is_playing)
         {
-            FMOD_System_CreateSound(fmod_system,(const char *)localpb->buffer,FMOD_SOFTWARE | FMOD_OPENMEMORY_POINT | FMOD_CREATESTREAM | FMOD_CREATECOMPRESSEDSAMPLE,&exinfo, &sound1);
-            FMOD_Sound_SetMode(sound1, FMOD_LOOP_OFF);
-            FMOD_System_PlaySound(fmod_system,FMOD_CHANNEL_FREE, sound1, false, &channel1);
+            memset(&exinfo, 0, sizeof(FMOD_CREATESOUNDEXINFO));
+            exinfo.cbsize = sizeof(FMOD_CREATESOUNDEXINFO);
+            exinfo.length = localpb->buffer_size;
+            FMOD_RESULT r ;
+
+            r = FMOD_System_CreateSound(fmod_system,(const char *)localpb->buffer,FMOD_SOFTWARE | FMOD_OPENMEMORY_POINT | FMOD_CREATESTREAM | FMOD_CREATECOMPRESSEDSAMPLE,&exinfo, &sound1);
+            r = FMOD_Sound_SetMode(sound1, FMOD_LOOP_OFF);
+            r = FMOD_System_PlaySound(fmod_system,FMOD_CHANNEL_FREE, sound1, false, &channel1);
+
             status = PLAYING;
         }else
         {
@@ -958,12 +1043,7 @@ void inline app_wiiradio::local_playback()
 #endif
     }
 
-    if(localpb->at_end)
-    {
-        status = STOPPED;
-        stop_playback(); // if playing stop!
-    }
-
+    SDL_mutexV(connect_mutex); // unlock
 }
 
 
@@ -992,6 +1072,9 @@ int critical_thread(void *arg)
                 case AS_ICECAST:
                     if (connected) app->network_playback(net_buffer);
                 break;
+				case AS_NULL:
+					Sleep(500);
+				break;
             }
         }
 /*        else
@@ -1051,7 +1134,6 @@ int app_wiiradio::wii_radio_main(int argc, char **argv)
     favs_idx = 0;
     fullscreen = 0;
     refresh_genre_cache = true; // default is to refresh cache
-    visualize = false;
     volume = 255; // max volume
     g_vol_lasttime = 0;
     visualize_number = 0;
@@ -1148,9 +1230,7 @@ int app_wiiradio::wii_radio_main(int argc, char **argv)
 #else
 
 
-    memset(&exinfo, 0, sizeof(FMOD_CREATESOUNDEXINFO));
-    exinfo.cbsize = sizeof(FMOD_CREATESOUNDEXINFO);
-    exinfo.length = icy_info->buffer_size;
+
 
     FMOD_System_Create(&fmod_system);
 #ifdef _LINUX_
@@ -1336,7 +1416,7 @@ _reload:
         check_sleep_timer();
 
         draw_ui(0);
-        if (cursor_visible && !visualize)
+        if (cursor_visible && (GetScreenStatus() != S_VISUALS))
             ui->draw_cursor(cursor_x, cursor_y, cursor_angle);
 
         // flip to main screen buffer
@@ -1345,7 +1425,7 @@ _reload:
         SDL_Flip(screen);
 
         // do the fft using the local
-        if (visualize || ui->vis_on_screen) // Only update if viewing
+        if ((GetScreenStatus() == S_VISUALS) || ui->vis_on_screen) // Only update if viewing
         {
             if(status == PLAYING)
             {

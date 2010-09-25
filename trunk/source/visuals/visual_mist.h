@@ -10,10 +10,11 @@ class vis_mist : public visual_object
     int             shifter;
     int             direction;
 
-    vis_mist(fft* _f)
+    vis_mist(app_wiiradio*   _theapp)
     {
+        theapp = _theapp;
         loaded = false;
-        f = _f;
+        f = theapp->fourier;
         layer = 1;
 
         DRAW_WIDTH = SCREEN_WIDTH  ;

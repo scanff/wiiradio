@@ -50,9 +50,10 @@ class vis_stars : public visual_object
 
     } starfield[MAX_STARS];
 
-    vis_stars(fft* _f)
+    vis_stars(app_wiiradio*   _theapp)
     {
-        f = _f;
+        theapp = _theapp;
+        f = theapp->fourier;
         loaded = false;
         layer = 1;
 

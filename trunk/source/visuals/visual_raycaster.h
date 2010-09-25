@@ -86,10 +86,11 @@ class vis_raycaster : public visual_object
 
     bool use_texture;
 
-    vis_raycaster(fft* _f) :  use_texture(true)
+    vis_raycaster(app_wiiradio*   _theapp) :  use_texture(true)
     {
+        theapp = _theapp;
         loaded = false;
-        f = _f;
+        f = theapp->fourier;
         layer = 1;
 
         loopi(RCS_MAX) rc_surfaces[i] = 0;
@@ -103,19 +104,6 @@ class vis_raycaster : public visual_object
         dirX = -1; dirY = 0; //initial direction vector
         planeX = 0; planeY = 0.66; //the 2d raycaster version of camera plane
 
-        unsigned long rmask, gmask, bmask, amask;
-
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-        rmask = 0x00ff0000;
-        gmask = 0x0000ff00;
-        bmask = 0x000000ff;
-        amask = 0x00000000;
-#else
-        rmask = 0x00ff0000;
-        gmask = 0x0000ff00;
-        bmask = 0x000000ff;
-        amask = 0x00000000;
-#endif
 
         bartexture = SDL_CreateRGBSurface(SDL_SWSURFACE, 128,128, BITDEPTH, rmask, gmask, bmask, amask);
 

@@ -12,10 +12,11 @@ class vis_rotzoom : public visual_object
     unsigned int path, zpath;
     SDL_Surface* tex;
 
-    vis_rotzoom(fft* _f) : tex(0)
+    vis_rotzoom(app_wiiradio*   _theapp) : tex(0)
     {
+        theapp = _theapp;
         loaded = false;
-        f = _f;
+        f = theapp->fourier;
         layer = 0;
         path = zpath = 0;
         DRAW_WIDTH = SCREEN_WIDTH;

@@ -10,9 +10,10 @@ class vis_fire : public visual_object
     unsigned int fire[SCREEN_WIDTH / 4][SCREEN_HEIGHT / 4];  //this buffer will contain the fire
     unsigned int palette[256]; //this will contain the color palette
 
-    vis_fire(fft* _f)
+    vis_fire(app_wiiradio*   _theapp)
     {
-        f = _f;
+        theapp = _theapp;
+        f = theapp->fourier;
         loaded = false;
         DRAW_WIDTH = SCREEN_WIDTH / 4;
         DRAW_HEIGHT = SCREEN_HEIGHT / 4;

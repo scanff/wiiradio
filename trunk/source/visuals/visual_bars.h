@@ -8,9 +8,10 @@ class vis_bars : public visual_object
 {
     public:
 
-    vis_bars(fft* _f)
+    vis_bars(app_wiiradio*   _theapp)
     {
-        f = _f;
+        theapp = _theapp;
+        f = theapp->fourier;
         loaded = false;
         layer = 1;
 

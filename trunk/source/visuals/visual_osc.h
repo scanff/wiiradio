@@ -8,9 +8,10 @@ class vis_osc : public visual_object
     public:
 
 
-    vis_osc(fft* _f)
+    vis_osc(app_wiiradio*   _theapp)
     {
-        f = _f;
+        theapp = _theapp;
+        f = theapp->fourier;
         loaded = false;
         layer = 1;
 
