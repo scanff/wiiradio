@@ -105,11 +105,13 @@ class gui_options : public gui_dlg
 
         saver_group = new gui_group(theapp,4,220,y,41,26,20,NULL);
         saver_group->set_on(g_screensavetime);
+        saver_group->bind_screen = S_OPTIONS;
 
         y += 45;
 
         sleep_timer_group = new gui_group(theapp,6,220,y,41,26,20,&sleep_timer_callback);
         sleep_timer_group->set_on(g_sleep_timer_time);
+        sleep_timer_group->bind_screen = S_OPTIONS;
 
         y += 35;
 

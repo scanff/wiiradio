@@ -28,10 +28,11 @@ class vis_explode : public visual_object
 
     PARTICLE particles[NUMBER_OF_PARTICLES];
 
-    vis_explode(fft* _f) : fire(0)
+    vis_explode(app_wiiradio*   _theapp) : fire(0)
     {
         loaded = false;
-        f = _f;
+        theapp = _theapp;
+        f = theapp->fourier;
         DRAW_WIDTH = SCREEN_WIDTH / 4;
         DRAW_HEIGHT = SCREEN_HEIGHT / 4;
 

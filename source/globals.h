@@ -29,6 +29,7 @@ using namespace std;
     #include <unistd.h>
     #include <fcntl.h>
     #include <asndlib.h>
+    #include <malloc.h>
     #include "../libmp3player_wiiradio/mp3player_wiiradio.h"
 
     #define Sleep(x) usleep(x*1000);//1000?
@@ -90,12 +91,15 @@ using namespace std;
 #include <SDL/SDL_rotozoom.h>
 #define MAX_KEYS 300
 
+typedef void(*func_void)(void*);  // void foo(void*) function pointer
+
 // -- audio source !
 enum audio_source
 {
     AS_SHOUTCAST = 0,
     AS_ICECAST,
     AS_LOCAL,
+    AS_NULL // Between states
     //AS_SD,
    // AS_USB,
   //  AS_MAX
@@ -122,12 +126,14 @@ enum
   S_SEARCHGENRE,
   S_LOCALFILES,
   S_MAX,
+  S_VISUALS,
   S_LOG
 };
 
 enum
 {
   V_BARS = 0,
+  V_WAVES,
   V_WATER,
   V_OSC,
   V_TUNNEL,
@@ -177,7 +183,6 @@ extern int            g_FPS;
 extern int             g_nGlobalStatus;
 extern bool         g_running;
 extern enum_status  status;
-extern bool         visualize;
 extern int          visualize_number;
 extern int          volume;
 extern Uint64       g_vol_lasttime;
@@ -193,6 +198,7 @@ extern void draw_rect(SDL_Surface*,int,int,int,int,unsigned long);
 //extern void delete_playlist(int);
 extern char* make_string(char*,...);
 extern char* trim_string(char*, int);
+extern void stdstring_trim( string& str);
 //extern void next_skin();
 //extern void next_lang();
 extern void SetWidescreen();
@@ -200,6 +206,25 @@ extern void SetWidescreen();
 extern int GetScreenStatus();
 extern void SetScreenStatus(int);
 extern void SetLastScreenStatus();
+
+#ifdef _WII_
+
+extern "C" {
+    extern void WII_SetWidescreen(int wide);
+    // other SDL secrets
+    extern void WII_VideoStart();
+    extern void WII_VideoStop();
+    extern unsigned int *xfb[2]; // Double buffered
+    extern int whichfb; // Switch
+
+}
+#endif
+
+enum _VideoMode{
+    VIDM_GX = 0,
+    VIDM_SDL
+};
+extern void switch_sdl_video_mode(const _VideoMode mode);
 
 #define K_UP_1      SDLK_UP
 #define K_DOWN_1    SDLK_DOWN
@@ -216,11 +241,16 @@ extern void SetLastScreenStatus();
 
 #define SCREEN_WIDTH    (640)
 #define SCREEN_HEIGHT   (480)
+#define SCREEN_HEIGHT_D2    (SCREEN_HEIGHT/2)
+#define SCREEN_WIDTH_D2     (SCREEN_WIDTH/2)
 #define SCREEN_WIDTH_BUFFER  (30)
 #define SCREEN_HEIGHT_BUFFER (30)
 #define FONT_SIZE       (40)
 #define VERSION_NUMBER  (0.6)
 #define BITDEPTH        (24)
+#define MAX_TAG_SIZE    (30)
+#define APIC_SIZE       (200)
+#define APIC_SIZE_D2    (APIC_SIZE/2)
 
 #define TIME_OUT_MS     (8000) // eight second timeout
 #define SC_DOWN         ("503 Service Temporarily Unavailable")
@@ -242,6 +272,20 @@ extern void SetLastScreenStatus();
 #define bloopj(m) bloop(j,m)
 #define CLIP(mx,x)  x>mx ? (mx) : x < 0 ? (0) : (x);
 #define MAX_Z_ORDERS (3)
+
+
+// SDL BYTE ORDER
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+    #define rmask  0x00ff0000
+    #define gmask  0x0000ff00
+    #define bmask  0x000000ff
+    #define amask  0x00000000
+#else
+    #define rmask  0x00ff0000
+    #define gmask  0x0000ff00
+    #define bmask  0x000000ff
+    #define amask  0x00000000
+#endif
 
 extern int max_listings;
 

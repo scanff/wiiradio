@@ -14,9 +14,10 @@ class vis_lasers : public visual_object
     int step[MAX_LASERS];
     int dir[MAX_LASERS];
 
-    vis_lasers(fft* _f)
+    vis_lasers(app_wiiradio*   _theapp)
     {
-        f = _f;
+        theapp = _theapp;
+        f = theapp->fourier;
         loaded = false;
         layer = 1;
 

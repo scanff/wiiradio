@@ -37,7 +37,7 @@ class vis_water : public visual_object
 
     public:
 
-    vis_water(fft* _f) :
+    vis_water(app_wiiradio*   _theapp) :
         watertexture(0),
         drip_radius(12),
         drip_radius_sqr(drip_radius*drip_radius),
@@ -45,7 +45,8 @@ class vis_water : public visual_object
         water_read_buf(0),
         water_write_buf(0)
     {
-        f = _f;
+        theapp = _theapp;
+        f = theapp->fourier;
         loaded = false;
         layer = 0;
 

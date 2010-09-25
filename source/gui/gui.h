@@ -5,6 +5,7 @@
 
 class gui {
 
+    typedef void(*func_gui_void)(void*);
 
     // -- everyone knows who gui is :)
     #include "gui_dlg.h"
@@ -116,6 +117,9 @@ class gui {
 
     string          skin_path;
 
+    unsigned long   visual_show_title;
+    char            visual_last_track_title[SMALL_MEM];
+
     gui(app_wiiradio* _theapp, char* dir) :
         buttons_listing(0), buttons_genre(0),
         buttons_playlists(0), buttons_delete(0), genre_selected(0),
@@ -137,25 +141,11 @@ class gui {
 
         text_areas.clear();
 
-        unsigned long rmask, gmask, bmask, amask, color, color2;
+        unsigned long color, color2;
 
         visbuffer = 0;
         vis_rect.x = vis_rect.y = vis_rect.w = vis_rect.h = 0;
         vis_bgcolor = 0;
-//for 24bit
-
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-        rmask = 0x00ff0000;
-        gmask = 0x0000ff00;
-        bmask = 0x000000ff;
-        amask = 0x00000000;
-#else
-        rmask = 0x00ff0000;
-        gmask = 0x0000ff00;
-        bmask = 0x000000ff;
-        amask = 0x00000000;
-#endif
-
 
         guibuffer = SDL_CreateRGBSurface(SDL_SWSURFACE,SCREEN_WIDTH,SCREEN_HEIGHT,BITDEPTH,
                                           rmask, gmask, bmask,amask);
@@ -314,6 +304,8 @@ class gui {
             buttons_listing[i]->pad_x = sk->get_value_int("listing_pad_text_x");
             buttons_listing[i]->text_color = sk->get_value_color("listing_font_color");
             buttons_listing[i]->text_color_over = sk->get_value_color("listing_font_color_over");
+            buttons_listing[i]->click_func = click_item;
+            buttons_listing[i]->object_id = i;
 
             //favs
             buttons_playlists[i] = new gui_button(theapp,x_offset,y_offset+i*height,NULL,color,true);
@@ -327,6 +319,8 @@ class gui {
             buttons_playlists[i]->pad_x = sk->get_value_int("listing_pad_text_x");
             buttons_playlists[i]->text_color = sk->get_value_color("listing_font_color");
             buttons_playlists[i]->text_color_over = sk->get_value_color("listing_font_color_over");
+            buttons_playlists[i]->click_func = click_item;
+            buttons_playlists[i]->object_id = i;
 
             //genres
             buttons_genre[i] = new gui_button(theapp,x_offset,y_offset+i*height,NULL,color,false);
@@ -338,6 +332,8 @@ class gui {
             buttons_genre[i]->pad_x = sk->get_value_int("listing_pad_text_x");
             buttons_genre[i]->text_color = sk->get_value_color("listing_font_color");
             buttons_genre[i]->text_color_over = sk->get_value_color("listing_font_color_over");
+            buttons_genre[i]->click_func = click_item;
+            buttons_genre[i]->object_id = i;
 
             //delete buttons
             x_offset = sk->get_value_int("delete_start_x");
@@ -350,6 +346,9 @@ class gui {
             buttons_delete[i]->set_images(s_value1,s_value2,0,0);
             buttons_delete[i]->z_order = 1;
             buttons_delete[i]->bind_screen = S_PLAYLISTS;
+            buttons_delete[i]->click_func = click_delete_item;
+            buttons_delete[i]->object_id = i;
+
 
             height = buttons_listing[i]->s_h + sk->get_value_int("listing_pad_y");
 
@@ -361,15 +360,25 @@ class gui {
             All the skinable buttons
         */
 
-        const char* btn_descripts[] = {   "next","back","pls","genres","playing","logo","add","stop",
-                                    "exit","browser","showvisuals","search","nextskin","localbrowser","dirup"
-                                };
+        const char* btn_descripts[] =
+        {
+            "next","back","pls","genres","playing","logo","add","stop",
+            "exit","browser","showvisuals","search","nextskin","localbrowser","dirup"
+        };
+
+        func_void btn_onclick[] =
+        {
+            click_next,click_back,click_playlists,
+            click_genres,click_playing,click_logo,click_add,
+            click_stop,click_exit, click_browser, click_showvisuals,
+            click_search, click_nextskin, click_localbrowser,
+            click_dirup
+        };
 
         loopi(BTN_MAX)
         {
-             buttons[i] = new_button(btn_descripts[i]);
+             buttons[i] = new_button(btn_descripts[i],btn_onclick[i]);
         }
-
 
         // -- general text items
         loopi(TXT_MAX)
@@ -485,7 +494,7 @@ class gui {
         return textarea;
     }
 
-    gui_button* new_button(const char* name)
+    gui_button* new_button(const char* name,func_void onclick)
     {
         char item[SMALL_MEM];
         char s_value1[SMALL_MEM];
@@ -544,10 +553,292 @@ class gui {
 
             sprintf(item,"%s_nocentertext",name);
             thebutton->center_text = !sk->get_value_int(item);
+
+            // callbacks
+            thebutton->click_func = onclick;
         }
 
         return thebutton;
     };
+
+    /* ----------------------
+       Button Click Functions
+       ---------------------- */
+
+    static void click_next(void* arg)
+    {
+        const gui_object* obj = (gui_object*)arg;
+        gui* g = (gui*)(obj->theapp->ui);
+
+        char* gc;
+
+        switch(GetScreenStatus())
+        {
+            case S_BROWSER:
+                gc = g->gl.get_genre(g->genre_selected);
+                genre_nex_prev(true,gc);
+            break;
+
+            case S_GENRES:
+                if (genre_display + max_listings  >= g->gl.total)
+                    return;
+
+                genre_display += max_listings;
+
+            break;
+
+            case S_PLAYLISTS:
+                if (pls_display + max_listings  >= total_num_playlists)
+                    return;
+
+                pls_display += max_listings;
+
+
+            break;
+
+            case S_LOCALFILES:
+                if (g->theapp->localfs->current_position + max_listings  >= g->theapp->localfs->total_num_files)
+                    return;
+
+                g->theapp->localfs->current_position += max_listings;
+
+            break;
+
+            default:
+            break;
+        }
+
+        g->reset_scrollings();
+    }
+
+    static void click_back(void* arg)
+    {
+        const gui_object* obj = (gui_object*)arg;
+        gui* g = (gui*)(obj->theapp->ui);
+
+        char*   gc;
+
+        switch(GetScreenStatus())
+        {
+        case S_BROWSER:
+            gc = g->gl.get_genre(g->genre_selected);
+            if (display_idx>1) genre_nex_prev(false,gc);
+            //if (display_idx>1) genre_nex_prev(false,(char*)genres[genre_selected]);
+        break;
+
+        case S_PLAYLISTS:
+            pls_display -= max_listings;
+            if (pls_display < 0) {
+                pls_display = 0;
+            }
+
+        break;
+
+         case S_GENRES:
+            genre_display -= max_listings;
+            if (genre_display < 0)
+                genre_display = 0;
+
+         break;
+
+         case S_LOCALFILES:
+            g->theapp->localfs->current_position -= max_listings;
+            if (g->theapp->localfs->current_position < 0)
+                g->theapp->localfs->current_position = 0;
+
+         break;
+
+
+         default:
+         break;
+
+
+        }
+        g->reset_scrollings();
+    }
+
+    static void click_add(void* arg)
+    {
+        const gui_object* obj = (gui_object*)arg;
+        gui* g = (gui*)(obj->theapp->ui);
+
+        if (status == PLAYING)
+            g->theapp->request_save_fav(); // save the pls
+    }
+
+    static void click_stop(void* arg)
+    {
+        status = STOPPED;
+    }
+    static void click_exit(void* arg)
+    {
+        g_running = false;
+    }
+
+    static void click_browser(void* arg)
+    {
+        SetScreenStatus(S_BROWSER);
+    }
+
+    static void click_search(void* arg)
+    {
+        SetScreenStatus(S_SEARCHGENRE);
+    }
+
+    static void click_nextskin(void* arg)
+    {
+        const gui_object* obj = (gui_object*)arg;
+        gui* g = (gui*)(obj->theapp->ui);
+
+        g->theapp->next_skin();
+    }
+
+    static void click_localbrowser(void* arg)
+    {
+        const gui_object* obj = (gui_object*)arg;
+        gui* g = (gui*)(obj->theapp->ui);
+
+        g->theapp->localfs->directory_list(0); // Run search
+        SetScreenStatus(S_LOCALFILES);
+    }
+
+    static void click_dirup(void* arg)
+    {
+        const gui_object* obj = (gui_object*)arg;
+        gui* g = (gui*)(obj->theapp->ui);
+
+        g->theapp->localfs->dirup();
+    }
+
+    static void click_showvisuals(void* arg)
+    {
+        SetScreenStatus(S_VISUALS);
+    }
+
+    static void click_logo(void* arg)
+    {
+#ifdef LOG_ENABLED
+        SetScreenStatus(S_LOG);
+#else
+        SetScreenStatus(S_OPTIONS);
+#endif
+    }
+
+    static void click_playing(void* arg)
+    {
+        const gui_object* obj = (gui_object*)arg;
+        gui* g = (gui*)(obj->theapp->ui);
+
+        g->buttons[BTN_PLAYING]->scroll_reset();
+    }
+
+    static void click_genres(void* arg)
+    {
+        const gui_object* obj = (gui_object*)arg;
+        gui* g = (gui*)(obj->theapp->ui);
+
+        SetScreenStatus(S_GENRES);
+        g->reset_scrollings();
+    }
+
+    static void click_playlists(void* arg)
+    {
+        const gui_object* obj = (gui_object*)arg;
+        gui* g = (gui*)(obj->theapp->ui);
+
+        SetScreenStatus(S_PLAYLISTS);
+        g->reset_scrollings();
+    }
+
+    static void click_item(void* arg)
+    {
+        const gui_object* obj = (gui_object*)arg;
+        gui* g = (gui*)(obj->theapp->ui);
+
+        localfiles* lf = g->theapp->localfs;
+        int i = obj->object_id;
+        int connect;
+        char* gc = 0;
+
+        switch(GetScreenStatus())
+        {
+
+            case S_BROWSER:
+                g->theapp->connect_to_stream(i,I_STATION);
+            break;
+
+            case S_LOCALFILES:
+
+                connect = i + lf->current_position;
+                if (connect >= lf->total_num_files || connect < 0)
+                    return;
+
+                if (lf->list[connect].isfolder)
+                {
+                    lf->directory_list(lf->list[connect].path.c_str());
+                }
+                else
+                {
+                    g->theapp->connect_to_stream(connect,I_LOCAL);
+                }
+
+            break;
+
+            case S_PLAYLISTS:
+
+                connect = i + pls_display;
+                if (connect>= total_num_playlists || connect < 0)
+                    return;
+
+                g->theapp->connect_to_stream(connect,I_PLAYLIST);
+
+            break;
+
+            case S_GENRES:
+
+                g->genre_selected = i;
+                g->genre_selected += genre_display;
+
+                if (g->genre_selected >= g->gl.total || g->genre_selected < 0)
+                    return;
+
+                gc = g->gl.get_genre(g->genre_selected);
+                if (!gc) return;
+
+                g->theapp->search_function(gc,SEARCH_GENRE); // do the search .. switch to browser
+            break;
+
+        }//switch
+
+        g->reset_scrollings();
+
+    }
+
+
+    static void click_delete_item(void* arg)
+    {
+        const gui_object* obj = (gui_object*)arg;
+        gui* g = (gui*)(obj->theapp->ui);
+
+        int i = obj->object_id;
+        int delete_item = -1;
+
+        switch(GetScreenStatus())
+        {
+            case S_PLAYLISTS:
+
+                delete_item = i + pls_display;
+                if (delete_item >= total_num_playlists)
+                    return;
+
+                g->theapp->delete_playlist(delete_item);
+
+            break;
+
+        }
+
+        g->reset_scrollings();
+    }
 
     void reset_scrollings()
     {
@@ -571,21 +862,28 @@ class gui {
 
     int handle_events(SDL_Event* events)
     {
+        if ((events->type != SDL_MOUSEMOTION &&
+            events->type != SDL_MOUSEBUTTONDOWN &&
+            events->type != SDL_MOUSEBUTTONUP) ||
+            (GetScreenStatus()==S_VISUALS))
+            return -1;
+
+
+
         handle_options();
 
-        if (visualize) return 0;
-
-        loopi(BTN_MAX) {
-            if(buttons[i]) buttons[i]->obj_state = B_OUT; //reset
-        }
-        loopi(max_listings)
+        // -- cancel buffering
+        if (status == BUFFERING || status == CONNECTING)
         {
-            buttons_delete[i]->obj_state = B_OUT; //reset
-            buttons_genre[i]->obj_state = B_OUT; //reset
-            buttons_playlists[i]->obj_state = B_OUT; //reset
-            buttons_listing[i]->obj_state = B_OUT; //reset
+            if(guis[GUI_INFO]->cancel->hit_test(events,1)==B_CLICK)
+            {
+                status = STOPPED;
+            }
 
+            return 0;
         }
+
+
         // reset the "Canceled" state
         guis[GUI_INFO]->cancel->obj_state = B_OUT;
 
@@ -609,314 +907,48 @@ class gui {
 
         }
 
-
-        // -- cancel buffering
-        if (status == BUFFERING || status == CONNECTING)
-        {
-            if(guis[GUI_INFO]->cancel->hit_test(events,1)==B_CLICK)
-            {
-                status = STOPPED;
-            }
-
-            return 0;
-        }
-
-
-        //loop through z-order
-        int obj_state = 0;
         bloopj(MAX_Z_ORDERS)
         {
-
-            //logo
-
-#ifdef LOG_ENABLED
-            if (buttons[BTN_LOGO]->hit_test(events,j)==B_CLICK) SetScreenStatus(S_LOG);
-#else
-            if (buttons[BTN_LOGO]->hit_test(events,j)==B_CLICK) SetScreenStatus(S_OPTIONS);
-#endif
-
-            //playing area
-             if(buttons[BTN_PLAYING]->hit_test(events,j)==B_CLICK) {
-                buttons[BTN_PLAYING]->scroll_reset();
-                return 0;
-             }
-            // genre select
-            if( buttons[BTN_GENRES_SELECT]->hit_test(events,j)==B_CLICK) {
-                SetScreenStatus(S_GENRES);
-                reset_scrollings();
-                return 0;
+            loopi(BTN_MAX)
+            {
+                if (buttons[i]) // could be optional button
+                {
+                    if (buttons[i]->hit_test(events,j))
+                        return 0;
+                }
             }
-            // playlist select
-            if(buttons[BTN_PLAYLISTS]->hit_test(events,j)==B_CLICK) {
-                SetScreenStatus(S_PLAYLISTS);
-                reset_scrollings();
-                return 0;
-            }
-
-            // screen buttons
-            localfiles* lf = theapp->localfs;
 
             loopi(max_listings)
             {
                 switch(GetScreenStatus())
                 {
-                case S_BROWSER:
-
-                    if ((obj_state = buttons_listing[i]->hit_test(events,j)))
+                    case S_BROWSER:
                     {
-                        if (obj_state == B_CLICK)
-                        {
-                            reset_scrollings();
-                            theapp->connect_to_stream(i,I_STATION);
-                        }
-
-                        return 0;
+                        if(buttons_listing[i]->hit_test(events,j))
+                            return 0;
                     }
-                break;
+                    break;
 
-                case S_LOCALFILES:
-
-                    // dir up select
-                    if(buttons[BTN_DIRUP]->hit_test(events,j)==B_CLICK)
+                    case S_GENRES:
                     {
-                        lf->dirup();
-                        return 0;
+                        if(buttons_genre[i]->hit_test(events,j))
+                            return 0;
                     }
+                    break;
 
-                    if ((obj_state = buttons_playlists[i]->hit_test(events,j)))
+                    case S_LOCALFILES:
+                    case S_PLAYLISTS:
                     {
-                        if (obj_state == B_CLICK)
-                        {
-                            int connect = i + lf->current_position;
-                            if (connect>= lf->total_num_files || connect < 0)
-                                return 0;
-
-                            if (lf->list[connect].isfolder)
-                            {
-                                lf->directory_list(lf->list[connect].path.c_str());
-                            }
-                            else
-                            {
-                                theapp->connect_to_stream(connect,I_LOCAL);
-                            }
-
-                            reset_scrollings();
-                        }
-
-                        return 0;
-                    }
-                break;
-
-                case S_PLAYLISTS:
-
-                    if ((obj_state = buttons_delete[i]->hit_test(events,j)))
-                    {
-                        if (obj_state == B_CLICK)
-                        {
-                            int list = i + pls_display;
-                            if (list >= total_num_playlists)
-                                return 0;
-
-                            theapp->delete_playlist(list);
-                            reset_scrollings();
-                        }
-                        return 0;
-                    }
-
-                    if ((obj_state = buttons_playlists[i]->hit_test(events,j)))
-                    {
-                        if (obj_state == B_CLICK)
-                        {
-                            int connect = i + pls_display;
-                            if (connect>= total_num_playlists || connect < 0)
-                                return 0;
-
-                            theapp->connect_to_stream(connect,I_PLAYLIST);
-                            reset_scrollings();
-                        }
-
-                        return 0;
-                    }
-                break;
-
-                case S_GENRES:
-
-                    if (buttons_genre[i]->hit_test(events,j)==B_CLICK) {
-                        genre_selected = i;
-                        genre_selected += genre_display;
-
-                        if (genre_selected >= gl.total || genre_selected < 0)
+                        if(buttons_playlists[i]->hit_test(events,j))
                             return 0;
 
-                        char* g = gl.get_genre(genre_selected);
-                        if (!g) return 0;
-
-
-                        theapp->search_function(g,SEARCH_GENRE); // do the search .. switch to browser
-                        reset_scrollings();
-                        return 0;
+                        if(buttons_delete[i]->hit_test(events,j))
+                            return 0;
                     }
-                break;
-
-                }//switch
-
-            }
-
-            if (buttons[BTN_ADD]) // -- optional button
-            {
-                if (buttons[BTN_ADD]->hit_test(events,j)==B_CLICK) {
-                    if (status == PLAYING)
-                        theapp->request_save_fav(); // save the pls
-
-                    return 0;
-                }
-            }
-            if (buttons[BTN_STOP]) // -- optional button
-            {
-                if (buttons[BTN_STOP]->hit_test(events,j)==B_CLICK)
-                {
-                    status = STOPPED;
-                    return 0;
+                    break;
                 }
             }
 
-            if (buttons[BTN_EXIT]) // -- optional button
-            {
-                if (buttons[BTN_EXIT]->hit_test(events,j)==B_CLICK)
-                {
-                    g_running = false;
-                    return 0;
-                }
-            }
-
-            if (buttons[BTN_BROWSER]) // -- optional button
-            {
-                if (buttons[BTN_BROWSER]->hit_test(events,j)==B_CLICK)
-                {
-                    SetScreenStatus(S_BROWSER);
-                    return 0;
-                }
-            }
-
-            if (buttons[BTN_VISUALS]) // -- optional button
-            {
-                if (buttons[BTN_VISUALS]->hit_test(events,j)==B_CLICK)
-                {
-                    visualize = !visualize;
-                    return 0;
-                }
-            }
-
-            if (buttons[BTN_SEARCH]) // -- optional button
-            {
-                if (buttons[BTN_SEARCH]->hit_test(events,j)==B_CLICK)
-                {
-                    SetScreenStatus(S_SEARCHGENRE);
-                    return 0;
-                }
-            }
-
-            if (buttons[BTN_NX_SKIN]) // -- optional button
-            {
-                if (buttons[BTN_NX_SKIN]->hit_test(events,j)==B_CLICK)
-                {
-                    theapp->next_skin();
-                    return 0;
-                }
-            }
-
-            if(buttons[BTN_LOCAL_BROWSER]) // -- optional local browser button
-            {
-                if (buttons[BTN_LOCAL_BROWSER]->hit_test(events,j)==B_CLICK)
-                {
-                    // Run search
-                    theapp->localfs->directory_list(0);
-                    SetScreenStatus(S_LOCALFILES);
-                    return 0;
-                }
-            }
-
-             if (buttons[BTN_NEXT]->hit_test(events,j)==B_CLICK)
-             {
-                    char* g;
-                    switch(GetScreenStatus())
-                    {
-                        case S_BROWSER:
-                            g = gl.get_genre(genre_selected);
-                            genre_nex_prev(true,g);//(char*)genres[genre_selected]);
-                        break;
-
-                        case S_GENRES:
-                            if (genre_display + max_listings  >= gl.total) return 0;
-                                genre_display += max_listings;
-
-                        break;
-
-                        case S_PLAYLISTS:
-                            if (pls_display + max_listings  >= total_num_playlists) return 0;
-
-                            pls_display += max_listings;
-
-
-                        break;
-
-                        case S_LOCALFILES:
-                            if (theapp->localfs->current_position + max_listings  >= theapp->localfs->total_num_files) return 0;
-
-                            theapp->localfs->current_position += max_listings;
-                            reset_scrollings();
-
-                        break;
-
-                        default:
-                        break;
-                }
-                    reset_scrollings();
-                    return 0;
-             }
-
-            if(buttons[BTN_PRIOR]->hit_test(events,j)==B_CLICK)
-            {
-				char* g;
-                switch(GetScreenStatus())
-                {
-                case S_BROWSER:
-                    g = gl.get_genre(genre_selected);
-                    if (display_idx>1) genre_nex_prev(false,g);
-                    //if (display_idx>1) genre_nex_prev(false,(char*)genres[genre_selected]);
-                break;
-
-                case S_PLAYLISTS:
-                    pls_display -= max_listings;
-                    if (pls_display < 0) {
-                        pls_display = 0;
-                    }
-
-                break;
-
-                 case S_GENRES:
-                    genre_display -= max_listings;
-                    if (genre_display < 0)
-                        genre_display = 0;
-
-                 break;
-
-                 case S_LOCALFILES:
-                    theapp->localfs->current_position -= max_listings;
-                    if (theapp->localfs->current_position < 0)
-                        theapp->localfs->current_position = 0;
-
-                 break;
-
-
-                 default:
-                 break;
-
-
-                }
-                reset_scrollings();
-				return 0;
-            }
         } //z-order loop
 
 
@@ -925,13 +957,13 @@ class gui {
     };
 
 
-    void inline draw_folder(int x, int y)
+    void inline draw_folder(const int x, const int y)
     {
         SDL_Rect dr = {x,y,folder_img->w,folder_img->h};
         SDL_BlitSurface(folder_img,0,guibuffer,&dr);
     };
 
-    void inline draw_file(int x, int y)
+    void inline draw_file(const int x, const int y)
     {
         SDL_Rect dr = {x,y,file_img->w,file_img->h};
         SDL_BlitSurface(file_img,0,guibuffer,&dr);
@@ -969,9 +1001,8 @@ class gui {
 
     }
 
-    void inline draw_favs(favorites *favs)
+    void inline draw_favs(const favorites *favs)
     {
-
         unsigned int i = 0;
         unsigned int p = 0;
 
@@ -989,23 +1020,19 @@ class gui {
         }
     }
 
-    unsigned long visual_show_title;
-    char visual_last_track_title[SMALL_MEM];
-
-    void draw()//station_list* current_list, icy* ic, favorites* favs, localfiles* localfs)
+    void draw()
     {
         station_list* current_list  = theapp->scb->sl_first;
         icy* ic                     = theapp->icy_info;
         favorites* favs             = theapp->favs;
-       // localfiles* localfs         = theapp->localfs;
+        local_player* lpb           = theapp->localpb;
 
         gui_current_time = SDL_GetTicks();
 
         draw_rect(guibuffer,0,0,SCREEN_WIDTH,SCREEN_HEIGHT,0); // clear the buffer
 
-        if (visualize)
+        if (GetScreenStatus() == S_VISUALS)
         {
-            // TO DO ... add more
             black_screen_saver();
             if (visualize_number < MAX_VISUALS) {
                 if(playback_type == AS_LOCAL)
@@ -1053,7 +1080,8 @@ class gui {
                 if (status != STOPPED && status != FAILED)
                 {
                     buttons[BTN_PLAYING]->auto_scroll_text = true;
-                    buttons[BTN_PLAYING]->set_text(ic->track_title);
+                    if (playback_type == AS_LOCAL) buttons[BTN_PLAYING]->set_text(lpb->display_name.c_str());
+                    else buttons[BTN_PLAYING]->set_text(ic->track_title);
                 }else{
                     buttons[BTN_PLAYING]->auto_scroll_text = true;
                     char s_status[TINY_MEM] = {0};
@@ -1137,7 +1165,21 @@ class gui {
                     break;
 
                     case S_STREAM_INFO:
-                        draw_stream_details(ic);
+                        switch(playback_type)
+                        {
+                            case AS_LOCAL:
+                                draw_mp3_details();
+                            break;
+                            case AS_SHOUTCAST:
+                            case AS_ICECAST:
+                                draw_stream_details();
+                            break;
+                            default:
+                                draw_stream_details();
+                            break;
+                        }
+
+
                     break;
 
 
@@ -1173,7 +1215,7 @@ class gui {
 
 
 
-        if (!visualize)
+        if (GetScreenStatus() != S_VISUALS)
         {
             // always inform user if buffering
             if (status == BUFFERING) draw_info(vars.search_var("$LANG_TXT_BUFFERING"));
@@ -1221,16 +1263,20 @@ class gui {
         return guis[GUI_LOG]->text;
     };
 
-    void inline draw_stream_details(icy* ic)
+    void inline draw_stream_details()
     {
-        fnts->change_color((dialog_text_color >> 16), ((dialog_text_color >> 8) & 0xff),(dialog_text_color & 0xff));
+        icy*                    ic = theapp->icy_info;
+        const unsigned long     text_color = 0;
+        char*                   lang = 0;
+
+        fnts->change_color((text_color >> 16), ((text_color >> 8) & 0xff),(text_color & 0xff));
         fnts->set_size(FS_SMALL);
-        fade(guibuffer,SDL_MapRGB(guibuffer->format,0,0,0),100);
 
-        SDL_Rect t = {(SCREEN_WIDTH / 2) - (dialog->w / 2),(SCREEN_HEIGHT / 2) - (dialog->h / 2),dialog->w,dialog->h};
+        SDL_Rect t = {220,SCREEN_HEIGHT_D2 - (dialog->h / 2),0,0};
 
-        SDL_BlitSurface(dialog,0, guibuffer,&t);
-        char* lang = vars.search_var("$LANG_TXT_STATION");
+        SDL_FillRect(guibuffer, 0, 0xE6E6E6FF); // bgcolor
+
+        lang = vars.search_var("$LANG_TXT_STATION");
         if (lang) fnts->text(guibuffer,make_string((char*)"%s: %s", lang,trim_string(ic->icy_name,50)),t.x + 35,t.y + 38,0);
         lang = vars.search_var("$LANG_TXT_URL");
         if (lang) fnts->text(guibuffer,make_string((char*)"%s: %s",lang,trim_string(ic->icy_url,50)),t.x + 35,t.y + 58,0);
@@ -1241,6 +1287,42 @@ class gui {
 
     };
 
+    void inline draw_mp3_details()
+    {
+        local_player*           lp = theapp->localpb;
+        const unsigned long     text_color = 0;
+        char*                   lang = 0;
+        SDL_Surface*            APIC_Surface = 0;
+        SDL_Rect                APIC_dst = {20,(SCREEN_HEIGHT_D2 - APIC_SIZE_D2),APIC_SIZE,APIC_SIZE};
+        const int               text_x = APIC_dst.w + APIC_dst.x + 20;
+        const int               text_y = APIC_dst.y + 15;
+
+        SDL_FillRect(guibuffer, 0, 0xE6E6E6FF); // bgcolor
+
+        fnts->change_color((text_color >> 16), ((text_color >> 8) & 0xff),(text_color & 0xff));
+
+        rectangleColor(guibuffer,APIC_dst.x-2,APIC_dst.y-2, APIC_dst.x+APIC_dst.w+2,APIC_dst.y+APIC_dst.h+2,0x0f0f0fff); // outline for picture
+
+        // TODO -- Add langs
+        fnts->set_size(FS_SYSTEM);
+        lang = vars.search_var("$LANG_TXT_TITLE");
+        if (lang) fnts->text(guibuffer,make_string((char*)"%s: %s",lang,lp->display_name.c_str()),20,100,0);
+
+        fnts->text(guibuffer,lp->artist.c_str(),text_x,text_y,0);
+        fnts->text(guibuffer,lp->title.c_str(),text_x,text_y+20,0);
+        fnts->text(guibuffer,lp->album.c_str(),text_x,text_y+40,0);
+        fnts->text(guibuffer,lp->year.c_str(),text_x,text_y+60,0);
+        fnts->text(guibuffer,lp->genre.c_str(),text_x,text_y+80,0);
+        fnts->text(guibuffer,lp->comments.c_str(),text_x,text_y+100,0);
+
+        APIC_Surface = theapp->localpb->APIC_Surface;
+
+        if (APIC_Surface)
+        {
+            SDL_BlitSurface(APIC_Surface,0, guibuffer,&APIC_dst);
+        }
+
+    };
     void inline draw_recording()
     {
         if (g_oripmusic && !theapp->screen_sleeping && ( status==PLAYING || status== BUFFERING ))

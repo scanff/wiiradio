@@ -2,7 +2,7 @@
 #define _GUI_TOGGLE_H_
 
 
-//simple button class
+//simple toggle button class
 class gui_toggle : public gui_object{
     public:
 
@@ -30,11 +30,12 @@ class gui_toggle : public gui_object{
     {
         gui_object::draw();
 
-        if (text_l1) {
+        if (*text_l1)
+        {
             fnts->set_size(font_sz);
 
             if (center_text) {
-                int text_len = fnts->get_length_px(text_l1,font_sz);
+                const int text_len = fnts->get_length_px(text_l1,font_sz);
                 int cx = 0;
                 text_len > 0 ? cx = (int)((s_w-(text_len))/2): cx = 1;
                 fnts->text(guibuffer,text_l1,cx+s_x,s_y+pad_y,limit_text);

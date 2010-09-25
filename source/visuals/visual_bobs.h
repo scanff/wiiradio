@@ -17,9 +17,10 @@ class vis_bobs : public visual_object
     Uint32  i, j, k, l, m;
     SDL_Surface* eye_surface;
 
-    vis_bobs(fft* _f) : eye_surface(0)
+    vis_bobs(app_wiiradio*   _theapp) : eye_surface(0)
     {
-        f = _f;
+        theapp = _theapp;
+        f = theapp->fourier;
         loaded = false;
         layer = 0;
 

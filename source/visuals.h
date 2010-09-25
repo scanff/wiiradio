@@ -80,7 +80,7 @@ static void bresenham_line(SDL_Surface* s, int x1, int y1, int x2, int y2,unsign
 };
 
 
-static unsigned int hsl_rgba(int ia, int ib, int ic)
+unsigned int inline hsl_rgba(int ia, int ib, int ic)
 {
     float r, g, b, h, s, l;
     float temp1, temp2, tempr, tempg, tempb;
@@ -158,7 +158,7 @@ static int lmin(int a, int b)
 #include "visuals/visual_raycaster.h"
 #include "visuals/visual_matrix.h"
 #include "visuals/visual_stars.h"
-
+#include "visuals/visual_waves.h"
 #include "visuals/visual_object.h"
 
 class visualizer
@@ -176,7 +176,7 @@ class visualizer
 
     app_wiiradio*   theapp;
 
-    visualizer(app_wiiradio* _theapp) : mode(1),theapp(_theapp)
+    visualizer(app_wiiradio* _theapp) : mode(1), theapp(_theapp)
     {
         r1 = r2 = vt = 0;
         loopi(MAX_FFT_RES)
@@ -186,42 +186,30 @@ class visualizer
 
         loopi(MAX_VISUALS) visuals_ptr[i] = 0;
 
-        // surface for visuals
-        unsigned long rmask, gmask, bmask, amask;
 
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-        rmask = 0x00ff0000;
-        gmask = 0x0000ff00;
-        bmask = 0x000000ff;
-        amask = 0x00000000;
-#else
-        rmask = 0x00ff0000;
-        gmask = 0x0000ff00;
-        bmask = 0x000000ff;
-        amask = 0x00000000;
-#endif
 
         vis_surface = SDL_CreateRGBSurface(SDL_SWSURFACE,SCREEN_WIDTH,SCREEN_HEIGHT,BITDEPTH,
                                           rmask, gmask, bmask,amask);
 
 
         // create all visuals
-        visuals_ptr[V_BARS]     = new vis_bars(theapp->fourier);
-        visuals_ptr[V_OSC]      = new vis_osc(theapp->fourier);
-        visuals_ptr[V_TUNNEL]   = new vis_tunnel(theapp->fourier);
-        visuals_ptr[V_FIRE]     = new vis_fire(theapp->fourier);
-        visuals_ptr[V_MIST]     = new vis_mist(theapp->fourier);
-        visuals_ptr[V_CIRCLES]  = new vis_circles(theapp->fourier);
-        visuals_ptr[V_PLASMA]   = new vis_plasma(theapp->fourier);
+        visuals_ptr[V_BARS]     = new vis_bars(theapp);
+        visuals_ptr[V_OSC]      = new vis_osc(theapp);
+        visuals_ptr[V_TUNNEL]   = new vis_tunnel(theapp);
+        visuals_ptr[V_FIRE]     = new vis_fire(theapp);
+        visuals_ptr[V_MIST]     = new vis_mist(theapp);
+        visuals_ptr[V_CIRCLES]  = new vis_circles(theapp);
+        visuals_ptr[V_PLASMA]   = new vis_plasma(theapp);
         visuals_ptr[V_SINTEXT]  = new vis_sintext(theapp);
-        visuals_ptr[V_ROTZOOM]  = new vis_rotzoom(theapp->fourier);
-        visuals_ptr[V_BOBS]     = new vis_bobs(theapp->fourier);
-        visuals_ptr[V_LASERS]   = new vis_lasers(theapp->fourier);
-        visuals_ptr[V_RAYCASTER]= new vis_raycaster(theapp->fourier);
+        visuals_ptr[V_ROTZOOM]  = new vis_rotzoom(theapp);
+        visuals_ptr[V_BOBS]     = new vis_bobs(theapp);
+        visuals_ptr[V_LASERS]   = new vis_lasers(theapp);
+        visuals_ptr[V_RAYCASTER]= new vis_raycaster(theapp);
         visuals_ptr[V_MATRIX]   = new vis_matrix(theapp);
-        visuals_ptr[V_STARS]    = new vis_stars(theapp->fourier);
-        visuals_ptr[V_WATER]    = new vis_water(theapp->fourier);
-        visuals_ptr[V_EXPLODE]  = new vis_explode(theapp->fourier);
+        visuals_ptr[V_STARS]    = new vis_stars(theapp);
+        visuals_ptr[V_WATER]    = new vis_water(theapp);
+        visuals_ptr[V_EXPLODE]  = new vis_explode(theapp);
+        visuals_ptr[V_WAVES]    = new vis_waves(theapp);
 
 
         srand ( get_tick_count() );
@@ -303,6 +291,7 @@ class visualizer
         }
 
     };
+
 
 };
 

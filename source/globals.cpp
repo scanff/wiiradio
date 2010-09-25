@@ -55,7 +55,19 @@ char* make_path(const char* path_rel)
 #endif
 
 }
-char* trim_string(char*, int);
+
+
+void stdstring_trim( string& str)
+{
+    size_t startpos = str.find_first_not_of(" \t");
+    size_t endpos = str.find_last_not_of(" \t");
+
+    if(( string::npos == startpos ) || ( string::npos == endpos))
+        str = "";
+    else
+        str = str.substr( startpos, endpos-startpos+1 );
+}
+
 char* trim_string(char* s, int n_len)
 {
     int c_len = strlen(s);
@@ -97,10 +109,33 @@ void draw_rect(SDL_Surface* s,int x,int y, int w, int h,unsigned long color)
     SDL_FillRect(s, &r, color);
 };
 
+
+
+// switch SDL video on / off
+_VideoMode sdl_video_mode_last = VIDM_SDL;
+void switch_sdl_video_mode(const _VideoMode mode)
+{
+    if (mode == sdl_video_mode_last) return;
 #ifdef _WII_
-// Will need latest SVN version of SDL as of 3/18/10
-extern "C" { extern void WII_SetWidescreen(int wide); }
+    GXColor background = { 0, 0, 0, 0xff };
+    switch(mode)
+    {
+        case 0:
+            WII_VideoStop();
+        break;
+        case 1:
+            GX_SetCopyClear (background, 0x00ffffff);
+            GX_SetBlendMode(GX_BM_BLEND, GX_BL_SRCALPHA, GX_BL_INVSRCALPHA, GX_LO_CLEAR);
+            GX_SetAlphaUpdate(GX_FALSE);
+            GX_SetColorUpdate(GX_TRUE);
+            WII_VideoStart();
+        break;
+    }
+
 #endif
+
+    sdl_video_mode_last = mode;
+}
 
 // Widescreen option
 void SetWidescreen();

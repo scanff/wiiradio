@@ -15,10 +15,11 @@ class vis_tunnel : public visual_object
     int* distanceTable;
     int angleTable[(SCREEN_WIDTH/TDIVIDER)*2][(SCREEN_HEIGHT/TDIVIDER)*2];
 
-    vis_tunnel(fft* _f) : texture(0), distanceTable(0)
+    vis_tunnel(app_wiiradio*   _theapp) : texture(0), distanceTable(0)
     {
+        theapp = _theapp;
         loaded = false;
-        f = _f;
+        f = theapp->fourier;
         layer = 1;
 
         DRAW_WIDTH = SCREEN_WIDTH / TDIVIDER;

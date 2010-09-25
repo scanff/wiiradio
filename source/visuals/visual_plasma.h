@@ -11,10 +11,11 @@ class vis_plasma : public visual_object
     int             aSin[512];
     Uint16          pos1, pos2, pos3, pos4, tpos1, tpos2, tpos3, tpos4;
 
-    vis_plasma(fft* _f)
+    vis_plasma(app_wiiradio*   _theapp)
     {
+        theapp = _theapp;
         loaded = false;
-        f = _f;
+        f = theapp->fourier;
         layer = 0;
 
         pos1 = pos2 = pos3 = pos4 =  tpos1 = tpos2 = tpos3 =  tpos4 = 0;

@@ -260,30 +260,48 @@ class network : public dns
 
 #endif
 
+            unsigned long flag = O_NONBLOCK;
+            net_ioctl(connection_socket, FIONBIO, &flag); // does not work on WII
         }
 
         if(protocol == TCP)
         {
-//#ifdef _WII_
-#ifndef _WIN32
             unsigned long start_time = get_tick_count();
 
             while(1)
             {
-                if ((get_tick_count() - start_time) > 5000) return 0; // 5 sec timeout
+                if ((get_tick_count() - start_time) > 1000) // 1 sec timeout
+                {
+                    net_close(connection_socket);
+                    connection_socket = 0;
+                    return 0;
+                }
 
                 int res = net_connect(connection_socket,(struct sockaddr*)&client,sizeof(client));
 
                 if (res < 0)
                 {
+#ifndef _WIN32
                     if (res == -EISCONN)
+#else
+                    res = WSAGetLastError();
+
+                    if(res == WSAEISCONN)
+#endif
                     {
                         break;
                     }
-
+#ifndef _WIN32
                     if (res == -EINPROGRESS || res == -EALREADY)
+#else
+                    if (res == WSAEWOULDBLOCK || res == WSAEALREADY || res == WSAEINPROGRESS)
+#endif
                     {
-                        usleep (20 * 1000);
+#ifndef _WIN32
+                        usleep (10 * 1000);
+#else
+                        Sleep(10);
+#endif
                         continue;
                     }
 
@@ -295,20 +313,6 @@ class network : public dns
                 }else break;
 
             }
-
-#else
-
-    if ((net_connect(connection_socket,(struct sockaddr*)&client,sizeof(client)) < 0))
-    {
-        net_close(connection_socket);
-        connection_socket = 0;
-        return 0;
-    }
-
-    unsigned long flag = O_NONBLOCK;
-    net_ioctl(connection_socket, FIONBIO, &flag); // does not work on WII
-
-#endif
 
     }
         client_connected = true;
