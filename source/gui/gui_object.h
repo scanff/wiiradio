@@ -63,15 +63,38 @@ class gui_object {
 
     func_void       click_func;
     func_void       over_func;
+    func_void       right_click_func;
 
     int             object_id;
+    bool            visible;
 
     gui_object() :
         obj_type(0),
-        s_x(0), s_y(0), s_h(0), s_w(0), text_color(0), text_color_over(0),
-        bnt_down(0), bnt_out(0), bnt_over(0), bnt_on(0), bnt_off(0),
-        font_sz(0), z_order(0), bind_screen(0), center_text(true), limit_text(0),
-        obj_state(B_OUT), pad_x(0), pad_y(0), isvariable(false),click_func(0),object_id(0)
+        s_x(0),
+        s_y(0),
+        s_h(0),
+        s_w(0),
+        text_color(0),
+        text_color_over(0),
+        bnt_down(0),
+        bnt_out(0),
+        bnt_over(0),
+        bnt_on(0),
+        bnt_off(0),
+        font_sz(0),
+        z_order(0),
+        bind_screen(0),
+        center_text(true),
+        limit_text(0),
+        obj_state(B_OUT),
+        pad_x(0),
+        pad_y(0),
+        isvariable(false),
+        click_func(0),
+        over_func(0),
+        right_click_func(0),
+        object_id(0),
+        visible(true)
     {
         text_l1 = new char[SMALL_MEM + 1];
         memset(text_l1,0,SMALL_MEM + 1);
