@@ -1,0 +1,130 @@
+skinauthor=TiMeBoMb
+skinname=WiiRadio
+cursor=cursor.png
+bgimg=bg.png
+back_out=left_out.png
+back_over=left_over.png
+next_out=right_out.png
+next_over=right_over.png
+logo_out=logo_out.png
+logo_over=logo_over.png
+list_out=listing_out.png
+list_over=listing_over.png
+info=info.png
+mute=mute.png
+playing_out=playing.png
+playing_over=playing.png
+volume_over=volume_ol.png
+volume_bg=volume_bg.png
+toggle_out=toggle_out.png
+toggle_on=toggle_on.png
+return_out=return_out.png
+return_over=return_over.png
+pls_out=playlists_out.png
+pls_over=playlists_over.png
+genres_out=genre_out.png
+genres_over=genre_over.png
+delete_out=delete_out.png
+delete_over=delete_over.png
+dialog=dialog.png
+info_cancel_out=gen_button_out.png
+info_cancel_over=gen_button_over.png
+search_over=search_over.png
+search_out=search_out.png
+add_out=plus_out.png
+add_over=plus_over.png
+
+[variables]
+cursor_y_off=57
+cursor_x_off=57
+
+fontset=FreeSansBold.ttf
+fontsize_small=14
+fontsize_medium=22
+fontsize_large=26
+
+// -- general vars
+listing_number_of  =   4
+
+// -- vars for positioning the lists
+listing_limit_text = 530
+listing_start_x    =  20
+listing_start_y    = 115
+delete_start_x     = 530
+listing_pad_y      =   0
+listing_font_size  =   0
+listing_font_color     = #444444
+listing_font_color_over= #444444
+listing_pad_text_y = 10
+listing_pad_text_x = 30
+
+// -- logo
+logo_x             =   0
+logo_y             =  25
+
+// -- playing area
+playing_x          = 200
+playing_y          =  45
+playing_text_color     = #444444
+playing_text_color_over= #444444
+playing_text_size  =   1
+playing_pad_y =   4
+playing_pad_x =  22
+playing_limit_text = 295
+playing_scroll = 1
+playing_autoscroll = 1
+playing_nocentertext = 1
+
+// -- add button
+add_x              = 544
+add_y              =  45
+
+// -- playlists btn
+pls_x              =  28
+pls_y              = 390
+
+// -- back button
+back_x             = 200
+back_y             = 390
+
+// -- button search
+search_x           = 287
+search_y           = 390
+
+// -- next button
+next_x             = 344
+next_y             = 390
+
+// -- genres
+genres_x           = 437
+genres_y           = 390
+
+// -- info dialog ... TEXT COLOR FOR ALL DIALOGS
+dialog_text_color     = #444444
+
+// -- delete button
+delete_pad_y       =   6
+
+// -- info text (i.e. buffering, connecting)
+// -- offset of text from the background image (image is centered DEFAULT)
+info_txt_x         = 130
+info_txt_y         = 32
+// -- text size
+info_txt_size      =   0
+// -- cancel button
+info_cancel_x      = 345
+info_cancel_y      =  25
+info_cancel_text   = Cancel
+info_cancel_text_color     = #444444
+info_cancel_text_color_over= #222222
+info_cancel_text_size  =  1
+info_cancel_text_pad_y = 10
+
+
+search_text        =
+search_text_color     = #444444
+search_text_color_over= #222222
+search_text_size   = 1
+search_pad_y       = 0
+search_pad_x       = 0
+
