@@ -1,0 +1,944 @@
+# depslib dependency file v1.0
+1260066048 source:c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\configfile.cpp
+	"ConfigFile.h"
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\configfile.h
+	<string>
+	<map>
+	<iostream>
+	<fstream>
+	<sstream>
+
+1260066048 source:c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\keyhandler.cpp
+	<stdio.h>
+	"Common.hpp"
+	"fatal.h"
+	"KeyHandler.hpp"
+	"event.h"
+	"BeatDetect.hpp"
+	"PresetChooser.hpp"
+	"Renderer.hpp"
+	"projectM.hpp"
+	<iostream>
+	"TimeKeeper.hpp"
+
+1284961376 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\common.hpp
+	<vector>
+	<typeinfo>
+	<cstdarg>
+	<GL/gl.h>
+	<GL/glext.h>
+	<GL/glu.h>
+	<cstdio>
+	"dlldefs.h"
+	<cstdlib>
+	<float.h>
+	<string>
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\dlldefs.h
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\fatal.h
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\keyhandler.hpp
+	"event.h"
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\event.h
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\renderer\beatdetect.hpp
+	"../PCM.hpp"
+	"../dlldefs.h"
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\pcm.hpp
+	"dlldefs.h"
+
+1284961335 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\presetchooser.hpp
+	"Preset.hpp"
+	"PresetLoader.hpp"
+	"RandomNumberGenerators.hpp"
+	<memory>
+	<iostream>
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\preset.hpp
+	<string>
+	"Renderer/BeatDetect.hpp"
+	"Renderer/Pipeline.hpp"
+	"Renderer/PipelineContext.hpp"
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\renderer\pipeline.hpp
+	<vector>
+	"PerPixelMesh.hpp"
+	"Renderable.hpp"
+	"Filters.hpp"
+	"PipelineContext.hpp"
+	"Shader.hpp"
+	"../Common.hpp"
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\renderer\perpixelmesh.hpp
+	<vector>
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\renderer\renderable.hpp
+	<vector>
+	<typeinfo>
+	"TextureManager.hpp"
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\renderer\texturemanager.hpp
+	<iostream>
+	<string>
+	<map>
+	<vector>
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\renderer\filters.hpp
+	"Renderable.hpp"
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\renderer\pipelinecontext.hpp
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\renderer\shader.hpp
+	<string>
+	<map>
+	"UserTexture.hpp"
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\renderer\usertexture.hpp
+	<string>
+
+1283995024 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\presetloader.hpp
+	<string>
+	<memory>
+	<sys/types.h>
+	<dirent.h>
+	<dirent.h>
+	<dirent.h>
+	<dirent.h>
+	<vector>
+	<map>
+	"PresetFactoryManager.hpp"
+
+1283916356 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\presetfactorymanager.hpp
+	"PresetFactory.hpp"
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\presetfactory.hpp
+	"Preset.hpp"
+	<memory>
+
+1284961278 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\randomnumbergenerators.hpp
+	<cmath>
+	<vector>
+	<iostream>
+	<stdlib.h>
+
+1286314157 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\renderer\renderer.hpp
+	"projectM.hpp"
+	"FBO.hpp"
+	"BeatDetect.hpp"
+	<string>
+	<set>
+	<GLES/gl.h>
+	<OpenGL/gl.h>
+	<OpenGL/glu.h>
+	<GL/gl.h>
+	<GL/glu.h>
+	<ftgl.h>
+	<FTGLPixmapFont.h>
+	<FTGLExtrdFont.h>
+	<FTGL/FTFont.h>
+	<FTGL/FTGLPixmapFont.h>
+	<FTGL/FTGLExtrdFont.h>
+	"Pipeline.hpp"
+	"PerPixelMesh.hpp"
+	"Transformation.hpp"
+	"ShaderEngine.hpp"
+
+1284005189 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\projectm.hpp
+	"win/win32-dirent.h"
+	<dirent.h>
+	<cmath>
+	<cstdio>
+	<string>
+	<cstdlib>
+	<unistd.h>
+	<sys/types.h>
+	<windows.h>
+	"dlldefs.h"
+	"event.h"
+	"fatal.h"
+	"PCM.hpp"
+	"pthread.h"
+	"Common.hpp"
+	<memory>
+
+1283907331 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\win\win32-dirent.h
+
+1284512397 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\renderer\fbo.hpp
+	"glew.h"
+	<GL/glew.h>
+	<OpenGL/gl.h>
+	<AGL/agl.h>
+	<windows.h>
+	<GL/gl.h>
+	<GLES/gl.h>
+	<GL/gl.h>
+	<GL/glx.h>
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\renderer\transformation.hpp
+	"PerPixelMesh.hpp"
+	<math.h>
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\renderer\shaderengine.hpp
+	<GLES/gl.h>
+	<OpenGL/gl.h>
+	<OpenGL/glu.h>
+	<GL/gl.h>
+	<GL/glu.h>
+	<Cg/cg.h>
+	<Cg/cgGL.h>
+	"Pipeline.hpp"
+	"PipelineContext.hpp"
+	"TextureManager.hpp"
+	<cstdlib>
+	<iostream>
+	<map>
+	"Shader.hpp"
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\timekeeper.hpp
+	<sys/time.h>
+	"timer.h"
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\timer.h
+	<sys/time.h>
+	<windows.h>
+
+1284961355 source:c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\milkdroppresetfactory\builtinfuncs.cpp
+	"BuiltinFuncs.hpp"
+	<string>
+	<iostream>
+	"fatal.h"
+
+1284961355 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\milkdroppresetfactory\builtinfuncs.hpp
+	"Common.hpp"
+	"Func.hpp"
+	<cmath>
+	<cstdlib>
+	"RandomNumberGenerators.hpp"
+	<map>
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\milkdroppresetfactory\func.hpp
+	"Common.hpp"
+	<string>
+
+1284963081 source:c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\milkdroppresetfactory\builtinparams.cpp
+	"fatal.h"
+	"BuiltinParams.hpp"
+	<iostream>
+	<algorithm>
+	"InitCondUtils.hpp"
+	<sstream>
+	<stdio.h>
+	"Common.hpp"
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\milkdroppresetfactory\builtinparams.hpp
+	<string>
+	"PresetFrameIO.hpp"
+	"Param.hpp"
+	<map>
+	<cstdio>
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\milkdroppresetfactory\presetframeio.hpp
+	<vector>
+	"Renderer/MilkdropWaveform.hpp"
+	"Renderer/Pipeline.hpp"
+	"Renderer/Filters.hpp"
+	"CustomShape.hpp"
+	"CustomWave.hpp"
+	"Renderer/VideoEcho.hpp"
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\renderer\milkdropwaveform.hpp
+	"Renderable.hpp"
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\milkdroppresetfactory\customshape.hpp
+	<map>
+	"Param.hpp"
+	"PerFrameEqn.hpp"
+	"InitCond.hpp"
+	"Renderer/Renderable.hpp"
+	<vector>
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\milkdroppresetfactory\param.hpp
+	"Expr.hpp"
+	"Common.hpp"
+	<cmath>
+	<string>
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\milkdroppresetfactory\expr.hpp
+	"dlldefs.h"
+	"CValue.hpp"
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\milkdroppresetfactory\cvalue.hpp
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\milkdroppresetfactory\perframeeqn.hpp
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\milkdroppresetfactory\initcond.hpp
+	"Param.hpp"
+	<map>
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\milkdroppresetfactory\customwave.hpp
+	<vector>
+	"Common.hpp"
+	"Param.hpp"
+	"PerFrameEqn.hpp"
+	"Renderer/Waveform.hpp"
+	<map>
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\renderer\waveform.hpp
+	"Renderable.hpp"
+	<vector>
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\renderer\videoecho.hpp
+	"Renderable.hpp"
+
+1284961278 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\milkdroppresetfactory\initcondutils.hpp
+	<map>
+	"InitCond.hpp"
+	<iostream>
+	<stdlib.h>
+
+1260066048 source:c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\milkdroppresetfactory\customshape.cpp
+	<sstream>
+	"Common.hpp"
+	"fatal.h"
+	"CustomShape.hpp"
+	"Eval.hpp"
+	"Expr.hpp"
+	"InitCond.hpp"
+	"Param.hpp"
+	"PerFrameEqn.hpp"
+	"Preset.hpp"
+	<map>
+	"ParamUtils.hpp"
+	"InitCondUtils.hpp"
+	"wipemalloc.h"
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\milkdroppresetfactory\eval.hpp
+	"fatal.h"
+	"Func.hpp"
+	"Param.hpp"
+
+1284961278 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\milkdroppresetfactory\paramutils.hpp
+	"Param.hpp"
+	<map>
+	"BuiltinParams.hpp"
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\wipemalloc.h
+	<malloc.h>
+	<string.h>
+	<stdlib.h>
+	<stdlib.h>
+	<string.h>
+	<stdlib.h>
+	<stdio.h>
+
+1284961277 source:c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\milkdroppresetfactory\customwave.cpp
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	<sstream>
+	"Common.hpp"
+	"fatal.h"
+	"CustomWave.hpp"
+	"Eval.hpp"
+	"Expr.hpp"
+	"InitCond.hpp"
+	"Param.hpp"
+	"PerFrameEqn.hpp"
+	"PerPointEqn.hpp"
+	"Preset.hpp"
+	<map>
+	"ParamUtils.hpp"
+	"InitCondUtils.hpp"
+	"wipemalloc.h"
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\milkdroppresetfactory\perpointeqn.hpp
+
+1260066048 source:c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\milkdroppresetfactory\eval.cpp
+	<cstdio>
+	<cstdlib>
+	"Common.hpp"
+	"fatal.h"
+	"Eval.hpp"
+	"Expr.hpp"
+	"Param.hpp"
+	"Func.hpp"
+	"wipemalloc.h"
+	"BuiltinFuncs.hpp"
+
+1284961392 source:c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\milkdroppresetfactory\expr.cpp
+	"wipemalloc.h"
+	"Expr.hpp"
+	<iostream>
+	"Eval.hpp"
+
+1260066048 source:c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\milkdroppresetfactory\func.cpp
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	"Common.hpp"
+	"fatal.h"
+	"Func.hpp"
+	<map>
+
+1260066048 source:c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\milkdroppresetfactory\idlepreset.cpp
+	"IdlePreset.hpp"
+	<sstream>
+	<string>
+	"MilkdropPreset.hpp"
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\milkdroppresetfactory\idlepreset.hpp
+	<memory>
+	<string>
+
+1284961515 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\milkdroppresetfactory\milkdroppreset.hpp
+	"Common.hpp"
+	<string>
+	<map>
+	"CustomShape.hpp"
+	"CustomWave.hpp"
+	"Expr.hpp"
+	"PerPixelEqn.hpp"
+	"PerFrameEqn.hpp"
+	"BuiltinParams.hpp"
+	"PresetFrameIO.hpp"
+	"InitCond.hpp"
+	"Preset.hpp"
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\milkdroppresetfactory\perpixeleqn.hpp
+
+1284961278 source:c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\milkdroppresetfactory\initcond.cpp
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"Common.hpp"
+	"fatal.h"
+	"Expr.hpp"
+	"InitCond.hpp"
+	"Param.hpp"
+	<map>
+	"wipemalloc.h"
+	<iostream>
+
+1284961438 source:c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\milkdroppresetfactory\milkdroppreset.cpp
+	<cstdio>
+	<cstring>
+	<cstdlib>
+	"win/win32-dirent.h"
+	<dirent.h>
+	<time.h>
+	"MilkdropPreset.hpp"
+	"Parser.hpp"
+	"ParamUtils.hpp"
+	"InitCondUtils.hpp"
+	"fatal.h"
+	<iostream>
+	<fstream>
+	"PresetFrameIO.hpp"
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\milkdroppresetfactory\parser.hpp
+	<stdio.h>
+	"Expr.hpp"
+	"PerFrameEqn.hpp"
+	"InitCond.hpp"
+	"MilkdropPreset.hpp"
+	<set>
+
+1284939679 source:c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\milkdroppresetfactory\milkdroppresetfactory.cpp
+	"MilkdropPresetFactory.hpp"
+	"MilkdropPreset.hpp"
+	"BuiltinFuncs.hpp"
+	"Eval.hpp"
+	"IdlePreset.hpp"
+	"PresetFrameIO.hpp"
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\milkdroppresetfactory\milkdroppresetfactory.hpp
+	<memory>
+	"../PresetFactory.hpp"
+
+1284961460 source:c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\milkdroppresetfactory\param.cpp
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	<math.h>
+	"fatal.h"
+	"Common.hpp"
+	"CustomShape.hpp"
+	"Eval.hpp"
+	"Expr.hpp"
+	"InitCond.hpp"
+	"Param.hpp"
+	"Preset.hpp"
+	<map>
+	<iostream>
+
+1286470057 source:c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\milkdroppresetfactory\parser.cpp
+	<stdio.h>
+	<string>
+	<cstring>
+	<iostream>
+	<stdlib.h>
+	"Common.hpp"
+	"CustomWave.hpp"
+	"CustomShape.hpp"
+	"Expr.hpp"
+	"Eval.hpp"
+	"Func.hpp"
+	"InitCond.hpp"
+	"Param.hpp"
+	"Parser.hpp"
+	"PerFrameEqn.hpp"
+	"PerPixelEqn.hpp"
+	<map>
+	"ParamUtils.hpp"
+	"wipemalloc.h"
+	<iostream>
+	<sstream>
+	"BuiltinFuncs.hpp"
+
+1284961526 source:c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\milkdroppresetfactory\perframeeqn.cpp
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"fatal.h"
+	"Common.hpp"
+	"Param.hpp"
+	"PerFrameEqn.hpp"
+	"Eval.hpp"
+	"Expr.hpp"
+	"wipemalloc.h"
+
+1284961543 source:c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\milkdroppresetfactory\perpixeleqn.cpp
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	<iostream>
+	"fatal.h"
+	"Common.hpp"
+	"Expr.hpp"
+	"Eval.hpp"
+	"Param.hpp"
+	"PerPixelEqn.hpp"
+	<map>
+	"wipemalloc.h"
+
+1284961548 source:c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\milkdroppresetfactory\perpointeqn.cpp
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	"fatal.h"
+	"Common.hpp"
+	"CustomWave.hpp"
+	"Eval.hpp"
+	"Expr.hpp"
+	"Param.hpp"
+	"PerPixelEqn.hpp"
+	"PerPointEqn.hpp"
+	<map>
+	<iostream>
+	"wipemalloc.h"
+
+1284961278 source:c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\milkdroppresetfactory\presetframeio.cpp
+	"PresetFrameIO.hpp"
+	"wipemalloc.h"
+	<math.h>
+	<iostream>
+	"Renderer/BeatDetect.hpp"
+
+1284961555 source:c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\pcm.cpp
+	<stdlib.h>
+	<stdio.h>
+	"Common.hpp"
+	"wipemalloc.h"
+	"fftsg.h"
+	"PCM.hpp"
+	<iostream>
+	<iostream>
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\fftsg.h
+
+1260066048 source:c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\pipelinemerger.cpp
+	"PipelineMerger.hpp"
+	"RenderItemMatcher.hpp"
+	"RenderItemMergeFunction.hpp"
+
+1283907152 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\pipelinemerger.hpp
+	"Preset.hpp"
+	"Pipeline.hpp"
+	"RenderItemMatcher.hpp"
+	"RenderItemMergeFunction.hpp"
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\renderer\renderitemmatcher.hpp
+	"RenderItemDistanceMetric.hpp"
+	<vector>
+	<map>
+	<iostream>
+	"HungarianMethod.hpp"
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\renderer\renderitemdistancemetric.hpp
+	"Common.hpp"
+	"Renderable.hpp"
+	<limits>
+	<functional>
+	<map>
+
+1284961561 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\hungarianmethod.hpp
+	<cstdlib>
+	<cstdio>
+	<cstring>
+	<limits>
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\renderer\renderitemmergefunction.hpp
+	"Common.hpp"
+	"Renderable.hpp"
+	"Waveform.hpp"
+	<limits>
+	<functional>
+	<map>
+
+1284656064 source:c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\preset.cpp
+	"Preset.hpp"
+
+1260066048 source:c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\presetchooser.cpp
+	"PresetChooser.hpp"
+
+1284963081 source:c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\presetfactory.cpp
+	"PresetFactory.hpp"
+
+1284961568 source:c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\presetfactorymanager.cpp
+	"PresetFactoryManager.hpp"
+	"MilkdropPresetFactory/MilkdropPresetFactory.hpp"
+	"NativePresetFactory/NativePresetFactory.hpp"
+	<sstream>
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\nativepresetfactory\nativepresetfactory.hpp
+	<memory>
+	"PresetFactory.hpp"
+
+1284961597 source:c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\presetloader.cpp
+	"PresetLoader.hpp"
+	"Preset.hpp"
+	"PresetFactory.hpp"
+	<iostream>
+	<sstream>
+	<set>
+	<errno.h>
+	<errno.h>
+	"fatal.h"
+	"Common.hpp"
+
+1260066048 source:c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\renderer\beatdetect.cpp
+	<stdlib.h>
+	<stdio.h>
+	"wipemalloc.h"
+	"Common.hpp"
+	"PCM.hpp"
+	<cmath>
+	"BeatDetect.hpp"
+
+1286229140 source:c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\renderer\fbo.cpp
+	<stdio.h>
+	<iostream>
+	"Common.hpp"
+	"FBO.hpp"
+	"global_gx.h"
+
+1286476861 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\global_gx.h
+	<gctypes.h>
+	<gccore.h>
+	<ogc/gx.h>
+	<ogc/gu.h>
+
+1286519297 source:c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\renderer\filters.cpp
+	<GLES/gl.h>
+	<OpenGL/gl.h>
+	<OpenGL/glu.h>
+	<GL/gl.h>
+	<GL/glu.h>
+	"Filters.hpp"
+	"global_gx.h"
+
+1286387842 source:c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\renderer\milkdropwaveform.cpp
+	<iostream>
+	<GL/gl.h>
+	"win/glew.h"
+	<GL/gl.h>
+	"MilkdropWaveform.hpp"
+	"math.h"
+	"BeatDetect.hpp"
+	"global_gx.h"
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\win\glew.h
+	<stddef.h>
+	<OpenGL/glu.h>
+	<GL/glu.h>
+
+1260066048 source:c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\renderer\perpixelmesh.cpp
+	<math.h>
+	<algorithm>
+	"PerPixelMesh.hpp"
+	"omptl/omptl"
+	"omptl/omptl_algorithm"
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\omptl\omptl
+	<cassert>
+	<omp.h>
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\omptl\omptl_algorithm
+	<algorithm>
+	"omptl"
+	"omptl_algorithm_par.h"
+	"omptl_algorithm_ser.h"
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\omptl\omptl_algorithm_par.h
+	<functional>
+	<utility>
+	<cmath>
+	<cstdlib>
+	"omptl_tools.h"
+	"omptl_numeric"
+	<iterator>
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\omptl\omptl_tools.h
+	<utility>
+	<vector>
+	<cassert>
+	<algorithm>
+	<climits>
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\omptl\omptl_numeric
+	<numeric>
+	"omptl"
+	"omptl_numeric_par.h"
+	"omptl_numeric_ser.h"
+	"omptl_numeric_extentions.h"
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\omptl\omptl_numeric_par.h
+	<utility>
+	<functional>
+	<iterator>
+	"omptl_algorithm"
+	"omptl_tools.h"
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\omptl\omptl_numeric_ser.h
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\omptl\omptl_numeric_extentions.h
+	<cmath>
+	"omptl_numeric_extentions_par.h"
+	"omptl_numeric_extentions_ser.h"
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\omptl\omptl_numeric_extentions_par.h
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\omptl\omptl_numeric_extentions_ser.h
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\omptl\omptl_algorithm_ser.h
+
+1260066048 source:c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\renderer\perlinnoise.cpp
+	"PerlinNoise.hpp"
+	<iostream>
+	<stdlib.h>
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\renderer\perlinnoise.hpp
+	<math.h>
+
+1260066048 source:c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\renderer\pipeline.cpp
+	"Pipeline.hpp"
+	"wipemalloc.h"
+
+1260066048 source:c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\renderer\pipelinecontext.cpp
+	"PipelineContext.hpp"
+
+1260066048 source:c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\renderer\renderitemdistancemetric.cpp
+	"RenderItemDistanceMetric.hpp"
+
+1260066048 source:c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\renderer\renderitemmatcher.cpp
+	"RenderItemMatcher.hpp"
+
+1286480230 source:c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\renderer\renderable.cpp
+	<GLES/gl.h>
+	<OpenGL/gl.h>
+	<OpenGL/glu.h>
+	<GL/gl.h>
+	<GL/glu.h>
+	"global_gx.h"
+	"Renderable.hpp"
+	<math.h>
+
+1286519316 source:c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\renderer\renderer.cpp
+	"Renderer.hpp"
+	"wipemalloc.h"
+	"math.h"
+	"Common.hpp"
+	"KeyHandler.hpp"
+	"TextureManager.hpp"
+	<iostream>
+	<algorithm>
+	"omptl/omptl"
+	"omptl/omptl_algorithm"
+	"UserTexture.hpp"
+	"global_gx.h"
+
+1285003514 source:c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\renderer\soil\soil.c
+	<windows.h>
+	<wingdi.h>
+	<GL/gl.h>
+	<OpenGL/gl.h>
+	<Carbon/Carbon.h>
+	<GL/gl.h>
+	<GL/glx.h>
+	"SOIL.h"
+	"stb_image_aug.h"
+	"image_helper.h"
+	"image_DXT.h"
+	<stdlib.h>
+	<string.h>
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\renderer\soil\soil.h
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\renderer\soil\stb_image_aug.h
+	<stdio.h>
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\renderer\soil\image_helper.h
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\renderer\soil\image_dxt.h
+
+1260066048 source:c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\renderer\soil\image_dxt.c
+	"image_DXT.h"
+	<math.h>
+	<stdlib.h>
+	<string.h>
+	<stdio.h>
+
+1260066048 source:c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\renderer\soil\image_helper.c
+	"image_helper.h"
+	<stdlib.h>
+	<math.h>
+
+1260066048 source:c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\renderer\soil\stb_image_aug.c
+	"stb_image_aug.h"
+	<math.h>
+	<string.h>
+	<stdio.h>
+	<stdlib.h>
+	<memory.h>
+	<assert.h>
+	<stdarg.h>
+	"stbi_DDS_aug.h"
+	"stbi_DDS_aug_c.h"
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\renderer\soil\stbi_dds_aug.h
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\renderer\soil\stbi_dds_aug_c.h
+
+1260066048 source:c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\renderer\shader.cpp
+	"Shader.hpp"
+
+1260066048 source:c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\renderer\shaderengine.cpp
+	<fstream>
+	"PerlinNoise.hpp"
+	"ShaderEngine.hpp"
+	"BeatDetect.hpp"
+
+1286229253 source:c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\renderer\texturemanager.cpp
+	<GL/gl.h>
+	"win/glew.h"
+	<GL/gl.h>
+	<IL/ilut.h>
+	"SOIL/SOIL.h"
+	<dirent.h>
+	<stdlib.h>
+	"SOIL/SOIL.h"
+	<dirent.h>
+	<dirent.h>
+	<dirent.h>
+	<stdlib.h>
+	"TextureManager.hpp"
+	"Common.hpp"
+	"IdleTextures.hpp"
+	"stb_image_aug.h"
+	"global_gx.h"
+
+1260066048 c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\idletextures.hpp
+
+1260066048 source:c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\renderer\usertexture.cpp
+	"UserTexture.hpp"
+
+1286511799 source:c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\renderer\videoecho.cpp
+	<GLES/gl.h>
+	<OpenGL/gl.h>
+	<OpenGL/glu.h>
+	<GL/gl.h>
+	<GL/glu.h>
+	"VideoEcho.hpp"
+	"global_gx.h"
+
+1286387426 source:c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\renderer\waveform.cpp
+	<GL/gl.h>
+	"win/glew.h"
+	<GL/gl.h>
+	"Waveform.hpp"
+	<algorithm>
+	"BeatDetect.hpp"
+	"global_gx.h"
+
+1284005638 source:c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\timekeeper.cpp
+	<sys/time.h>
+	<stdlib.h>
+	<GL/gl.h>
+	"win/glew.h"
+	<GL/gl.h>
+	"TimeKeeper.hpp"
+	"RandomNumberGenerators.hpp"
+
+1260066048 source:c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\fftsg.cpp
+	<math.h>
+	<pthread.h>
+	<stdio.h>
+	<stdlib.h>
+	<windows.h>
+	<stdio.h>
+	<stdlib.h>
+
+1286519966 source:c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\global_gx.cpp
+	<stdio.h>
+	<stdlib.h>
+	<malloc.h>
+	<string.h>
+	"global_gx.h"
+
+1286214393 source:c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\projectm.cpp
+	"RenderItemMatcher.hpp"
+	"RenderItemMergeFunction.hpp"
+	"fatal.h"
+	"Common.hpp"
+	"win/win32-dirent.h"
+	"timer.h"
+	<iostream>
+	"time.h"
+	<time.h>
+	"PipelineContext.hpp"
+	<iostream>
+	"projectM.hpp"
+	"BeatDetect.hpp"
+	"Preset.hpp"
+	"PipelineMerger.hpp"
+	"PCM.hpp"
+	<map>
+	"Renderer.hpp"
+	"PresetChooser.hpp"
+	"ConfigFile.h"
+	"TextureManager.hpp"
+	"TimeKeeper.hpp"
+	"RenderItemMergeFunction.hpp"
+	"pthread.h"
+
+1260066048 source:c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\timer.cpp
+	"timer.h"
+	<stdlib.h>
+
+1260066048 source:c:\devkitpro\examples\wii\projectm_full\projectm-complete-2.0.1-source\src\libprojectm\wipemalloc.cpp
+	"wipemalloc.h"
+

@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="libprojectM" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Win32 Release">
+				<Option output="Release\libprojectM" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="Release" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-w" />
+					<Add option="-fexceptions" />
+					<Add option="-DWIN32" />
+					<Add option="-DNDEBUG" />
+					<Add option="-D_MBCS" />
+					<Add option="-D_LIB" />
+					<Add option="-DDISABLE_NATIVE_PRESETS" />
+					<Add directory="Renderer" />
+					<Add directory="C:\Users\AARON\Desktop\projectm_full\projectM-complete-2.0.1-Source\src\libprojectM\" />
+					<Add directory="omptl" />
+				</Compiler>
+			</Target>
+			<Target title="Win32 Debug">
+				<Option output="Debug\libprojectMd" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="Debug" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-w" />
+					<Add option="-g" />
+					<Add option="-fexceptions" />
+					<Add option="-DWIN32" />
+					<Add option="-D_DEBUG" />
+					<Add option="-D_MBCS" />
+					<Add option="-D_LIB" />
+					<Add option="-DDEBUG" />
+					<Add option="-DDISABLE_NATIVE_PRESETS" />
+				</Compiler>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-DDISABLE_NATIVE_PRESETS" />
+			<Add directory="Renderer" />
+			<Add directory="..\libprojectM" />
+			<Add directory="omptl" />
+		</Compiler>
+		<Unit filename="Common.hpp" />
+		<Unit filename="ConfigFile.cpp" />
+		<Unit filename="ConfigFile.h" />
+		<Unit filename="HungarianMethod.hpp" />
+		<Unit filename="IdleTextures.hpp" />
+		<Unit filename="KeyHandler.cpp" />
+		<Unit filename="KeyHandler.hpp" />
+		<Unit filename="MilkdropPresetFactory\BuiltinFuncs.cpp" />
+		<Unit filename="MilkdropPresetFactory\BuiltinFuncs.hpp" />
+		<Unit filename="MilkdropPresetFactory\BuiltinParams.cpp" />
+		<Unit filename="MilkdropPresetFactory\BuiltinParams.hpp" />
+		<Unit filename="MilkdropPresetFactory\CValue.hpp" />
+		<Unit filename="MilkdropPresetFactory\CustomShape.cpp" />
+		<Unit filename="MilkdropPresetFactory\CustomShape.hpp" />
+		<Unit filename="MilkdropPresetFactory\CustomWave.cpp" />
+		<Unit filename="MilkdropPresetFactory\CustomWave.hpp" />
+		<Unit filename="MilkdropPresetFactory\Eval.cpp" />
+		<Unit filename="MilkdropPresetFactory\Eval.hpp" />
+		<Unit filename="MilkdropPresetFactory\Expr.cpp" />
+		<Unit filename="MilkdropPresetFactory\Expr.hpp" />
+		<Unit filename="MilkdropPresetFactory\Func.cpp" />
+		<Unit filename="MilkdropPresetFactory\Func.hpp" />
+		<Unit filename="MilkdropPresetFactory\IdlePreset.cpp" />
+		<Unit filename="MilkdropPresetFactory\IdlePreset.hpp" />
+		<Unit filename="MilkdropPresetFactory\InitCond.cpp" />
+		<Unit filename="MilkdropPresetFactory\InitCond.hpp" />
+		<Unit filename="MilkdropPresetFactory\InitCondUtils.hpp" />
+		<Unit filename="MilkdropPresetFactory\MilkdropPreset.cpp" />
+		<Unit filename="MilkdropPresetFactory\MilkdropPreset.hpp" />
+		<Unit filename="MilkdropPresetFactory\MilkdropPresetFactory.cpp" />
+		<Unit filename="MilkdropPresetFactory\MilkdropPresetFactory.hpp" />
+		<Unit filename="MilkdropPresetFactory\Param.cpp" />
+		<Unit filename="MilkdropPresetFactory\Param.hpp" />
+		<Unit filename="MilkdropPresetFactory\ParamUtils.hpp" />
+		<Unit filename="MilkdropPresetFactory\Parser.cpp" />
+		<Unit filename="MilkdropPresetFactory\Parser.hpp" />
+		<Unit filename="MilkdropPresetFactory\PerFrameEqn.cpp" />
+		<Unit filename="MilkdropPresetFactory\PerFrameEqn.hpp" />
+		<Unit filename="MilkdropPresetFactory\PerPixelEqn.cpp" />
+		<Unit filename="MilkdropPresetFactory\PerPixelEqn.hpp" />
+		<Unit filename="MilkdropPresetFactory\PerPointEqn.cpp" />
+		<Unit filename="MilkdropPresetFactory\PerPointEqn.hpp" />
+		<Unit filename="MilkdropPresetFactory\PresetFrameIO.cpp" />
+		<Unit filename="MilkdropPresetFactory\PresetFrameIO.hpp" />
+		<Unit filename="NativePresetFactory\MilkdropCompatability.hpp" />
+		<Unit filename="NativePresetFactory\NativePreset.hpp" />
+		<Unit filename="NativePresetFactory\NativePresetFactory.hpp" />
+		<Unit filename="PCM.cpp" />
+		<Unit filename="PCM.hpp" />
+		<Unit filename="PipelineMerger.cpp" />
+		<Unit filename="PipelineMerger.hpp" />
+		<Unit filename="Preset.cpp" />
+		<Unit filename="Preset.hpp" />
+		<Unit filename="PresetChooser.cpp" />
+		<Unit filename="PresetChooser.hpp" />
+		<Unit filename="PresetFactory.cpp" />
+		<Unit filename="PresetFactory.hpp" />
+		<Unit filename="PresetFactoryManager.cpp" />
+		<Unit filename="PresetFactoryManager.hpp" />
+		<Unit filename="PresetLoader.cpp" />
+		<Unit filename="PresetLoader.hpp" />
+		<Unit filename="RandomNumberGenerators.hpp" />
+		<Unit filename="Renderer\BeatDetect.cpp" />
+		<Unit filename="Renderer\BeatDetect.hpp" />
+		<Unit filename="Renderer\FBO.cpp" />
+		<Unit filename="Renderer\FBO.hpp" />
+		<Unit filename="Renderer\Filters.cpp" />
+		<Unit filename="Renderer\Filters.hpp" />
+		<Unit filename="Renderer\MilkdropWaveform.cpp" />
+		<Unit filename="Renderer\MilkdropWaveform.hpp" />
+		<Unit filename="Renderer\PerPixelMesh.cpp" />
+		<Unit filename="Renderer\PerPixelMesh.hpp" />
+		<Unit filename="Renderer\PerlinNoise.cpp" />
+		<Unit filename="Renderer\PerlinNoise.hpp" />
+		<Unit filename="Renderer\Pipeline.cpp" />
+		<Unit filename="Renderer\Pipeline.hpp" />
+		<Unit filename="Renderer\PipelineContext.cpp" />
+		<Unit filename="Renderer\PipelineContext.hpp" />
+		<Unit filename="Renderer\RenderItemDistanceMetric.cpp" />
+		<Unit filename="Renderer\RenderItemDistanceMetric.hpp" />
+		<Unit filename="Renderer\RenderItemMatcher.cpp" />
+		<Unit filename="Renderer\RenderItemMatcher.hpp" />
+		<Unit filename="Renderer\RenderItemMergeFunction.hpp" />
+		<Unit filename="Renderer\Renderable.cpp" />
+		<Unit filename="Renderer\Renderable.hpp" />
+		<Unit filename="Renderer\Renderer.cpp" />
+		<Unit filename="Renderer\Renderer.hpp" />
+		<Unit filename="Renderer\SOIL\SOIL.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Renderer\SOIL\SOIL.h" />
+		<Unit filename="Renderer\SOIL\image_DXT.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Renderer\SOIL\image_DXT.h" />
+		<Unit filename="Renderer\SOIL\image_helper.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Renderer\SOIL\image_helper.h" />
+		<Unit filename="Renderer\SOIL\stb_image_aug.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Renderer\SOIL\stb_image_aug.h" />
+		<Unit filename="Renderer\SOIL\stbi_DDS_aug.h" />
+		<Unit filename="Renderer\SOIL\stbi_DDS_aug_c.h" />
+		<Unit filename="Renderer\Shader.cpp" />
+		<Unit filename="Renderer\Shader.hpp" />
+		<Unit filename="Renderer\ShaderEngine.cpp" />
+		<Unit filename="Renderer\ShaderEngine.hpp" />
+		<Unit filename="Renderer\TextureManager.cpp" />
+		<Unit filename="Renderer\TextureManager.hpp" />
+		<Unit filename="Renderer\Transformation.hpp" />
+		<Unit filename="Renderer\UserTexture.cpp" />
+		<Unit filename="Renderer\UserTexture.hpp" />
+		<Unit filename="Renderer\VideoEcho.cpp" />
+		<Unit filename="Renderer\VideoEcho.hpp" />
+		<Unit filename="Renderer\Waveform.cpp" />
+		<Unit filename="Renderer\Waveform.hpp" />
+		<Unit filename="TimeKeeper.cpp" />
+		<Unit filename="TimeKeeper.hpp" />
+		<Unit filename="carbontoprojectM.h" />
+		<Unit filename="dlldefs.h" />
+		<Unit filename="event.h" />
+		<Unit filename="fatal.h" />
+		<Unit filename="fftsg.cpp" />
+		<Unit filename="fftsg.h" />
+		<Unit filename="glError.h" />
+		<Unit filename="global_gx.cpp" />
+		<Unit filename="global_gx.h" />
+		<Unit filename="lvtoprojectM.h" />
+		<Unit filename="projectM.cpp" />
+		<Unit filename="projectM.hpp" />
+		<Unit filename="resource.h" />
+		<Unit filename="sdltoprojectM.h" />
+		<Unit filename="timer.cpp" />
+		<Unit filename="timer.h" />
+		<Unit filename="wipemalloc.cpp" />
+		<Unit filename="wipemalloc.h" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
