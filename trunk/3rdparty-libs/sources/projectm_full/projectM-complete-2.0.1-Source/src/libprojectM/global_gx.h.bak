@@ -1,0 +1,224 @@
+#ifndef GLOBAL_GX_H_INCLUDED
+#define GLOBAL_GX_H_INCLUDED
+
+// Wii specific functions and wrappers
+
+#ifdef _WII_
+#include <gctypes.h>
+#include <gccore.h>
+#include <ogc/gx.h>
+#include <ogc/gu.h>
+#include <malloc.h>
+static u8 gx_r,gx_g,gx_b,gx_a;
+static Mtx view,modelview, model, textview;
+static Mtx44 projection;
+
+#define MAX_TEXTURES	(20)
+
+struct _textures
+{
+	_textures() : data(0), w(0), h(0), inuse(false) {};
+
+    GXTexObj        texture;
+    void*			data;
+    int             w;
+    int             h;
+
+	bool			inuse;
+};
+
+static _textures textures[MAX_TEXTURES];
+static int textures_used = 0;
+
+static void delete_gx_texture(int r)
+{
+	free(textures[r].data);
+	textures[r].data = 0;
+	textures[r].w = textures[r].h = 0;
+	textures[r].inuse = false;
+}
+
+static void activate_gx_texture(int r,int w, int h, int type)
+{
+	int bytes = w*h*4;
+	if (!textures[r].inuse) 
+	{
+		textures[r].data = memalign(32,bytes);
+
+		
+		GX_InitTexObj(&textures[r].texture, textures[r].data, textures[r].w, textures[r].h, 
+			 GX_TF_RGBA8, type, type, GX_FALSE);
+
+		DCFlushRange(textures[r].data, bytes);
+
+	}
+
+
+	GX_LoadTexObj(&textures[r].texture, GX_TEXMAP0);
+	GX_SetTevOp(GX_TEVSTAGE0, GX_MODULATE);
+	GX_SetVtxDesc(GX_VA_TEX0, GX_DIRECT);
+
+
+}
+
+static void Set3DVideoSettings()
+{
+
+	// clear color of the FB
+	GXColor background = { gfx3d.clearColor >> 24, gfx3d.clearColor >> 16, gfx3d.clearColor >> 8, gfx3d.clearColor  };
+	GX_SetCopyClear(background, 0xffffffff);
+
+	//The only EFB pixel format supporting an alpha buffer is GX_PF_RGBA6_Z24
+	GX_SetPixelFmt(GX_PF_RGBA6_Z24, GX_ZC_LINEAR);
+
+	GX_SetBlendMode(GX_BM_BLEND, GX_BL_SRCALPHA, GX_BL_INVSRCALPHA, GX_LO_CLEAR);
+
+	GX_InvVtxCache();
+	GX_InvalidateTexAll();
+	GX_ClearVtxDesc();
+
+	GX_SetVtxDesc(GX_VA_POS, GX_DIRECT);
+	GX_SetVtxDesc(GX_VA_CLR0, GX_DIRECT);
+
+	GX_SetVtxAttrFmt(GX_VTXFMT0, GX_VA_POS, GX_POS_XYZ, GX_F32, 0);
+	GX_SetVtxAttrFmt(GX_VTXFMT0, GX_VA_CLR0, GX_CLR_RGBA, GX_RGBA8, 0);
+
+	GX_SetNumTexGens(1);
+
+	GX_SetVtxDesc(GX_VA_TEX0, GX_DIRECT);
+	GX_SetVtxAttrFmt(GX_VTXFMT0, GX_VA_TEX0, GX_TEX_ST, GX_F32, 0);
+
+	GX_SetTexCoordGen(GX_TEXCOORD0, GX_TG_MTX3x4, GX_VA_TEX0, GX_IDENTITY); 
+
+	GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR0A0);
+
+
+	GX_SetTevOp(GX_TEVSTAGE0, GX_REPLACE);
+
+}
+
+
+static void ReadFramebuffer(int desttex,int w, int h)
+{ 
+
+	GXColor background = { 0,0,0,0 };
+	GX_SetCopyClear(background, 0x00ffffff);
+
+	GX_DrawDone();
+
+	GX_SetTexCopySrc(0, 0, w, h); 
+	GX_SetTexCopyDst(w, h, GX_TF_RGBA8, GX_FALSE);
+
+	// Turn off vertical de-flicker filter temporary
+    // (to avoid filtering during the framebuffer-to-texture copy)
+	GX_SetCopyFilter(GX_FALSE, NULL, GX_FALSE, NULL);
+
+	// Copy the screen into a texture
+	GX_CopyTex((void*)textures[r].data, GX_TRUE);
+	GX_PixModeSync();
+	//--DCN: PixModeSync should take care of flushing.
+	//DCFlushRange(GPU_screen3D, 256*192*4);
+
+	// Bleh, another "conversion" problem. In order to make our GX scene
+	// jive with Desmume, we need to convert it OUT of its native format.
+/*	u8* dst = gfx3d_convertedScreen;
+
+	u8 *truc = (u8*)GPU_screen3D;
+	u8 r, g, b, a;
+    u32 offset;
+
+	for(u32 y = 0; y < 192; y++){
+		for(u32 x = 0; x < 256; x++){
+	        
+			offset = ((y >> 2)<< 12) + ((x >> 2)<<6) + ((((y%4) << 2) + (x%4)) << 1);
+
+			a = *(truc+offset);
+			r = *(truc+offset+1);
+			g = *(truc+offset+32);
+			b = *(truc+offset+33);
+
+			*dst++ = (a >> 3) & 0x1F; // 5 bits
+			*dst++ = (b >> 2) & 0x3F; // 6 bits
+			*dst++ = (g >> 2) & 0x3F; // 6 bits
+			*dst++ = (r >> 2) & 0x3F; // 6 bits
+
+		}
+	}
+*/
+	DCFlushRange(textures[r].data, textures[r].w*textures[r].h*4);
+
+    // Restore vertical de-flicker filter mode
+	GX_SetCopyFilter(rmode->aa, rmode->sample_pattern, GX_TRUE, rmode->vfilter);
+
+}
+
+static void inline wii_setlinewidth(int glwidth)
+{
+
+	int iWidth = (int)(6.*glwidth);
+
+	if(iWidth > 255) iWidth = 255;
+	if(iWidth < 0) iWidth = 0;
+
+	GX_SetLineWidth((u8)iWidth, GX_TO_ONE);
+}
+static void inline wii_setpointsize(int size)
+{
+
+	int iWidth = (int)(6.*size);
+
+
+	if(iWidth > 255) iWidth = 255;
+	if(iWidth < 0) iWidth = 0;
+
+	GX_SetPointSize((u8)iWidth, GX_TO_ONE);
+}
+
+static void inline GX_VERTARRAYS_2D_TX(int type, float* points, float* tx, int size)
+{
+    GX_Begin(type, GX_VTXFMT0, size);
+    for(int j = 0; j < size; j++)
+    {
+
+        GX_Position3f32(points[j*size+0], points[j*size+1], 0.0f);
+        GX_Color4u8(gx_r,gx_g,gx_b,gx_a);
+        GX_TexCoord2f32(tx[j*size+0], tx[j*size+1]);
+
+    }
+    GX_End();
+
+}
+
+static void inline GX_VERTARRAYS_2D(int type, float* points,int size)
+{
+    GX_Begin(type, GX_VTXFMT0, size);
+    for(int j = 0; j < size; j++)
+    {
+
+      //  GX_Position3f32(points[j][0], points[j][1], 0.0f);
+        //GX_Color4u8(gx_r,gx_g,gx_b,gx_a);
+        //GX_TexCoord2f32(vert->u, vert->v);
+
+    }
+    GX_End();
+
+}
+
+static void inline GX_VERTARRAYS_2D_CLR(int type, float* points, float* colors,int size)
+{
+    GX_Begin(type, GX_VTXFMT0, size);
+    for(int j = 0; j < size; j++)
+    {
+
+        //GX_Position3f32(points[j][0], points[j][1], 0.0f);
+        //GX_Color4u8(colors[j][0],colors[j][1],colors[j][2],colors[j][3]);
+        //GX_TexCoord2f32(vert->u, vert->v);
+
+    }
+    GX_End();
+
+}
+#endif
+
+
+#endif // GLOBAL_GX_H_INCLUDED
