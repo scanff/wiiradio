@@ -1,0 +1,47 @@
+// lang file
+
+$LANG_NAME=English
+
+$LANG_TXT_TITLE_SEARCHCONNECT=Search/Connect
+$LANG_TXT_TITLE_DEVSEL=Local Device
+$LANG_TXT_PLAYLISTS=Playlists
+$LANG_TXT_GENRE=Genre
+$LANG_TXT_BROWSER=Browser
+$LANG_TXT_EXIT=Quit
+$LANG_TXT_LB=Files
+$LANG_TXT_BUFFERING=Buffering...
+$LANG_TXT_CONNECTING=Connecting...
+$LANG_TXT_ERROR=Stream Error
+$LANG_TXT_STOPPED=Stream Stopped
+$LANG_TXT_PLAYING=Stream Playing
+$LANG_TXT_SEARCHING=Searching...
+$LANG_TXT_SC_ERROR_l1=Sorry, SHOUTcast is not responding!
+$LANG_TXT_SC_ERROR_l2=Please try again by selecting another genre.
+$LANG_TXT_BR=BitRate
+$LANG_TXT_URL=URL
+$LANG_TXT_STATION=Station
+$LANG_TXT_TITLE=Playing
+$LANG_TXT_NEXT_SKIN=Next >
+$LANG_TXT_NEXT_LANG=Next >
+$LANG_TXT_QUIT=Quit
+$LANG_TXT_QUIT_LOADER=Loader
+$LANG_TXT_QUIT_SYS=System
+$LANG_TXT_QUIT_TO=Turn Off
+$LANG_TXT_OK=OK
+$LANG_SCROLL_STATIONTEXT=Scroll Station Text:
+$LANG_SCREEN_SAVE=Screen Save After:
+$LANG_SLEEP_TIMER=Shutdown After:
+$LANG_CHANGE_SKIN=Change Skin:
+$LANG_ABOUT=About:
+$LANG_VERSION=Version
+$LANG_CHANGE_LANG=Change Language:
+$LANG_AUTHOR=By
+$LANG_AND=and
+$LANG_CLOSE=Close
+$LANG_SEARCH=Search
+$LANG_ADDGENRE=Add Genre
+$LANG_SEARCH_TITLE=Search/Add Genre
+$LANG_CANCEL=Cancel
+$LANG_CONNECT=Connect
+$LANG_REINTNET=Restart Net.
+

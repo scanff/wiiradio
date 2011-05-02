@@ -1,0 +1,814 @@
+skinname=SHOUTcast
+skinauthor=Scanff
+
+// -- general images (required)
+bgimg=bg.png
+mute=mute.png
+volume_over=volume_ol.png
+volume_bg=volume_bg.png
+
+// -- cusror (required)
+cursor_y_off=26
+cursor_x_off=26
+cursor=cursor.png
+
+// -- fonts (required)
+fontset=FreeSansBold.ttf
+fontsize_small=16
+fontsize_medium=22
+fontsize_large=26
+
+
+listing_number_of=5
+
+
+lua_script{
+
+--anything withing here will be treated as a lua script
+
+}
+
+
+gui_screen{
+	screen  = 	SCREEN_MAIN
+	name	= 	"main"
+	x		=	0;
+	y		=	0;
+	w		=	$SCREEN_WIDTH
+	h		=	$SCREEN_HEIGHT
+	layer	= 	0
+	visible = 	1
+	bgcolor = 	0x444444
+	img		=	"bg.png"
+
+	
+	gui_button{
+		x=315
+		y=50
+		layer = 1
+		z_order = 1
+		img_out			= info_out.png
+		img_over		= info_over.png
+		img_down		= info_over.png
+		action_lclick	= $FN_SHOW_INFO
+	}
+	
+	
+
+	// logo
+	gui_button{
+			x = 20
+			y = 42
+			z_order = 1
+			visible = 1
+			img_over		= logo_over.png
+			img_down		= logo_out.png
+			img_out			= logo_out.png
+			action_lclick	= $FN_OPTIONS
+			action_rclick	= 0
+	}
+
+	// rip id
+	gui_imageanim{
+		show_on_var		= %ripmusic
+		x				= 370
+		y				= 404
+		layer 			= 2
+		z_order 		= 2
+		images			= record.png, record-blink.png
+		time			= 500
+	}
+
+	// back
+	gui_button{
+		x = 47
+		y = 350
+		z_order = 1
+		visible = 1
+		img_over		= left_over.png
+		img_out			= left_out.png
+		action_lclick	= $FN_BACK
+		action_rclick	= 0
+	}
+	// next
+	gui_button{
+		x = 405
+		y = 350
+		z_order = 1
+		visible = 1
+		img_over		= right_over.png
+		img_out			= right_out.png
+		action_lclick	= $FN_NEXT
+		action_rclick	= 0
+	}
+
+	
+	// -- browser button 
+	gui_button{
+		text=$LANG_TXT_BROWSER
+		text_size=2
+		text_color_out	=#FFBA34
+		text_color_over	=#dddddd
+		text_pad_y		= 5
+		text_pad_x		= 0
+		x = 150
+		y = 39
+		z_order = 1
+		visible = 1
+		img_over		= playlists_over.png
+		img_out			= playlists_out.png
+		action_lclick	= $FN_SHOWBROWSER
+		action_rclick	= 0
+	}
+	
+	// exit
+	gui_button{
+		text=$LANG_TXT_EXIT
+		text_size=2
+		text_color_out=#FFBA34
+		text_color_over=#dddddd
+		text_pad_y		= 5
+		text_pad_x		= 0
+		x = 527
+		y = 39
+		z_order = 1
+		visible = 1
+		img_over		= playlists_over.png
+		img_out			= playlists_out.png
+		action_lclick	= $FN_EXIT
+	}
+
+	// genres
+	gui_button{
+		text=$LANG_TXT_GENRE
+		text_size=2
+		text_color_out=#FFBA34
+		text_color_over=#dddddd
+		text_pad_y		= 5
+		text_pad_x		= 0
+		x = 410
+		y = 39
+		z_order = 1
+		visible = 1
+		img_over		= playlists_over.png
+		img_out			= playlists_out.png
+		action_lclick	= $FN_SHOWGENRES
+	}
+	
+	// playlists
+	gui_button{
+		text=$LANG_TXT_PLAYLISTS
+		text_size=2
+		text_color_out=#FFBA34
+		text_color_over=#dddddd
+		text_pad_y		= 5
+		text_pad_x		= 0
+		x = 280
+		y = 39
+		z_order = 1
+		visible = 1
+		img_over		= playlists_over.png
+		img_out			= playlists_out.png
+		action_lclick	= $FN_SHOWPLAYLISTS
+	}
+
+	gui_button{
+		x = 570
+		y = 413
+		z_order = 1
+		visible = 1
+		img_over		= search_over.png
+		img_out			= search_out.png
+		action_lclick	= $FN_SHOW_WND("100")
+	}
+
+
+	gui_button{
+		text=%NOW_PLAYING
+		text_size=2
+		text_color_out=#dddddd
+		text_color_over=#FDEAB3
+		text_pad_y		= 0
+		text_pad_x		= 0
+		x = 49
+		y = 416
+		z_order = 1
+		visible = 1
+		scroll 			= 1
+		autoscroll 		= 1
+		align			= 0
+		img_over		= playing.png
+		img_out			= playing.png
+		action_lclick	= $FN_SHOW_INFO
+		limit_text=270
+	}
+
+		gui_visual{
+			z_order = 	11
+			changable = 1
+			x=490
+			y=250
+			h=80
+			w=130
+			vis_type = 0
+			vis_color_A = #87b8f7
+			vis_color_B	= #118DA7
+			vis_bgcolor	= #FFFFFF
+		}
+
+	// -- browser list
+	gui_list{
+		name 			= "browser_browser"
+		listid			= 1
+		text			= $BROWSER_LIST_0,$BROWSER_LIST_1,$BROWSER_LIST_2,$BROWSER_LIST_3,$BROWSER_LIST_4
+		x 				= 27
+		y 				= 130
+		z_order 		= 2
+		align			= 0
+		vspacing		= 0
+		items			= 5
+		text_pad_x		= 10
+		text_pad_y		= 11
+		text_size		= 2
+		text_color_out 	= #dddddd
+		text_color_over = #FFBA34
+		text_color_playing = #FFBA34
+		img_pad_x		= 0
+		img_pad_y		= 0
+		img_out			= listing_out.png
+		img_over		= listing_out.png
+		img_down		= listing_out.png
+		action_lclick 	= $FN_LISTITEM_LCLICK
+		limit_text 		= 400
+	}
+
+	gui_list{
+		name 			= "genre_browser"
+		listid			= 3
+		text			= $GENRE_LIST_0,$GENRE_LIST_1,$GENRE_LIST_2,$GENRE_LIST_3,$GENRE_LIST_4
+		x 				= 27
+		y 				= 130
+		z_order 		= 2
+		align			= 1
+		vspacing		= 0
+		items			= 5
+		text_pad_x		= 5
+		text_pad_y		= 11
+		text_size		= 2
+		text_color_out 	= #dddddd
+		text_color_over = #FFBA34
+		text_color_playing = #FFBA34
+		img_pad_x		= 0
+		img_pad_y		= 0
+		img_out			= listing_out.png
+		img_over		= listing_out.png
+		img_down		= listing_out.png
+		action_lclick 	= $FN_LISTITEM_LCLICK
+		limit_text 		= 400
+	}	
+
+	// -- Delete Buttons
+	gui_list{
+		name			= "favs_del"
+		listid			= 2
+		visible			= 0
+		x 				= 431
+		y 				= 130
+		img_pad_x		= 0
+		img_pad_y		= 0
+		z_order 		= 3
+		layer 			= 1
+		align			= 0
+		vspacing		= 0
+		items			= 5
+		img_out			= delete_out.png
+		img_over		= delete_over.png
+		img_down		= delete_out.png
+		action_lclick 	= $FN_DELETEITEM
+	}
+
+	// -- playlist
+	gui_list{
+		name			= "favs_browser"
+		listid			= 2
+		text			= $FAVS_LIST_0,$FAVS_LIST_1,$FAVS_LIST_2,$FAVS_LIST_3,$FAVS_LIST_4
+		x 				= 27
+		y 				= 130
+		z_order 		= 2
+		align			= 0
+		vspacing		= 0
+		items			= 5
+		text_pad_x		= 10
+		text_pad_y		= 10
+		text_size		= 2
+		text_color_out 	= #dddddd
+		text_color_over = #FFBA34
+		text_color_playing = #55ff77
+		img_pad_x		= 0
+		img_pad_y		= 0
+		img_out			= listing_out.png
+		img_over		= listing_out.png
+		img_down		= listing_out.png
+		action_lclick 	= $FN_LISTITEM_LCLICK
+		limit_text 		= 380
+	}
+	
+	// connecting
+	gui_popup{
+		show_status		= SYS_CONNECTING
+		text 			= $LANG_TXT_CONNECTING
+		text_size		= 1
+		text_pad_x		= 50
+		text_pad_y		= 65
+		x				= 20
+		y				= 20
+		text_color_out  = #222222
+		text_color_over = #222222
+		text_color_down = #222222
+		center_img		= 1
+		img				= dialog.png
+		z_order			= 100
+
+
+		gui_button{
+			x 				= 410
+			y 				= 49
+			z_order			= 101
+			visible 		= 1
+			img_over		= cancel_over.png
+			img_out			= cancel_out.png
+			action_lclick	= $FN_CANCEL_CONNECTING
+			action_rclick	= 0
+		}
+		
+	}
+
+	// buffering
+	gui_popup{
+		show_status		= SYS_BUFFERING
+		text 			= $LANG_TXT_BUFFERING
+		text_size		= 1
+		text_pad_x		= 50
+		text_pad_y		= 65
+		x				= 20
+		y				= 20
+		text_color_out  = #222222
+		text_color_over = #222222
+		text_color_down = #222222
+		center_img		= 1
+		img				= dialog.png
+		z_order			= 100
+
+
+		gui_button{
+			x 				= 410
+			y 				= 49
+			z_order			= 101
+			visible 		= 1
+			img_over		= cancel_over.png
+			img_out			= cancel_out.png
+			action_lclick	= $FN_CANCEL_BUFFERING
+			action_rclick	= 0
+		}
+		
+	}
+
+	// Searching
+	gui_popup{
+		show_status		= WND_SEARCHING
+		text 			= $LANG_TXT_SEARCHING
+		text_size		= 1
+		text_pad_x		= 50
+		text_pad_y		= 65
+		x				= 20
+		y				= 20
+		text_color_out  = #555555
+		text_color_over = #555555
+		text_color_down = #555555
+		center_img		= 1
+		img				= dialog.png
+		z_order			= 100
+
+		gui_button{
+			x 				= 400
+			y 				= 39
+			z_order			= 101
+			visible 		= 1
+			img_over		= cancel_over.png
+			img_out			= cancel_out.png
+			action_lclick	= $FN_CANCEL_SEARCHING
+			action_rclick	= 0
+		}
+	}
+
+// Select Search
+	gui_popup{
+		show_status		= WND_PRESEARCH
+		text 			= ""
+		center_img		= 1
+		img				= dialog.png
+		z_order			= 100
+
+		
+		gui_button{
+			x 				= 410
+			y 				= 49
+			z_order			= 101
+			visible = 1
+			img_over		= cancel_over.png
+			img_out			= cancel_out.png
+			action_lclick	= $FN_CLOSE_WND
+		}
+	
+		
+		gui_label{
+			z_order = 	1
+			x = 20
+			y = 3
+			align = 0
+			limit_text		= 200
+			text_color_out = #888888
+			text_size = 3
+			text = $LANG_TXT_TITLE_SEARCHCONNECT
+		}
+		
+		gui_button{
+			text = $LANG_TXT_GENRE
+			text_color_out	= #dddddd
+			text_color_over	= #FDEAB3
+			text_color_down = #FFFFFF
+			text_pad_y		= 10
+			text_pad_x		= 0
+			z_order = 2
+		    text_size = 2
+			x = 30
+			y = 68
+			visible = 1
+			img_over		= button_over.png
+			img_out			= button_out.png
+			action_lclick	= $FN_SHOWSEARCH
+		}
+		
+		gui_button{
+			text = $LANG_CONNECT
+			text_color_out	= #dddddd
+			text_color_over	= #FDEAB3
+			text_color_down = #FFFFFF
+			text_pad_y		= 10
+			text_pad_x		= 0
+		    text_size = 2
+			x = 200
+			y = 68
+			z_order = 1
+			visible = 1
+			img_over		= button_over.png
+			img_out			= button_out.png
+			action_lclick	= $FN_SHOWCONNECT
+		}		
+
+
+	}	
+
+}
+
+
+
+
+// -- Connect
+gui_screen{
+	screen  = 	SCREEN_CONNECT
+	name	= 	"connectto"
+	x		=	0
+	y		=	0
+	w 		= 	SCREEN_WIDTH
+	h 		= 	SCREEN_HEIGHT
+	z_order	= 	0
+	visible = 	0
+	bgcolor = 	#3a2501
+	
+	gui_shape{
+		z_order = 	1
+		x =	0
+		y =	0
+		w = 640
+		h = 50
+		bgcolor = #000000
+	}
+	gui_shape{
+		z_order = 	1
+		x =	0
+		y =	430
+		w = 640
+		h = 50
+		bgcolor = #000000
+	}
+
+	gui_label{
+		z_order = 	2
+		x = 20
+		y = 64
+		align = 0
+		text_color_out = #eeeeee
+		text_size = 1
+		text = $LANG_CONNECT
+	}
+	
+	gui_label{
+		z_order = 	2
+		limit_text		=	600
+		x = 20
+		y = 100
+		align = 0
+		text_color_out = #dddddd
+		text_size = 2
+		text = %KB_OUTPUT
+	}
+	
+	gui_shape{
+		z_order = 	1
+		x =	18
+		y =	100
+		w = 604
+		h = 30
+		bgcolor = #111111
+	}
+	
+	gui_keyboard{
+		z_order 		= 	2
+		x				=	30
+		y				=	60
+		text			=	%KB_OUTPUT
+		img_key_over		= keyboard_key_over.png
+		img_key_out 		= keyboard_key.png
+		img_key_med_out		= keyboard_mediumkey.png
+		img_key_med_over	= keyboard_mediumkey_over.png
+		img_key_space_out	= space_out.png
+		img_key_space_over	= space_over.png
+		text_color_out		= #111111
+		text_color_over		= #444444
+	}
+	
+	gui_button{
+		text = $LANG_CONNECT
+		x = 470
+		y = 360
+		text_color_out = #EEEEEE
+		text_color_over = #ffffff
+		text_color_down = #0000FF
+		text_pad_y		= 12
+		text_pad_x		= 0
+		z_order = 1
+		layer = 1
+		text_size = 3
+		visible = 1
+		img_over		= button_over.png
+		img_out			= button_out.png
+		action_lclick	= $FN_DIRECT_CONNECT
+	}
+	
+	gui_button{
+		text = $LANG_CLOSE
+		x = 290
+		y = 360
+		text_color_out = #EEEEEE
+		text_color_over = #ffffff
+		text_color_down = #0000FF
+		text_pad_y		= 12
+		text_pad_x		= 0
+		z_order = 1
+		layer = 1
+		text_size = 3
+		visible = 1
+		img_over		= button_over.png
+		img_out			= button_out.png
+		action_lclick	= $FN_CLOSE_SCREEN
+	}
+}
+
+// Search for a genre
+gui_screen{
+	screen  = 	SCREEN_SEARCHGENRE
+	name	= 	"genresearchscreen"
+	x		=	0
+	y		=	0
+	w 		= 	SCREEN_WIDTH
+	h 		= 	SCREEN_HEIGHT
+	z_order	= 	0
+	visible = 	0
+	bgcolor = 	#3a2501
+	
+	gui_shape{
+		z_order = 	1
+		x =	0
+		y =	0
+		w = 640
+		h = 50
+		bgcolor = #000000
+	}
+	gui_shape{
+		z_order = 	1
+		x =	0
+		y =	430
+		w = 640
+		h = 50
+		bgcolor = #000000
+	}
+	gui_label{
+		z_order = 	2
+		x = 20
+		y = 64
+		align = 0
+		text_color_out = #eeeeee
+		text_size = 1
+		text = "Genre Search"
+	}
+	
+	gui_label{
+		z_order = 	2
+		limit_text		=	600
+		x = 20
+		y = 100
+		align = 0
+		text_color_out = #dddddd
+		text_size = 2
+		text = %KB_OUTPUT
+	}
+	
+	gui_shape{
+		z_order = 	1
+		x =	18
+		y =	100
+		w = 604
+		h = 30
+		bgcolor = #121519
+	}
+	
+	gui_keyboard{
+		z_order 		= 	2
+		x				=	30
+		y				=	60
+		text			=	%KB_OUTPUT
+		img_key_over		= keyboard_key_over.png
+		img_key_out 		= keyboard_key.png
+		img_key_med_out		= keyboard_mediumkey.png
+		img_key_med_over	= keyboard_mediumkey_over.png
+		img_key_space_out	= space_out.png
+		img_key_space_over	= space_over.png
+		text_color_out		= #111111
+		text_color_over		= #444444
+	}
+	
+	gui_button{
+		text = $LANG_ADDGENRE
+		x = 260
+		y = 360
+		text_color_out = #EEEEEE
+		text_color_over = #ffffff
+		text_color_down = #0000FF
+		text_pad_y		= 12
+		text_pad_x		= 0
+		z_order = 1
+		layer = 1
+		text_size = 3
+		visible = 1
+		img_over		= button_over.png
+		img_out			= button_out.png
+		action_lclick	= $FN_ADDGENRE
+	}
+	
+	gui_button{
+		text = $LANG_SEARCH
+		x = 440
+		y = 360
+		text_color_out = #EEEEEE
+		text_color_over = #ffffff
+		text_color_down = #0000FF
+		text_pad_y		= 12
+		text_pad_x		= 0
+		z_order = 1
+		layer = 1
+		text_size = 3
+		visible = 1
+		img_over		= button_over.png
+		img_out			= button_out.png
+		action_lclick	= $FN_SEARCH_ON_GENRE
+	}
+	
+	gui_button{
+		text = $LANG_CLOSE
+		x = 80
+		y = 360
+		text_color_out = #EEEEEE
+		text_color_over = #ffffff
+		text_color_down = #0000FF
+		text_pad_y		= 12
+		text_pad_x		= 0
+		z_order = 1
+		layer = 1
+		text_size = 3
+		visible = 1
+		img_over		= button_over.png
+		img_out			= button_out.png
+		action_lclick	= $FN_CLOSE_SCREEN
+	}
+}
+
+
+
+
+// -- Stream info screen
+gui_screen{
+	screen  = 	SCREEN_STREAM_INFO
+	name	= 	"streaminfo"
+	z_order = 	10
+	x		=	0
+	y		=	0
+	w 		= 	SCREEN_WIDTH
+	h 		= 	SCREEN_HEIGHT
+	z_order	= 	0
+	visible = 	0
+	bgcolor = 	#222222
+
+	gui_label{
+		z_order = 	11
+		x = 20
+		y = 67
+		align = 0
+		text_color_out = #EEEEEE
+		text_size = 1
+		text = "CURRENTLY PLAYING"
+	}
+
+
+	// Visual - Album art
+	gui_visual{
+		z_order = 	11
+		changable = 0
+		x=20
+		y=150
+		h=200
+		w=200
+		vis_type = 1
+	}
+
+	//Artist
+	gui_label{
+		x = 250
+		y = 155
+		z_order = 	11
+		align = 0
+		text_color_out = #EEEEEE
+		text_size = 3
+		text = $ARTIST
+	}
+	//Song Title
+	gui_label{
+		x = 250
+		y = 175
+		z_order = 	11
+		align = 0
+		text_color_out = #EEEEEE
+		text_size = 3
+		text = $TITLE
+	}
+	//ALBUM
+	gui_label{
+		x = 250
+		y = 195
+		z_order = 	11
+		align = 0
+		text_color_out = #EEEEEE
+		text_size = 3
+		text = $ALBUM
+	}
+	//GENRE
+	gui_label{
+		x = 250
+		y = 215
+		z_order = 	11
+		align = 0
+		text_color_out = #EEEEEE
+		text_size = 3
+		text = $GENRE
+	}
+	//YEAR
+	gui_label{
+		x = 250
+		y = 235
+		z_order = 	11
+		align = 0
+		text_color_out = #EEEEEE
+		text_size = 3
+		text = $YEAR
+	}
+	//YEAR
+	gui_label{
+		x = 250
+		y = 255
+		z_order = 	11
+		align = 0
+		text_color_out = #EEEEEE
+		text_size = 3
+		text = $BITRATE
+	}
+}
