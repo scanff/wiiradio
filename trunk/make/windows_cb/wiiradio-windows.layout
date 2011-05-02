@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_layout_file>
+	<ActiveTarget name="Debug" />
+	<File name="..\..\source\application.cpp" open="1" top="0" tabpos="67">
+		<Cursor position="40982" topLine="1844" />
+	</File>
+	<File name="..\..\source\application.h" open="1" top="0" tabpos="17">
+		<Cursor position="2776" topLine="123" />
+	</File>
+	<File name="..\..\source\audio\mp3.cpp" open="1" top="0" tabpos="25">
+		<Cursor position="3026" topLine="145" />
+	</File>
+	<File name="..\..\source\audio\mp3.h" open="1" top="0" tabpos="31">
+		<Cursor position="115" topLine="0" />
+	</File>
+	<File name="..\..\source\audio\sound_sdl.cpp" open="1" top="0" tabpos="26">
+		<Cursor position="265" topLine="0" />
+	</File>
+	<File name="..\..\source\audio\sound_sdl.h" open="1" top="0" tabpos="33">
+		<Cursor position="1024" topLine="0" />
+	</File>
+	<File name="..\..\source\browser.cpp" open="1" top="0" tabpos="28">
+		<Cursor position="10956" topLine="485" />
+	</File>
+	<File name="..\..\source\browser.h" open="1" top="0" tabpos="98">
+		<Cursor position="860" topLine="30" />
+	</File>
+	<File name="..\..\source\client.cpp" open="1" top="0" tabpos="27">
+		<Cursor position="2941" topLine="226" />
+	</File>
+	<File name="..\..\source\client.h" open="1" top="0" tabpos="101">
+		<Cursor position="95" topLine="20" />
+	</File>
+	<File name="..\..\source\favorites.cpp" open="1" top="0" tabpos="1">
+		<Cursor position="80" topLine="0" />
+	</File>
+	<File name="..\..\source\favorites.h" open="1" top="0" tabpos="23">
+		<Cursor position="124" topLine="0" />
+	</File>
+	<File name="..\..\source\fft.h" open="1" top="0" tabpos="66">
+		<Cursor position="5323" topLine="200" />
+	</File>
+	<File name="..\..\source\fonts.cpp" open="1" top="0" tabpos="16">
+		<Cursor position="230" topLine="13" />
+	</File>
+	<File name="..\..\source\fonts.h" open="1" top="0" tabpos="94">
+		<Cursor position="206" topLine="0" />
+	</File>
+	<File name="..\..\source\functions.cpp" open="1" top="0" tabpos="30">
+		<Cursor position="2130" topLine="60" />
+	</File>
+	<File name="..\..\source\functions.h" open="1" top="0" tabpos="64">
+		<Cursor position="1130" topLine="25" />
+	</File>
+	<File name="..\..\source\genre_list.cpp" open="1" top="0" tabpos="2">
+		<Cursor position="2751" topLine="156" />
+	</File>
+	<File name="..\..\source\genre_list.h" open="1" top="0" tabpos="99">
+		<Cursor position="889" topLine="24" />
+	</File>
+	<File name="..\..\source\globals.cpp" open="1" top="1" tabpos="42">
+		<Cursor position="535" topLine="11" />
+	</File>
+	<File name="..\..\source\globals.h" open="1" top="0" tabpos="19">
+		<Cursor position="2408" topLine="112" />
+	</File>
+	<File name="..\..\source\gui.cpp" open="1" top="0" tabpos="51">
+		<Cursor position="13502" topLine="513" />
+	</File>
+	<File name="..\..\source\gui.h" open="1" top="0" tabpos="50">
+		<Cursor position="902" topLine="43" />
+	</File>
+	<File name="..\..\source\gui\gui_button.cpp" open="1" top="0" tabpos="37">
+		<Cursor position="142" topLine="0" />
+	</File>
+	<File name="..\..\source\gui\gui_button.h" open="1" top="0" tabpos="69">
+		<Cursor position="325" topLine="4" />
+	</File>
+	<File name="..\..\source\gui\gui_font.cpp" open="1" top="0" tabpos="53">
+		<Cursor position="111" topLine="0" />
+	</File>
+	<File name="..\..\source\gui\gui_group.cpp" open="1" top="0" tabpos="13">
+		<Cursor position="1767" topLine="58" />
+	</File>
+	<File name="..\..\source\gui\gui_group.h" open="1" top="0" tabpos="46">
+		<Cursor position="435" topLine="0" />
+	</File>
+	<File name="..\..\source\gui\gui_img.cpp" open="1" top="0" tabpos="54">
+		<Cursor position="852" topLine="24" />
+	</File>
+	<File name="..\..\source\gui\gui_img_anim.cpp" open="1" top="0" tabpos="55">
+		<Cursor position="165" topLine="0" />
+	</File>
+	<File name="..\..\source\gui\gui_img_anim.h" open="1" top="0" tabpos="76">
+		<Cursor position="0" topLine="0" />
+	</File>
+	<File name="..\..\source\gui\gui_img_list.cpp" open="1" top="0" tabpos="56">
+		<Cursor position="2633" topLine="122" />
+	</File>
+	<File name="..\..\source\gui\gui_img_list.h" open="1" top="0" tabpos="75">
+		<Cursor position="0" topLine="0" />
+	</File>
+	<File name="..\..\source\gui\gui_keyboard.cpp" open="1" top="0" tabpos="14">
+		<Cursor position="2226" topLine="107" />
+	</File>
+	<File name="..\..\source\gui\gui_keyboard.h" open="1" top="0" tabpos="70">
+		<Cursor position="1232" topLine="27" />
+	</File>
+	<File name="..\..\source\gui\gui_label.cpp" open="1" top="0" tabpos="39">
+		<Cursor position="98" topLine="0" />
+	</File>
+	<File name="..\..\source\gui\gui_label.h" open="1" top="0" tabpos="74">
+		<Cursor position="0" topLine="0" />
+	</File>
+	<File name="..\..\source\gui\gui_list.cpp" open="1" top="0" tabpos="57">
+		<Cursor position="3194" topLine="131" />
+	</File>
+	<File name="..\..\source\gui\gui_list.h" open="1" top="0" tabpos="68">
+		<Cursor position="249" topLine="5" />
+	</File>
+	<File name="..\..\source\gui\gui_object.cpp" open="1" top="0" tabpos="36">
+		<Cursor position="153" topLine="4" />
+	</File>
+	<File name="..\..\source\gui\gui_object.h" open="1" top="0" tabpos="43">
+		<Cursor position="2436" topLine="128" />
+	</File>
+	<File name="..\..\source\gui\gui_options.cpp" open="1" top="0" tabpos="3">
+		<Cursor position="911" topLine="19" />
+	</File>
+	<File name="..\..\source\gui\gui_options.h" open="1" top="0" tabpos="45">
+		<Cursor position="511" topLine="15" />
+	</File>
+	<File name="..\..\source\gui\gui_popup.cpp" open="1" top="0" tabpos="62">
+		<Cursor position="873" topLine="41" />
+	</File>
+	<File name="..\..\source\gui\gui_popup.h" open="1" top="0" tabpos="63">
+		<Cursor position="0" topLine="0" />
+	</File>
+	<File name="..\..\source\gui\gui_screen.cpp" open="1" top="0" tabpos="49">
+		<Cursor position="1070" topLine="38" />
+	</File>
+	<File name="..\..\source\gui\gui_shape.cpp" open="1" top="0" tabpos="58">
+		<Cursor position="763" topLine="10" />
+	</File>
+	<File name="..\..\source\gui\gui_slider.cpp" open="1" top="0" tabpos="59">
+		<Cursor position="189" topLine="0" />
+	</File>
+	<File name="..\..\source\gui\gui_slider.h" open="1" top="0" tabpos="78">
+		<Cursor position="446" topLine="2" />
+	</File>
+	<File name="..\..\source\gui\gui_textbox.cpp" open="1" top="0" tabpos="60">
+		<Cursor position="1774" topLine="65" />
+	</File>
+	<File name="..\..\source\gui\gui_visual.cpp" open="1" top="0" tabpos="15">
+		<Cursor position="3797" topLine="142" />
+	</File>
+	<File name="..\..\source\gui\gui_visual.h" open="1" top="0" tabpos="92">
+		<Cursor position="332" topLine="0" />
+	</File>
+	<File name="..\..\source\hashing.h" open="1" top="0" tabpos="97">
+		<Cursor position="324" topLine="13" />
+	</File>
+	<File name="..\..\source\icy.cpp" open="1" top="0" tabpos="95">
+		<Cursor position="2240" topLine="95" />
+	</File>
+	<File name="..\..\source\icy.h" open="1" top="0" tabpos="96">
+		<Cursor position="716" topLine="51" />
+	</File>
+	<File name="..\..\source\id3.cpp" open="1" top="0" tabpos="38">
+		<Cursor position="5496" topLine="284" />
+	</File>
+	<File name="..\..\source\id3.h" open="1" top="0" tabpos="73">
+		<Cursor position="369" topLine="37" />
+	</File>
+	<File name="..\..\source\lang.h" open="1" top="0" tabpos="20">
+		<Cursor position="2482" topLine="109" />
+	</File>
+	<File name="..\..\source\local.cpp" open="1" top="0" tabpos="32">
+		<Cursor position="1285" topLine="64" />
+	</File>
+	<File name="..\..\source\local.h" open="1" top="0" tabpos="40">
+		<Cursor position="794" topLine="27" />
+	</File>
+	<File name="..\..\source\localfiles.cpp" open="1" top="0" tabpos="24">
+		<Cursor position="4070" topLine="155" />
+	</File>
+	<File name="..\..\source\localfiles.h" open="1" top="0" tabpos="29">
+		<Cursor position="119" topLine="0" />
+	</File>
+	<File name="..\..\source\main.cpp" open="1" top="0" tabpos="35">
+		<Cursor position="0" topLine="0" />
+	</File>
+	<File name="..\..\source\options.cpp" open="1" top="0" tabpos="4">
+		<Cursor position="2919" topLine="82" />
+	</File>
+	<File name="..\..\source\options.h" open="1" top="0" tabpos="44">
+		<Cursor position="513" topLine="16" />
+	</File>
+	<File name="..\..\source\playlists.h" open="1" top="0" tabpos="22">
+		<Cursor position="4037" topLine="163" />
+	</File>
+	<File name="..\..\source\projectm.cpp" open="1" top="0" tabpos="6">
+		<Cursor position="1023" topLine="55" />
+	</File>
+	<File name="..\..\source\projectm.h" open="1" top="0" tabpos="21">
+		<Cursor position="60" topLine="0" />
+	</File>
+	<File name="..\..\source\ripper.cpp" open="1" top="0" tabpos="5">
+		<Cursor position="730" topLine="24" />
+	</File>
+	<File name="..\..\source\ripper.h" open="1" top="0" tabpos="103">
+		<Cursor position="279" topLine="0" />
+	</File>
+	<File name="..\..\source\script.cpp" open="1" top="0" tabpos="7">
+		<Cursor position="483" topLine="22" />
+	</File>
+	<File name="..\..\source\script.h" open="1" top="0" tabpos="71">
+		<Cursor position="512" topLine="11" />
+	</File>
+	<File name="..\..\source\skins.cpp" open="1" top="0" tabpos="18">
+		<Cursor position="21550" topLine="870" />
+	</File>
+	<File name="..\..\source\skins.h" open="1" top="0" tabpos="52">
+		<Cursor position="609" topLine="15" />
+	</File>
+	<File name="..\..\source\station.cpp" open="1" top="0" tabpos="48">
+		<Cursor position="1999" topLine="72" />
+	</File>
+	<File name="..\..\source\station.h" open="1" top="0" tabpos="47">
+		<Cursor position="90" topLine="0" />
+	</File>
+	<File name="..\..\source\station_cache.cpp" open="1" top="0" tabpos="79">
+		<Cursor position="291" topLine="8" />
+	</File>
+	<File name="..\..\source\station_cache.h" open="1" top="0" tabpos="100">
+		<Cursor position="80" topLine="0" />
+	</File>
+	<File name="..\..\source\textures.cpp" open="1" top="0" tabpos="93">
+		<Cursor position="0" topLine="0" />
+	</File>
+	<File name="..\..\source\textures.h" open="1" top="0" tabpos="102">
+		<Cursor position="201" topLine="0" />
+	</File>
+	<File name="..\..\source\types.h" open="1" top="0" tabpos="34">
+		<Cursor position="325" topLine="2" />
+	</File>
+	<File name="..\..\source\variables.cpp" open="1" top="0" tabpos="91">
+		<Cursor position="877" topLine="44" />
+	</File>
+	<File name="..\..\source\variables.h" open="1" top="0" tabpos="80">
+		<Cursor position="143" topLine="30" />
+	</File>
+	<File name="..\..\source\visuals.cpp" open="1" top="0" tabpos="72">
+		<Cursor position="3715" topLine="114" />
+	</File>
+	<File name="..\..\source\visuals.h" open="1" top="0" tabpos="90">
+		<Cursor position="616" topLine="4" />
+	</File>
+	<File name="..\..\source\visuals\visual_bars.h" open="1" top="0" tabpos="65">
+		<Cursor position="672" topLine="25" />
+	</File>
+	<File name="..\..\source\visuals\visual_bobs.h" open="1" top="0" tabpos="8">
+		<Cursor position="1906" topLine="78" />
+	</File>
+	<File name="..\..\source\visuals\visual_circles.h" open="1" top="0" tabpos="61">
+		<Cursor position="951" topLine="43" />
+	</File>
+	<File name="..\..\source\visuals\visual_explode.h" open="1" top="0" tabpos="41">
+		<Cursor position="189" topLine="0" />
+	</File>
+	<File name="..\..\source\visuals\visual_fire.h" open="1" top="0" tabpos="86">
+		<Cursor position="602" topLine="19" />
+	</File>
+	<File name="..\..\source\visuals\visual_lasers.h" open="1" top="0" tabpos="81">
+		<Cursor position="502" topLine="29" />
+	</File>
+	<File name="..\..\source\visuals\visual_matrix.h" open="1" top="0" tabpos="89">
+		<Cursor position="671" topLine="32" />
+	</File>
+	<File name="..\..\source\visuals\visual_mist.h" open="1" top="0" tabpos="77">
+		<Cursor position="811" topLine="32" />
+	</File>
+	<File name="..\..\source\visuals\visual_object.h" open="1" top="0" tabpos="84">
+		<Cursor position="215" topLine="0" />
+	</File>
+	<File name="..\..\source\visuals\visual_osc.h" open="1" top="0" tabpos="82">
+		<Cursor position="843" topLine="37" />
+	</File>
+	<File name="..\..\source\visuals\visual_plasma.h" open="1" top="0" tabpos="87">
+		<Cursor position="1740" topLine="66" />
+	</File>
+	<File name="..\..\source\visuals\visual_raycaster.h" open="1" top="0" tabpos="9">
+		<Cursor position="11534" topLine="345" />
+	</File>
+	<File name="..\..\source\visuals\visual_rotzoom.h" open="1" top="0" tabpos="10">
+		<Cursor position="469" topLine="22" />
+	</File>
+	<File name="..\..\source\visuals\visual_sintext.h" open="1" top="0" tabpos="88">
+		<Cursor position="972" topLine="48" />
+	</File>
+	<File name="..\..\source\visuals\visual_stars.h" open="1" top="0" tabpos="85">
+		<Cursor position="784" topLine="31" />
+	</File>
+	<File name="..\..\source\visuals\visual_tunnel.h" open="1" top="0" tabpos="83">
+		<Cursor position="3385" topLine="119" />
+	</File>
+	<File name="..\..\source\visuals\visual_water.h" open="1" top="0" tabpos="11">
+		<Cursor position="276" topLine="4" />
+	</File>
+	<File name="..\..\source\visuals\visual_waves.h" open="1" top="0" tabpos="12">
+		<Cursor position="1705" topLine="67" />
+	</File>
+</CodeBlocks_layout_file>

@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes'?>
+	<app version='0.7'>
+		<name>WiiRadio</name>
+		<coder>Scanff</coder>
+		<version>0.7</version>
+		<release_date>20110502</release_date>
+		<short_description>Internet Radio For Wii</short_description>
+		<long_description>WiiRadio is a SHOUT/ICEcast stream player, ripper and music visualizer for the Wii.
+
+Includes language packs, skinning capabilities and local music playback.
+
+Coding By: Scanff and Knarrff
+Graphics By: TiMeBoMb
+
+--- Thanks To ---
+.:: ProjectM ::.
+
+projectM is an awesome music visualizer. 
+
+http://projectm.sourceforge.net/
+
+.:: Tantric ::.
+
+Allowing me to use the libgui keyboard images.
+
+.:: The Demo Effects Collection ::.
+
+The main resource for the visual effects.  http://demo-effects.sourceforge.net/
+    </long_description>
+	</app>
