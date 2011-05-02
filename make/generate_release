@@ -1,0 +1,39 @@
+#!/bin/bash
+
+DEST=apps/radiow
+
+if [ -e $DEST ]; then
+  echo "Directory apps/ exists, aborting";
+  exit 1;
+fi
+
+mkdir -p $DEST
+
+cp wiiradio.dol $DEST/boot.dol
+cp -r \
+FreeSansBold.ttf \
+genres.dat       \
+icon.png         \
+meta.xml         \
+options.dat      \
+imgs    \
+lang    \
+skins   \
+visdata \
+$DEST
+
+mkdir -p $DEST/pls
+mkdir -p $DEST/cache
+
+find $DEST -name .svn -exec rm -rf '{}' \; 2>/dev/null
+
+cd $DEST/lang
+mv English.txt english.txt
+mv Türkçe.txt  turkey.txt
+rm Français.txt
+
+cd -
+
+VERSION=`grep VERSION_NUMBER source/globals.h | sed -e 's/.*(\([^)]*\)).*/\1/;s/\.//'`
+
+zip -r -9 wiiradio_$VERSION.zip apps

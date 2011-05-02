@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="WiiRadio" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/WiiRadio" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+					<Add option="-D_DEBUG" />
+					<Add directory="../libs/include" />
+				</Compiler>
+				<Linker>
+					<Add library="mad" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/WiiRadio" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add library="ws2_32" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-g" />
+			<Add option="-fexceptions" />
+			<Add option="-D_CONSOLE" />
+			<Add option="-D_LINUX_" />
+			<Add directory="C:/libs/SDL-1.2.13_cb/include" />
+		</Compiler>
+		<Linker>
+			<Add library="SDL" />
+			<Add library="SDL_image" />
+			<Add library="SDL_ttf" />
+			<Add library="SDL_gfx" />
+			<Add directory="C:/libs/SDL-1.2.13_cb/lib" />
+		</Linker>
+		<Unit filename="../source/application.cpp" />
+		<Unit filename="../source/application.h" />
+		<Unit filename="../source/audio/audio.h" />
+		<Unit filename="../source/audio/mp3/mp3.h" />
+		<Unit filename="../source/audio/sound_sdl.cpp" />
+		<Unit filename="../source/audio/sound_sdl.h" />
+		<Unit filename="../source/browser.h" />
+		<Unit filename="../source/client.h" />
+		<Unit filename="../source/favorites.cpp" />
+		<Unit filename="../source/favorites.h" />
+		<Unit filename="../source/fft.h" />
+		<Unit filename="../source/fonts.h" />
+		<Unit filename="../source/functions.cpp" />
+		<Unit filename="../source/functions.h" />
+		<Unit filename="../source/genre_list.h" />
+		<Unit filename="../source/globals.cpp" />
+		<Unit filename="../source/globals.h" />
+		<Unit filename="../source/gui/gui.cpp" />
+		<Unit filename="../source/gui/gui.h" />
+		<Unit filename="../source/gui/gui_button.cpp" />
+		<Unit filename="../source/gui/gui_button.h" />
+		<Unit filename="../source/gui/gui_dlg.h" />
+		<Unit filename="../source/gui/gui_group.cpp" />
+		<Unit filename="../source/gui/gui_group.h" />
+		<Unit filename="../source/gui/gui_img.cpp" />
+		<Unit filename="../source/gui/gui_img.h" />
+		<Unit filename="../source/gui/gui_img_anim.cpp" />
+		<Unit filename="../source/gui/gui_img_anim.h" />
+		<Unit filename="../source/gui/gui_img_list.cpp" />
+		<Unit filename="../source/gui/gui_img_list.h" />
+		<Unit filename="../source/gui/gui_keyboard.cpp" />
+		<Unit filename="../source/gui/gui_keyboard.h" />
+		<Unit filename="../source/gui/gui_label.cpp" />
+		<Unit filename="../source/gui/gui_label.h" />
+		<Unit filename="../source/gui/gui_list.cpp" />
+		<Unit filename="../source/gui/gui_list.h" />
+		<Unit filename="../source/gui/gui_log.cpp" />
+		<Unit filename="../source/gui/gui_log.h" />
+		<Unit filename="../source/gui/gui_object.cpp" />
+		<Unit filename="../source/gui/gui_object.h" />
+		<Unit filename="../source/gui/gui_options.cpp" />
+		<Unit filename="../source/gui/gui_options.h" />
+		<Unit filename="../source/gui/gui_popup.cpp" />
+		<Unit filename="../source/gui/gui_popup.h" />
+		<Unit filename="../source/gui/gui_screen.cpp" />
+		<Unit filename="../source/gui/gui_screen.h" />
+		<Unit filename="../source/gui/gui_search.cpp" />
+		<Unit filename="../source/gui/gui_search.h" />
+		<Unit filename="../source/gui/gui_shape.cpp" />
+		<Unit filename="../source/gui/gui_shape.h" />
+		<Unit filename="../source/gui/gui_slider.h" />
+		<Unit filename="../source/gui/gui_textbox.cpp" />
+		<Unit filename="../source/gui/gui_textbox.h" />
+		<Unit filename="../source/gui/gui_toggle.cpp" />
+		<Unit filename="../source/gui/gui_toggle.h" />
+		<Unit filename="../source/gui/gui_visual.cpp" />
+		<Unit filename="../source/gui/gui_visual.h" />
+		<Unit filename="../source/icy.h" />
+		<Unit filename="../source/id3.cpp" />
+		<Unit filename="../source/id3.h" />
+		<Unit filename="../source/lang.h" />
+		<Unit filename="../source/local.cpp" />
+		<Unit filename="../source/local.h" />
+		<Unit filename="../source/localfiles.cpp" />
+		<Unit filename="../source/localfiles.h" />
+		<Unit filename="../source/main.cpp" />
+		<Unit filename="../source/options.cpp" />
+		<Unit filename="../source/options.h" />
+		<Unit filename="../source/pixel_mesh.h" />
+		<Unit filename="../source/playlists.h" />
+		<Unit filename="../source/projectm.cpp" />
+		<Unit filename="../source/projectm.h" />
+		<Unit filename="../source/reflection.cpp" />
+		<Unit filename="../source/reflection.h" />
+		<Unit filename="../source/render/stub.h" />
+		<Unit filename="../source/ripper.cpp" />
+		<Unit filename="../source/ripper.h" />
+		<Unit filename="../source/skins.cpp" />
+		<Unit filename="../source/skins.h" />
+		<Unit filename="../source/station.cpp" />
+		<Unit filename="../source/station.h" />
+		<Unit filename="../source/station_cache.cpp" />
+		<Unit filename="../source/station_cache.h" />
+		<Unit filename="../source/textures.h" />
+		<Unit filename="../source/types.h" />
+		<Unit filename="../source/variables.cpp" />
+		<Unit filename="../source/variables.h" />
+		<Unit filename="../source/visuals.cpp" />
+		<Unit filename="../source/visuals.h" />
+		<Unit filename="../source/visuals/visual_bars.h" />
+		<Unit filename="../source/visuals/visual_bobs.h" />
+		<Unit filename="../source/visuals/visual_circles.h" />
+		<Unit filename="../source/visuals/visual_explode.h" />
+		<Unit filename="../source/visuals/visual_fire.h" />
+		<Unit filename="../source/visuals/visual_lasers.h" />
+		<Unit filename="../source/visuals/visual_matrix.h" />
+		<Unit filename="../source/visuals/visual_mist.h" />
+		<Unit filename="../source/visuals/visual_object.h" />
+		<Unit filename="../source/visuals/visual_osc.h" />
+		<Unit filename="../source/visuals/visual_plasma.h" />
+		<Unit filename="../source/visuals/visual_raycaster.h" />
+		<Unit filename="../source/visuals/visual_rotzoom.h" />
+		<Unit filename="../source/visuals/visual_sintext.h" />
+		<Unit filename="../source/visuals/visual_stars.h" />
+		<Unit filename="../source/visuals/visual_tunnel.h" />
+		<Unit filename="../source/visuals/visual_water.h" />
+		<Unit filename="../source/visuals/visual_waves.h" />
+		<Unit filename="../source/visuals/visual_wormhole.h" />
+		<Unit filename="../source/wr_scriptengine.cpp" />
+		<Unit filename="../source/wr_scriptengine.h" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
