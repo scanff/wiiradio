@@ -37,7 +37,7 @@ class audio_device
     bool            playing;
     SDL_AudioSpec   audiofmt;
     int             sdl_volume;
-    int             min_buffers;
+    u32             min_buffers;
 
 
     u8* audio_buffer;

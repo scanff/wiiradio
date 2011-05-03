@@ -74,6 +74,8 @@ class codec_mp3
         s32                 ReadSize;
         void*               databuffer;
 
+        u32                 samplecount;
+
         EQState eqs[2];
 
         bool atend;
