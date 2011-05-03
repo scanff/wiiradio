@@ -1488,6 +1488,15 @@ FORCEINLINE void app_wiiradio::do_input()
         while (SDL_PollEvent( &event ))
         {
             ui->handle_events(&event);
+            switch (event.type)
+            {
+                case SDL_QUIT:
+                {
+                    g_running = false;
+                }break;
+                default:
+                break;
+            }
         }
 #endif
 
