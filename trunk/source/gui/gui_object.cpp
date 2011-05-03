@@ -28,8 +28,8 @@ gui_object::gui_object() :
     right_click_func(0),
     object_id(0),
     visible(false),
-    center_img(1),
     parent( NULL ),
+    center_img(1),
     show_on_status(0) // default all
 {
     bgcolor.color = 0;

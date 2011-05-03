@@ -158,7 +158,7 @@ u64 get_media_free_space()
 #else
 u64 get_media_free_space()
 {
-    u64 free = 0;
+
     u64 FreeBytesAvailable;
     u64 TotalNumberOfBytes;
     u64 TotalNumberOfFreeBytes;

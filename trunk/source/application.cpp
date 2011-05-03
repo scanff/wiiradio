@@ -88,17 +88,17 @@ app_wiiradio::app_wiiradio() :
     usb(&__io_usbstorage),
 //    dvd(&__io_wiidvd),
 #endif
+    sleep_time_start( 0 ),
     unsaved_volume_change( false ),
     screen_sleeping( false ),
     playing_uuid( 0 ),
     playing_item( -1 ),
     replay_item( 0 ),
-    current_screen_status( 0 ),
-    last_screen_status( 0 ),
+    exit_mode( 0 ),
     app_timer( 0 ),
     current_lv( 2 ),
-    exit_mode( 0 ),
-    sleep_time_start( 0 )
+    current_screen_status( 0 ),
+    last_screen_status( 0 )
 {
 
 
