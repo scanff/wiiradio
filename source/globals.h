@@ -259,7 +259,6 @@ extern void switch_sdl_video_mode(const _VideoMode mode);
 #define CLIPB(x,mx)  x > mx ? mx : x < 0 ? 0 : (x);
 
 #define PI              (3.14159265)
-#define MAX_Z_ORDERS    (3) // -- z orders per layer
 #define ELEMENTS_IN_2D_ARRAY(x)  ((int)((sizeof(x)) / (sizeof(x[0]))))
 
 

@@ -8,12 +8,6 @@
 #define SHRT_MAX 32767
 #define SAMPLE_DEPTH 16
 bool g_Stereo = true;
-u32 g_samplecount = 0;
-u32 g_buflen = 0;
-u32 g_rate = 0;
-u32 g_frames = 0;
-u32 g_iBitRate_Kbs = 0;
-
 
 int codec_mp3::get_bitrate(){ return 0;};
 
@@ -21,9 +15,9 @@ int codec_mp3::get_bitrate(){ return 0;};
 codec_mp3::codec_mp3() :
     current_outbuf(0),
     outbuf_pos(0),
+    playing( false ),
     ReadSize(0),
-    databuffer(0),
-    playing( false )
+    databuffer(0)
 {
 }
 
@@ -45,7 +39,7 @@ void codec_mp3::start()
     if(playing) return;
 
     length.seconds = 0;
-    g_samplecount = 0;
+    samplecount = 0;
 
     mad_stream_init(&Stream);
     mad_frame_init(&Frame);
@@ -65,7 +59,7 @@ void codec_mp3::stop()
     mad_frame_finish(&Frame);
     mad_stream_finish(&Stream);
 
-    g_samplecount = 0;
+    samplecount = 0;
 }
 
 
@@ -79,9 +73,9 @@ int codec_mp3::decode2(void *block, u32 *size)
 
 	while (nsamples)
 	{
-		unsigned int count, bitrate;
+		u32 count;
 
-		count = Synth.pcm.length - g_samplecount;
+		count = Synth.pcm.length - samplecount;
 
 		if (count > nsamples)
 			count = nsamples;
@@ -89,7 +83,7 @@ int codec_mp3::decode2(void *block, u32 *size)
 		if (count)
 		{
             resample2((u16**)&samples,count);
-			g_samplecount += count;
+			samplecount += count;
 
 			nsamples -= count;
 
@@ -127,7 +121,7 @@ int codec_mp3::decode2(void *block, u32 *size)
 
 		mad_synth_frame(&Synth, &Frame);
 
-		g_samplecount = 0;
+		samplecount = 0;
 
 		mad_timer_add(&Timer, Frame.header.duration);
 	}
@@ -160,11 +154,11 @@ int inline codec_mp3::resample2(u16** buf, u32 num)
 
     while(pos.aword.hi < num)
     {
-        (*buf)[0] = (u16)Do3Band(&eqs[0],mad_fixed_to_ushort(Pcm->samples[0][pos.aword.hi + g_samplecount]));
+        (*buf)[0] = (u16)Do3Band(&eqs[0],mad_fixed_to_ushort(Pcm->samples[0][pos.aword.hi + samplecount]));
 
         if(stereo)
         {
-            (*buf)[1] = (u16)Do3Band(&eqs[1],mad_fixed_to_ushort(Pcm->samples[1][pos.aword.hi + g_samplecount]));
+            (*buf)[1] = (u16)Do3Band(&eqs[1],mad_fixed_to_ushort(Pcm->samples[1][pos.aword.hi + samplecount]));
             (*buf)++;
         }
 
