@@ -6,7 +6,8 @@
 class vis_tunnel : public visual_object
 {
     public:
-    typedef struct _color_24{
+
+    struct _color_24{
         u8 r, g, b;
     };
 

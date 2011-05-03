@@ -27,7 +27,7 @@ void browser::MoveBack()
 }
 const int browser::GetSize() { return total; }
 
-browser::browser(app_wiiradio* _theapp) :  net(0), total(0), type(0), theapp(_theapp)
+browser::browser(app_wiiradio* _theapp) :  net(0), type(0), total(0), theapp(_theapp)
 {
     net = new network(theapp);
     position = 0;
@@ -72,7 +72,7 @@ void browser::clear_list()
 
 const char* browser::get_station(const int num)
 {
-    const int p = num + GetPosition();
+    const u32 p = num + GetPosition();
 
     if(p >= 0 && p < sl.size())
         return sl[p]->station_name;
@@ -82,7 +82,7 @@ const char* browser::get_station(const int num)
 
 struct station_list* browser::GetItem(const u32 n)
 {
-    const int p = n + GetPosition();
+    const u32 p = n + GetPosition();
 
     if (p < 0 || p > sl.size())
         return NULL;
@@ -129,9 +129,6 @@ const int browser::connect(const char* path,char* genre,int itype = 0 /* SHOUTCA
     if(!current_page) return 0;
 
     memset(current_page,0,MAX_PAGE_SIZE);
-
-    app_wiiradio* app = (app_wiiradio*)theapp;
-
 
     char tmp_buffer[3100];
     u32 page_size = 0;

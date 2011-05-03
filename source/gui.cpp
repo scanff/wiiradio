@@ -33,8 +33,8 @@
 
 gui::gui(app_wiiradio* _theapp) :
     theapp(_theapp),
-    vis_on_screen(0),
     visbuffer( NULL ),
+    vis_on_screen(0),
     options_screen( NULL )
 {
 
@@ -349,7 +349,7 @@ FORCEINLINE void gui::draw_favs()
     gui_object* obj_del = 0;
 
     int i = 0;
-    u32 p = 0;
+    int p = 0;
 
     loopi(max_listings) theapp->GetVariables()->add_var_array("$FAVS_LIST_",(char*)STRING_NOTHING,i);
 
@@ -579,7 +579,6 @@ void gui::HideLists(const int not_lv)
 
 void gui::draw()
 {
-    icy* ic                     = theapp->icy_info;
     const int cur_screen        = theapp->GetScreenStatus();
     const int cur_listview      = theapp->GetListView();
 

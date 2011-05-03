@@ -29,7 +29,7 @@ static void FORCEINLINE FastSetPixel24(SDL_Surface * dst, const int x, const int
 
 }
 
-static void bresenham_line(SDL_Surface* s, int x1, int y1, int x2, int y2,unsigned long color)
+inline void bresenham_line(SDL_Surface* s, int x1, int y1, int x2, int y2,unsigned long color)
 {
     // clip
     x1 > SCREEN_WIDTH ? x1 = SCREEN_WIDTH : x1 < 0 ? x1 = 0 : 0;

@@ -51,7 +51,7 @@ class vis_matrix : public visual_object
         theapp->GetFonts()->set_size(FS_SYSTEM_TINY);
         int sizeoffont = theapp->GetFonts()->get_length_px(text,FS_SYSTEM_TINY);
         int divy = sizeoffont+10;
-        int i = 0;
+
         for(int y = 0; y < DRAW_HEIGHT / divy; y++)
         {
             for(int x = 0; x < DRAW_WIDTH / divy; x++)
