@@ -1019,7 +1019,7 @@ static int critical_thread(void *arg)
 
     while(app->critical_running)
     {
-        usleep(450); // -- running too fast will slow down the gui
+        usleep(850); // -- running too fast will slow down the gui
 
         SDL_mutexP(connect_mutex);
 
@@ -1915,8 +1915,11 @@ _reload:
 
 
         last_time = app_timer;
-        usleep(100);
-
+#ifdef _WII_
+    usleep(500);
+#else
+    Sleep(10);
+#endif
     }
 
     delete ui;
