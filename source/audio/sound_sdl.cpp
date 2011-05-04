@@ -4,7 +4,7 @@
 #include "sound_sdl.h"
 
 #define SAMPLES 512
-#define AUDIO_BUFFER_SIZE   (OUT_BUFFERSIZE*200)//(2000000)
+#define AUDIO_BUFFER_SIZE   (OUT_BUFFERSIZE*200)
 
 static void (*samples)(u8* data,int len,app_wiiradio* _theapp);
 static s32 (*reader)(void*,void *,s32,app_wiiradio* _theapp);
@@ -161,6 +161,7 @@ void audio_device::sound_init()
 
     if (SDL_OpenAudio(&audiofmt, NULL) != 0)
         return;
+
 
     audio_running = true;
     SDL_PauseAudio(0);

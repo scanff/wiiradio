@@ -4,8 +4,6 @@
 #include "audio.h"
 #include "mp3.h"
 
-
-#define SHRT_MAX 32767
 #define SAMPLE_DEPTH 16
 bool g_Stereo = true;
 

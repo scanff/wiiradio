@@ -1676,6 +1676,7 @@ int app_wiiradio::wrMain(int argc, char **argv)
 
     /** Setup some window stuff */
 #ifndef _WII_
+    SDL_WM_SetIcon(IMG_Load(make_path("data/winicon.png")),NULL);
     SDL_WM_SetCaption( "WiiRadio", NULL );
     video_flags = (fullscreen ? SDL_FULLSCREEN : 0) | SDL_HWSURFACE | SDL_DOUBLEBUF | SDL_OPENGLBLIT | SDL_OPENGL;
 #else

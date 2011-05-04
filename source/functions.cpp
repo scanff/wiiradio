@@ -312,8 +312,12 @@ void click_exit(void* arg)
     const gui_object* obj = (gui_object*)arg;
     app_wiiradio* theapp = obj->theapp;
 
+#ifndef _WII_
+    g_running = false;
+    return;
+#endif
     theapp->SetScreenStatus(S_QUIT);
-    //g_running = false;
+
 }
 
 void click_browser(void* arg)
