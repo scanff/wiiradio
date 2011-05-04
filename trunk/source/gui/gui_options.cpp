@@ -206,6 +206,10 @@ int gui_options::Events(const SDL_Event* events)
 
     if(option_buts[OB_QUIT]->hit_test(events)==B_CLICK)
     {
+#ifndef _WII_
+        g_running = false;
+        return 1;
+#endif
         theapp->SetScreenStatus(S_QUIT);
         return 1;
     }
