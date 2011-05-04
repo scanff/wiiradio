@@ -288,6 +288,13 @@ int id3::newfile(FILE* _f,const unsigned int _filesize)
     string frame_name = "";
     bool embed_apic = false;
 
+    title = "";
+    artist = "";
+    album = "";
+    year = "";
+    genre = "";
+    comments = "";
+
     while(read < hdr_size)
     {
         read += fread(&frame,1,sizeof(id3frame),f);
@@ -297,10 +304,74 @@ int id3::newfile(FILE* _f,const unsigned int _filesize)
 
         read += current_size;
 
-        if (frame_name == "APIC")
+        char description = 0xff;
+        char temp[MED_MEM];
+
+        if (frame_name == "TIT2")
+        {
+            // bypass the first char .. as it's null
+            fread(temp,1,1,f);
+            while(description)
+            {
+                fread(&description,1,1,f);
+                title += description;
+            }
+
+        }
+        else if (frame_name == "TPE1")
+        {
+            // bypass the first char .. as it's null
+            fread(temp,1,1,f);
+            while(description)
+            {
+                fread(&description,1,1,f);
+                artist += description;
+            }
+
+        }
+        else if (frame_name == "TALB")
+        {
+            // bypass the first char .. as it's null
+            fread(temp,1,1,f);
+            while(description)
+            {
+                fread(&description,1,1,f);
+                album += description;
+            }
+        }
+        else if (frame_name == "TDRC")
+        {
+           // bypass the first char .. as it's null
+            fread(temp,1,1,f);
+            while(description)
+            {
+                fread(&description,1,1,f);
+                year += description;
+            }
+        }
+        else if (frame_name == "TCON")
+        {
+            // bypass the first char .. as it's null
+            fread(temp,1,1,f);
+            while(description)
+            {
+                fread(&description,1,1,f);
+                genre += description;
+            }
+        }
+        else if (frame_name == "COMM")
+        {
+            // bypass the first char .. as it's null
+            fread(temp,1,1,f);
+            while(description)
+            {
+                fread(&description,1,1,f);
+                comments += description;
+            }
+        }
+        else if (frame_name == "APIC")
         {
             embed_apic = true;
-
             read += fread(&frame_APIC.text_encoding,1,1,f);
 
             char mime_type = 0xff;
@@ -312,7 +383,7 @@ int id3::newfile(FILE* _f,const unsigned int _filesize)
 
             read += fread(&frame_APIC.picture_type,1,1,f);
 
-            char description = 0xff;
+
             while(description)
             {
                 read += fread(&description,1,1,f);
@@ -366,46 +437,49 @@ int id3::newfile(FILE* _f,const unsigned int _filesize)
 
     fread(buffer,1,3,f);
 
+    // OLD Format ID3
     if (buffer[0] == 'T' && buffer[1] == 'A' && buffer[2] == 'G')
     {
         // -- Title
         fread(buffer,1,MAX_TAG_SIZE,f);
         buffer[MAX_TAG_SIZE] = 0;
-        title = buffer;
+        if(title == "") title = buffer;
 
         // -- Artist
         fread(buffer,1,MAX_TAG_SIZE,f);
         buffer[MAX_TAG_SIZE] = 0;
-        artist = buffer;
+        if(artist == "") artist = buffer;
 
         // -- Album
         fread(buffer,1,MAX_TAG_SIZE,f);
         buffer[MAX_TAG_SIZE] = 0;
-        album = buffer;
+        if(album == "") album = buffer;
 
         // -- Year
         fread(buffer,1,4,f);
         buffer[4] = 0;
-        year = buffer;
+        if(year == "") year = buffer;
 
 
          // -- comments
         fread(buffer,1,MAX_TAG_SIZE,f);
         buffer[MAX_TAG_SIZE] = 0;
-        comments = buffer;
+        if(comments == "") comments = buffer;
 
         // -- Genre
-        fread(buffer,1,1,f);
-        buffer[1] = 0;
-        int genre_num = buffer[0];
-
-        if((genre_num < 0) || (genre_num > (MAX_ID3_GENRES-1)))
+        if(genre == "")
         {
-            genre = "Unknown";
-        }else{
-            genre = id3_genres[genre_num];
-        }
+            fread(buffer,1,1,f);
+            buffer[1] = 0;
+            int genre_num = buffer[0];
 
+            if((genre_num < 0) || (genre_num > (MAX_ID3_GENRES-1)))
+            {
+                genre = "Unknown";
+            }else{
+                genre = id3_genres[genre_num];
+            }
+        }
         stdstring_trim(title);
         stdstring_trim(artist);
         stdstring_trim(album);
