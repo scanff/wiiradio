@@ -309,64 +309,52 @@ int id3::newfile(FILE* _f,const unsigned int _filesize)
 
         if (frame_name == "TIT2")
         {
-            // bypass the first char .. as it's null
-            fread(temp,1,1,f);
-            while(description)
+            while(current_size--)
             {
                 fread(&description,1,1,f);
-                title += description;
+                if(description > 0x20) title += description;
             }
 
         }
         else if (frame_name == "TPE1")
         {
-            // bypass the first char .. as it's null
-            fread(temp,1,1,f);
-            while(description)
+            while(current_size--)
             {
                 fread(&description,1,1,f);
-                artist += description;
+                if(description > 0x20) artist += description;
             }
 
         }
         else if (frame_name == "TALB")
         {
-            // bypass the first char .. as it's null
-            fread(temp,1,1,f);
-            while(description)
+            while(current_size--)
             {
                 fread(&description,1,1,f);
-                album += description;
+                if(description > 0x20) album += description;
             }
         }
         else if (frame_name == "TDRC")
         {
-           // bypass the first char .. as it's null
-            fread(temp,1,1,f);
-            while(description)
+            while(current_size--)
             {
                 fread(&description,1,1,f);
-                year += description;
+                if(description > 0x20) year += description;
             }
         }
         else if (frame_name == "TCON")
         {
-            // bypass the first char .. as it's null
-            fread(temp,1,1,f);
-            while(description)
+            while(current_size--)
             {
                 fread(&description,1,1,f);
-                genre += description;
+                if(description > 0x20) genre += description;
             }
         }
         else if (frame_name == "COMM")
         {
-            // bypass the first char .. as it's null
-            fread(temp,1,1,f);
-            while(description)
+            while(current_size--)
             {
                 fread(&description,1,1,f);
-                comments += description;
+                if(description > 0x20) comments += description;
             }
         }
         else if (frame_name == "APIC")
