@@ -15,21 +15,13 @@ static u16 buffer[OUT_BUFFERSIZE] __attribute__((aligned(32)));
 static SDL_mutex* audio_mutex = 0;
 static int audio_thread (void *arg);
 static SDL_Thread* audiothread = 0;
-static bool audiothread_on = false;
 
 static int audio_thread(void *arg)
 {
     audio_device* dev = (audio_device*)arg;
 
-    audiothread_on = true;
-
-    while(audiothread_on)
+    while(!dev->done)
     {
-        usleep(400);
-
-        if(!dev->playing)
-            continue;
-
         SDL_mutexP(audio_mutex);
 
         u32 samps = OUT_BUFFERSIZE;
@@ -47,8 +39,10 @@ static int audio_thread(void *arg)
 
         SDL_mutexV(audio_mutex);
 
-
+        usleep(400);
     }
+	
+	return 0;
 }
 
 static void MixAudio(void *userdata, u8 *stream, int len)
@@ -190,17 +184,12 @@ void audio_device::sound_init()
     audio_running = true;
     SDL_PauseAudio(0);
 
-    audiothread = SDL_CreateThread(audio_thread,this);
-    if (!audiothread) exit(0);
 
 }
 
 void audio_device::sound_close()
 {
     sound_stop();
-
-    audiothread_on = false;
-    SDL_WaitThread(audiothread, NULL);
 
     SDL_CloseAudio();
     audio_running = false;
@@ -225,19 +214,23 @@ void audio_device::sound_pause(const int pause)
 
 void audio_device::sound_stop()
 {
+    if(playing)
+    {
+        playing = false;
 
-    playing = false;
+        SDL_mutexP(audio_mutex);
+        done = true;
+        SDL_PauseAudio(true);
 
-    SDL_mutexP(audio_mutex);
-    done = true;
-    SDL_PauseAudio(true);
+        mp3->stop();
+        audio_wd_num = audio_rd_num = audio_wd = audio_rd = 0;
+        audio_total_done = audio_total_decoded = 0;
 
-    mp3->stop();
-    audio_wd_num = audio_rd_num = audio_wd = audio_rd = 0;
-    audio_total_done = audio_total_decoded = 0;
+        SDL_mutexV(audio_mutex);
 
-    SDL_mutexV(audio_mutex);
 
+        if(audiothread) SDL_WaitThread(audiothread, NULL);
+    }
 }
 
 void audio_device::sound_seek(u32 pos, u32 total)
@@ -284,6 +277,8 @@ void audio_device::sound_start(const int mb, const u32 size)
 {
     if ( !playing )
     {
+        SDL_mutexP(audio_mutex);
+
         filesize = size;
         min_buffers = 20000*mb;
         done = false;
@@ -296,7 +291,16 @@ void audio_device::sound_start(const int mb, const u32 size)
         SDL_PauseAudio(false);
 
         time_elapsed = total_samples = 0;
+
+
+        SDL_mutexV(audio_mutex);
+
         playing = true;
+        audiothread = SDL_CreateThread(audio_thread,this);
+        if (!audiothread)
+        {
+            playing = true;
+        }
 
     }
 }
