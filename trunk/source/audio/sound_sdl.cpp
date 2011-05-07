@@ -3,8 +3,8 @@
 #include "mp3.h"
 #include "sound_sdl.h"
 
-#define SAMPLES 512
-#define AUDIO_BUFFER_SIZE   (OUT_BUFFERSIZE*200)
+#define SAMPLES 1024
+#define AUDIO_BUFFER_SIZE   (OUT_BUFFERSIZE*220)
 
 static void (*samples)(u8* data,int len,app_wiiradio* _theapp);
 static s32 (*reader)(void*,void *,s32,app_wiiradio* _theapp);
@@ -13,6 +13,43 @@ static u8 mix_buffer[SAMPLES * 4] __attribute__((aligned(32))); // 16bit * 2 cha
 static u16 buffer[OUT_BUFFERSIZE] __attribute__((aligned(32)));
 
 static SDL_mutex* audio_mutex = 0;
+static int audio_thread (void *arg);
+static SDL_Thread* audiothread = 0;
+static bool audiothread_on = false;
+
+static int audio_thread(void *arg)
+{
+    audio_device* dev = (audio_device*)arg;
+
+    audiothread_on = true;
+
+    while(audiothread_on)
+    {
+        usleep(400);
+
+        if(!dev->playing)
+            continue;
+
+        SDL_mutexP(audio_mutex);
+
+        u32 samps = OUT_BUFFERSIZE;
+
+        if( (dev->audio_total_decoded - dev->audio_total_done) < dev->min_buffers)
+        {
+            if(dev->mp3->decode2(buffer,&samps))
+            {
+                dev->sound_update(buffer, samps/2);
+                dev->audio_total_decoded += samps;
+                dev->time_elapsed = dev->mp3->Timer.seconds; // This is not very acurate
+
+            }
+        }
+
+        SDL_mutexV(audio_mutex);
+
+
+    }
+}
 
 static void MixAudio(void *userdata, u8 *stream, int len)
 {
@@ -21,23 +58,10 @@ static void MixAudio(void *userdata, u8 *stream, int len)
     if(!dev->playing)
         return;
 
-    int i;
-
-    u32 samps = OUT_BUFFERSIZE;
 
     SDL_mutexP(audio_mutex);
 
-    if( (dev->audio_total_decoded - dev->audio_total_done) < dev->min_buffers)
-    {
-        if(dev->mp3->decode2(buffer,&samps))
-        {
-            dev->sound_update(buffer, samps/2);
-            dev->audio_total_decoded += samps;
-            dev->time_elapsed = dev->mp3->Timer.seconds; // This is not very acurate
-
-        }
-    }
-
+    int i;
 
     // Buffering ?
     if(dev->audio_total_decoded < dev->min_buffers)
@@ -166,11 +190,18 @@ void audio_device::sound_init()
     audio_running = true;
     SDL_PauseAudio(0);
 
+    audiothread = SDL_CreateThread(audio_thread,this);
+    if (!audiothread) exit(0);
+
 }
 
 void audio_device::sound_close()
 {
     sound_stop();
+
+    audiothread_on = false;
+    SDL_WaitThread(audiothread, NULL);
+
     SDL_CloseAudio();
     audio_running = false;
 
