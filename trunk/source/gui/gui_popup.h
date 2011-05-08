@@ -19,6 +19,12 @@ class gui_popup : public gui_object
     void set_show_status(const char* status);
     void load_img(char* name);
     virtual int draw();
+    virtual const int IsModal() { return modal; }
+
+    public:
+
+    int     modal;
+    int     fadebg;
 
 };
 

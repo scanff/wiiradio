@@ -159,6 +159,8 @@ public:
 
     const int GetType() const { return obj_type; };
 
+    virtual const int IsModal() { return 0; };
+
     // -- set the images for this gui object
     void set_image_img(char* img);
     void set_image_out(char* img);
