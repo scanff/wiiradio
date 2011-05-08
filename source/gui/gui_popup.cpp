@@ -6,6 +6,7 @@
 #include "../gui.h"
 
 gui_popup::gui_popup(app_wiiradio* _theapp)
+    : modal( 1 ), fadebg( 1)
 {
     theapp = _theapp;
     guibuffer = theapp->ui->guibuffer;
@@ -13,6 +14,7 @@ gui_popup::gui_popup(app_wiiradio* _theapp)
 }
 
 gui_popup::gui_popup(app_wiiradio* _theapp,int x,int y)
+    : modal( 1 ), fadebg( 1)
 {
     theapp = _theapp;
     s_x = x;
@@ -49,7 +51,7 @@ int gui_popup::draw()
 
     if (!visible) return 0;
 
-    fade(guibuffer,50);
+    if(fadebg) fade(guibuffer,50);
 
     const int xoffset = parent ? parent->s_x : 0;
     const int yoffset = parent ? parent->s_y : 0;
