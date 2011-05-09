@@ -20,11 +20,18 @@ class gui_popup : public gui_object
     void load_img(char* name);
     virtual int draw();
     virtual const int IsModal() { return modal; }
-
+    virtual int hit_test(const SDL_Event *event);
     public:
 
     int     modal;
     int     fadebg;
+    int     moveable;
+
+    private:
+
+    bool    m_down;
+    int     m_start_x;
+    int     m_start_y;
 
 };
 

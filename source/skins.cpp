@@ -416,10 +416,23 @@ void skins::object_add_var(char* name, char* value)
             static_cast<gui_popup*>(obj)->center_img = atoi(value);
         }
 
+        if(strcmp(name,"modal") == 0)
+        {
+            static_cast<gui_popup*>(obj)->modal = atoi(value);
+        }
+        if(strcmp(name,"fadebg") == 0)
+        {
+            static_cast<gui_popup*>(obj)->fadebg = atoi(value);
+        }
+        if(strcmp(name,"moveable") == 0)
+        {
+            static_cast<gui_popup*>(obj)->moveable = atoi(value);
+        }
     }
 
 
     // -- Applies to all
+
     if(strcmp(name,"text_color_out") == 0)
     {
         obj->text_color = make_color(value);

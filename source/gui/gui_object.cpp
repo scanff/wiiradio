@@ -76,6 +76,11 @@ void gui_object::set_image_img(char* img)
 {
     texture_cache* tx = theapp->GetTextures();
     object_images[GUI_IMG_BG] = tx->texture_lookup(img);
+    if(object_images[GUI_IMG_BG])
+    {
+        s_w = object_images[GUI_IMG_BG]->w;
+        s_h = object_images[GUI_IMG_BG]->h;
+    }
 
 }
 
@@ -116,7 +121,15 @@ void gui_object::set_image_ondown(char* img)
 
 void gui_object::set_show_status(const char* status)
 {
-    this->show_on_status = theapp->GetScript()->GetVariableInt(status);
+    bool digit = true;
+
+    for(int i = 0; i < strlen(status); i++)
+        if (!isdigit(status[i])) digit = false;
+
+    if (!digit)
+        this->show_on_status = theapp->GetScript()->GetVariableInt(status);
+    else
+        this->show_on_status = atoi(status);
 }
 
 

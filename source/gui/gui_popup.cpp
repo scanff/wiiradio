@@ -6,7 +6,7 @@
 #include "../gui.h"
 
 gui_popup::gui_popup(app_wiiradio* _theapp)
-    : modal( 1 ), fadebg( 1)
+    : modal( 1 ), fadebg( 1 ), moveable( 0 ), m_down( false )
 {
     theapp = _theapp;
     guibuffer = theapp->ui->guibuffer;
@@ -14,7 +14,7 @@ gui_popup::gui_popup(app_wiiradio* _theapp)
 }
 
 gui_popup::gui_popup(app_wiiradio* _theapp,int x,int y)
-    : modal( 1 ), fadebg( 1)
+    : modal( 1 ), fadebg( 1 ), moveable( 0 ), m_down( false )
 {
     theapp = _theapp;
     s_x = x;
@@ -33,6 +33,47 @@ void gui_popup::load_img(char* name)
     gui_object::set_image_img(name);
 }
 
+
+ //-- hit test
+int gui_popup::hit_test(const SDL_Event *event)
+{
+    if(!IsVisible())
+        return 0;
+
+    int x;
+    int y;
+
+    switch (event->type)
+    {
+        case SDL_MOUSEMOTION:
+        break;
+        case SDL_MOUSEBUTTONDOWN:
+            m_down = true;
+            m_start_x = event->button.x - s_x;
+            m_start_y = event->button.y - s_y;
+        break;
+        case SDL_MOUSEBUTTONUP:
+            m_down = false;
+        break;
+        default:
+            return obj_state;
+    }
+
+    x = event->button.x;
+    y = event->button.y;
+
+    if (point_in_rect(x,y))
+    {
+        if(m_down && moveable)
+        {
+            s_x = x - m_start_x;
+            s_y = y - m_start_y;
+        }
+        return 1;
+    }
+
+    return 0;
+}
 
 int gui_popup::draw()
 {

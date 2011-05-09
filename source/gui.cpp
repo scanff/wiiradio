@@ -269,7 +269,7 @@ void gui::handle_events(const SDL_Event* events)
 
                 if(
                    ((cur_ent->IsVisible()) && (cur_ent->hit_test(events))) ||
-                   ((cur_ent->GetType() == GUI_POPUP) && (cur_ent->IsVisible()))
+                   ((cur_ent->IsModal()) && (cur_ent->IsVisible()))
                    ) // If this is a popup return, only want hit test for it's children
                     return;
             }
