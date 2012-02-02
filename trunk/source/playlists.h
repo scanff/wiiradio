@@ -177,7 +177,7 @@ public:
         char* start = 0;
         char* end = 0;
 
-        start = strstr(cp,"File1=");
+        start = (char*)strstr(cp,"File1=");
         if (start)
         {
             start += strlen("File1=");
