@@ -39,7 +39,7 @@ inline int gui_imganim::new_img(char* path, char* file)
     x->load_img(fullname);
     items.push_back(x);
 
-    return (int)(x);
+    return !!x;
 }
 
 void gui_imganim::parse_imgstr(char* path,char* text)
