@@ -334,7 +334,7 @@ void browser::get_stationid(const char* url,char* stationid)
 {
     if (!url) return;
 
-    char* sid = strstr(url,"id=");
+    char* sid = (char*)strstr(url,"id=");
     if (sid)
     {
         sid += 3;
