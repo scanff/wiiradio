@@ -427,7 +427,7 @@ void click_logo(void* arg)
     app_wiiradio* theapp = obj->theapp;
 
 #ifdef LOG_ENABLED
-    thesapp->SetScreenStatus(S_LOG);
+    theapp->SetScreenStatus(S_LOG);
 #else
     theapp->SetScreenStatus(S_OPTIONS);
 #endif
