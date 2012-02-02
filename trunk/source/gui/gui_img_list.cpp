@@ -38,7 +38,7 @@ inline int gui_imglist::new_img(char* path, char* file)
     x->load_img(fullname);
     items.push_back(x);
 
-    return (int)(x);
+    return !!x;
 }
 
 void gui_imglist::parse_imgstr(char* path,char* text)
