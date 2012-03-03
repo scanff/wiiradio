@@ -34,8 +34,8 @@ lua_script{
 gui_screen{
 	screen  = 	SCREEN_MAIN
 	name	= 	"main"
-	x		=	0;
-	y		=	0;
+	x		=	0
+	y		=	0
 	w		=	$SCREEN_WIDTH
 	h		=	$SCREEN_HEIGHT
 	layer	= 	0
@@ -381,7 +381,7 @@ gui_screen{
 		z_order 		= 1
 		align			= 0
 		vspacing		= 0
-		items			= 7
+		items			= 6
 		text_pad_x		= 60
 		text_pad_y		= 7
 		text_size		= 3
@@ -427,7 +427,7 @@ gui_screen{
 		align			= 0
 		vspacing		= 0
 		visible			= 1
-		items			= 7
+		items			= 6
 		text_pad_x		= 60
 		text_pad_y		= 7
 		text_size		= 3
@@ -457,7 +457,7 @@ gui_screen{
 		z_order 		= 1
 		align			= 1
 		vspacing		= 0
-		items			= 7
+		items			= 6
 		text_pad_x		= 60
 		text_pad_y		= 7
 		text_size		= 3
