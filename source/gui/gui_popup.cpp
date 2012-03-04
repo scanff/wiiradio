@@ -11,6 +11,7 @@ gui_popup::gui_popup(app_wiiradio* _theapp)
     theapp = _theapp;
     guibuffer = theapp->ui->guibuffer;
     obj_type = GUI_POPUP;
+    m_start_y = m_start_x = 0;
 }
 
 gui_popup::gui_popup(app_wiiradio* _theapp,int x,int y)
@@ -20,7 +21,8 @@ gui_popup::gui_popup(app_wiiradio* _theapp,int x,int y)
     s_x = x;
     s_y = y;
     guibuffer = theapp->ui->guibuffer;
-    obj_type = GUI_IMG;
+    obj_type = GUI_POPUP;
+    m_start_y = m_start_x = 0;
 
 }
 
@@ -64,6 +66,9 @@ int gui_popup::hit_test(const SDL_Event *event)
 
     if (point_in_rect(x,y))
     {
+        // make this topmost window
+        if(m_down) SetTopMost();
+
         if(m_down && moveable)
         {
             s_x = x - m_start_x;
@@ -72,12 +77,16 @@ int gui_popup::hit_test(const SDL_Event *event)
         return 1;
     }
 
+    m_down = false;
     return 0;
 }
 
 int gui_popup::draw()
 {
+
     visible = false;
+
+
 
     if (theapp->GetSystemStatus() == show_on_status)
     {
@@ -89,9 +98,17 @@ int gui_popup::draw()
         }
     }
 
+    if(!IsVisible())
+    {
+        visible = false;
+        return 0;
+    }
+
+
 
     if (!visible) return 0;
 
+    if(modal) SetTopMost();
     if(fadebg) fade(guibuffer,50);
 
     const int xoffset = parent ? parent->s_x : 0;

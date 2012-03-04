@@ -108,6 +108,7 @@ const char* wiiradio_variables::search_var(const char* name)
 
     loopi(var_list.size())
     {
+        const u32 stored_hash = var_list[i]->vHashName;
         if (var_list[i]->vHashName == hash)
              return var_list[i]->vValue;
     }

@@ -270,9 +270,9 @@ extern void switch_sdl_video_mode(const _VideoMode mode);
     #define RATE    44100
 #endif
 
-const inline unsigned long MAKE_HASH(const char* x)
+const inline u32 MAKE_HASH(const char* x)
 {
-    unsigned long h = 0;
+    u32 h = 0;
     const char* ptr = x;
     while (*ptr) h = (h << 5) + h + *ptr++;
 

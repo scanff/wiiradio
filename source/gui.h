@@ -21,6 +21,7 @@ class gui {
 
     vector<gui_object*>    gui_ents;
 
+
     SDL_Surface*    cursor;
     SDL_Surface*    guibuffer;
     SDL_Surface*    visbuffer;
@@ -44,6 +45,8 @@ class gui {
     string          skin_path;
     gui_options*    options_screen;
 
+    gui_object*     topmost_wnd;
+
     public:
 
     gui(app_wiiradio* _theapp);
@@ -64,7 +67,7 @@ class gui {
 
     void HideLists(const int); // hides all the list views except arg
     void HideScreens(const int);
-
+    void reorder();
     //void inline draw_info(char* txt);
     void draw_cursor(int x,int y, float angle);
     FORCEINLINE void draw_quit();

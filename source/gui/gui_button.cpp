@@ -27,6 +27,7 @@ gui_button::gui_button(app_wiiradio* _theapp) :
     guibuffer = theapp->ui->guibuffer;
     obj_state = B_OUT;
     obj_type = GUI_BUTTON;
+    visible = 1;
 
 }
 
@@ -40,7 +41,7 @@ gui_button::gui_button(app_wiiradio* _theapp, int x,int y,char* t,long tc,bool s
 
 {
     theapp = _theapp;
-
+    visible = 1;
     s_x = x;
     s_y = y;
     pad_x = 30;
@@ -159,9 +160,18 @@ int gui_button::draw()
     if (!(parent ? parent->visible : 1))
         return 0;
 
-    const int xoffset = parent ? parent->s_x + s_x: s_x;
-    const int yoffset = parent ? parent->s_y + s_y: s_y;
+    gui_object* inherit = parent;
+    int xoffset = 0;
+    int yoffset = 0;
 
+    while(inherit && (inherit != inherit->parent))
+    {
+        xoffset += inherit->s_x;
+        yoffset += inherit->s_y;
+        inherit = inherit->parent;
+    }
+    xoffset += s_x;
+    yoffset += s_y;
 
     if(ishighlighted && object_images[GUI_IMG_PLAYING])
     {
@@ -173,7 +183,8 @@ int gui_button::draw()
 
 
     const char* real_text = gui_object::get_text();
-    if(!real_text) return 0;
+    if(!real_text)
+        return 0;
 
     if (*real_text)
     {

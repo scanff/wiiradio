@@ -60,6 +60,8 @@ enum
 
 };
 
+#define TOPMOST_WND (10000)
+
 class gui_object {
 
     public:
@@ -90,7 +92,8 @@ class gui_object {
 
 
     int             font_sz;
-    int             z_order;    // zorder ... max of 3
+    int             z_order;
+    int             z_order_start; // original z
     int             bind_screen;
 
     fonts*          fnts;
@@ -126,13 +129,14 @@ public:
 
     u32             name;
     gui_object*     parent;
+    vector<gui_object*> children;
 
     char            text_name[SMALL_MEM]; // actual name
     char*           script_onclick;
 
     int             center_img; // prolly should move
 
-    union
+    union _acolor
     {
         struct _rgb
         {
@@ -143,9 +147,11 @@ public:
 #endif
         }cbyte;
         u32 color;
-    } bgcolor;
+    };
 
 
+    _acolor     bgcolor;
+    _acolor     bgcolor_over;
    // u32             bgcolor; // back color
 
     int             show_on_status; // if this status is not met the object will not be active
@@ -196,11 +202,13 @@ public:
     bool check_screen(unsigned long cur);
 
     virtual bool IsVisible();
+    virtual void SetTopMost();
 
 
 
     const char* get_text_raw() { return text; }
 };
+
 
 
 #endif // GUI_OBJECT_H_INCLUDED

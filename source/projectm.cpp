@@ -23,9 +23,13 @@ projectm::~projectm()
 void projectm::init()
 {
     init_done = true;
-
+#ifdef _WII_
     config.meshX 				= 30;
     config.meshY 				= 20;
+#else
+    config.meshX 				= 32;
+    config.meshY 				= 32;
+#endif
     config.textureSize 			= 512;
     config.windowWidth 			= 640;
     config.windowHeight 		= 480;

@@ -95,9 +95,13 @@ class langs
     bool load_lang(char* lang)
     {
         FILE* f = 0;
-        char fullpath[SMALL_MEM] = {0};
+        char fullpath[SMALL_MEM];
+        char filenamelower[SMALL_MEM];
+        int i = 0;
 
-        sprintf(fullpath,"data/lang/%s.txt",lang);
+        do { filenamelower[i] = tolower( lang[i] ); } while( lang[i++] );
+
+        sprintf( fullpath,"data/lang/%s.txt", filenamelower );
 
         f = fopen(make_path(fullpath),"rb");
         if (!f) return false;

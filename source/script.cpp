@@ -273,3 +273,14 @@ void script::OnKey(const char* key)
     lua_call(L, 1, 0);
 
 }
+
+void script::Visualizer_PP(int x, int y)
+{
+    lua_State* L = this->m_LuaScript;
+
+    lua_getglobal(L, "visual_pp");
+    lua_pushnumber(m_LuaScript, x);
+    lua_pushnumber(m_LuaScript, y);
+    lua_call(L, 2, 0);
+
+}

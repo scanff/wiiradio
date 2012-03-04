@@ -16,7 +16,8 @@ gui_visual::gui_visual(app_wiiradio* _theapp)
     guibuffer = theapp->ui->guibuffer;
     obj_type = GUI_VISUAL;
     theapp->ui->vis_on_screen = 1;
-    loopi(MAX_FFT_RES) peakResults[i] = 0;;
+    loopi(MAX_FFT_RES) peakResults[i] = 0;
+    visible = 1;
 }
 
 gui_visual::~gui_visual()
@@ -26,23 +27,28 @@ gui_visual::~gui_visual()
 int gui_visual::draw()
 {
 
-    if (!(parent ? parent->visible : 1))
+    if(!IsVisible())
         return 0;
 
-    if (!gui_object::draw())
-        return 0;
+    const int xoffset = parent ? parent->s_x + s_x : s_x;
+    const int yoffset = parent ? parent->s_y + s_y:  s_y;
 
-    const int xoffset = parent ? parent->s_x : 0;
-    const int yoffset = parent ? parent->s_y : 0;
+    if (bgcolor.color && !object_images[GUI_IMG_BG]) // has a bgcolor
+    {
+        draw_rect_rgb(guibuffer,xoffset,yoffset,s_w,s_h,bgcolor.cbyte.r,bgcolor.cbyte.g,bgcolor.cbyte.b);
 
+    }else if (object_images[GUI_IMG_BG]){
 
+         SDL_Rect ds = {xoffset,yoffset,object_images[GUI_IMG_BG]->w, object_images[GUI_IMG_BG]->h};
+         SDL_BlitSurface( object_images[GUI_IMG_BG],0, guibuffer,&ds );
+    }
     switch(vis_type)
     {
     case 0:
     {
 
-        const int x = xoffset + s_x;
-        const int y = yoffset + s_y + s_h;
+        const int x = xoffset;
+        const int y = yoffset + s_h;
         const int bar_height = s_h;
         const int bar_width = s_w / MAX_FFT_RES + 1;
         const double percent = ((double)bar_height / (double)32767);
@@ -82,8 +88,8 @@ int gui_visual::draw()
     case 1: //AA
     {
 
-        int x = xoffset + s_x;
-        int y = yoffset + s_y;
+        int x = xoffset ;
+        int y = yoffset ;
         SDL_Rect APIC_dst = {x,y,APIC_SIZE,APIC_SIZE};
         SDL_Rect APIC_src = {0,0,APIC_SIZE,APIC_SIZE};
 
@@ -113,8 +119,8 @@ int gui_visual::draw()
     case 2:
     {
         short *wavedata = (short*)theapp->audio_data;
-        int ox = xoffset + s_x;
-        int oy = yoffset + s_y;
+        int ox = xoffset ;
+        int oy = yoffset ;
 
         int x,ynuml;
         int zerolevel = (s_h >> 1);
@@ -151,8 +157,8 @@ int gui_visual::draw()
         int x1;
         int y1;
 
-        int ox = xoffset + s_x + (s_w >> 1);
-        int oy = yoffset + s_y + (s_h >> 1);
+        int ox = xoffset  + (s_w >> 1);
+        int oy = yoffset  + (s_h >> 1);
         u32 color = vis_color_A;
 //        u32 color2 = vis_color_B;
         int x2 = ox;

@@ -53,8 +53,17 @@ const char* make_path(const char* path_rel)
 
     return abs_path;
 #else
+#ifdef _WIN32_
     return (char*)path_rel;
+#else
+static char abs_path[SMALL_MEM] = {0};
+    sprintf(abs_path,"../%s",path_rel);
+return abs_path;
 #endif
+
+#endif
+
+
 
 }
 

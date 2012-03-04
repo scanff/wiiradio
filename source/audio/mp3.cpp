@@ -24,10 +24,13 @@ int codec_mp3::init(s32 (*reader)(void *,void *,s32,app_wiiradio*),app_wiiradio*
     mp3read = reader;
     theapp = _theapp;
 
-
+#ifdef _WII_
     Init3BandState(&eqs[0],880,5000,48000);
     Init3BandState(&eqs[1],880,5000,48000);
-
+#else
+    Init3BandState(&eqs[0],880,5000,44100);
+    Init3BandState(&eqs[1],880,5000,44100);
+#endif
     return 1;
 }
 

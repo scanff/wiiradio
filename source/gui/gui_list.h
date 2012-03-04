@@ -34,6 +34,23 @@ class gui_list : public gui_object
     void SetItemVisible(const int i, const bool visible);
     void SetHighlight(const int i, const bool h);
 
+
+    public:
+
+    // Item dims
+    int     item_w;
+    int     item_h;
+    int     item_ox;
+    int     item_oy;
+    u32     item_bgcolor;
+    u32     item_bgcolor_over;
+    int     moveable;
+
+    private:
+
+    bool    m_down;
+    int     m_start_x;
+    int     m_start_y;
 };
 
 #endif
