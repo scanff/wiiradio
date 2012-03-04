@@ -8,7 +8,7 @@
 		<Cursor position="68" topLine="119" />
 	</File>
 	<File name="ConfigFile.h" open="1" top="0" tabpos="30">
-		<Cursor position="0" topLine="232" />
+		<Cursor position="0" topLine="212" />
 	</File>
 	<File name="HungarianMethod.hpp" open="0" top="0" tabpos="0">
 		<Cursor position="7018" topLine="151" />
@@ -22,98 +22,98 @@
 	<File name="KeyHandler.hpp" open="0" top="0" tabpos="20">
 		<Cursor position="1200" topLine="16" />
 	</File>
-	<File name="MilkdropPresetFactory\BuiltinFuncs.cpp" open="1" top="0" tabpos="16">
+	<File name="MilkdropPresetFactory/BuiltinFuncs.cpp" open="1" top="0" tabpos="16">
 		<Cursor position="4015" topLine="0" />
 	</File>
-	<File name="MilkdropPresetFactory\BuiltinFuncs.hpp" open="1" top="0" tabpos="21">
+	<File name="MilkdropPresetFactory/BuiltinFuncs.hpp" open="1" top="0" tabpos="21">
 		<Cursor position="1857" topLine="90" />
 	</File>
-	<File name="MilkdropPresetFactory\BuiltinParams.cpp" open="1" top="0" tabpos="10">
+	<File name="MilkdropPresetFactory/BuiltinParams.cpp" open="1" top="0" tabpos="10">
 		<Cursor position="10261" topLine="310" />
 	</File>
-	<File name="MilkdropPresetFactory\BuiltinParams.hpp" open="0" top="0" tabpos="41">
+	<File name="MilkdropPresetFactory/BuiltinParams.hpp" open="0" top="0" tabpos="41">
 		<Cursor position="3029" topLine="51" />
 	</File>
-	<File name="MilkdropPresetFactory\CustomShape.cpp" open="0" top="0" tabpos="15">
+	<File name="MilkdropPresetFactory/CustomShape.cpp" open="0" top="0" tabpos="15">
 		<Cursor position="4363" topLine="142" />
 	</File>
-	<File name="MilkdropPresetFactory\CustomWave.cpp" open="1" top="0" tabpos="34">
-		<Cursor position="11865" topLine="521" />
+	<File name="MilkdropPresetFactory/CustomWave.cpp" open="1" top="0" tabpos="34">
+		<Cursor position="11865" topLine="498" />
 	</File>
-	<File name="MilkdropPresetFactory\CustomWave.hpp" open="0" top="0" tabpos="47">
+	<File name="MilkdropPresetFactory/CustomWave.hpp" open="0" top="0" tabpos="47">
 		<Cursor position="1001" topLine="25" />
 	</File>
-	<File name="MilkdropPresetFactory\Eval.cpp" open="1" top="0" tabpos="35">
-		<Cursor position="0" topLine="73" />
+	<File name="MilkdropPresetFactory/Eval.cpp" open="1" top="0" tabpos="35">
+		<Cursor position="0" topLine="50" />
 	</File>
-	<File name="MilkdropPresetFactory\Eval.hpp" open="0" top="0" tabpos="61">
+	<File name="MilkdropPresetFactory/Eval.hpp" open="0" top="0" tabpos="61">
 		<Cursor position="1435" topLine="48" />
 	</File>
-	<File name="MilkdropPresetFactory\Expr.cpp" open="0" top="0" tabpos="0">
+	<File name="MilkdropPresetFactory/Expr.cpp" open="0" top="0" tabpos="0">
 		<Cursor position="3974" topLine="148" />
 	</File>
-	<File name="MilkdropPresetFactory\IdlePreset.cpp" open="0" top="0" tabpos="30">
+	<File name="MilkdropPresetFactory/IdlePreset.cpp" open="0" top="0" tabpos="30">
 		<Cursor position="6781" topLine="189" />
 	</File>
-	<File name="MilkdropPresetFactory\InitCond.cpp" open="0" top="0" tabpos="38">
+	<File name="MilkdropPresetFactory/InitCond.cpp" open="0" top="0" tabpos="38">
 		<Cursor position="1159" topLine="25" />
 	</File>
-	<File name="MilkdropPresetFactory\InitCondUtils.hpp" open="0" top="0" tabpos="46">
+	<File name="MilkdropPresetFactory/InitCondUtils.hpp" open="0" top="0" tabpos="46">
 		<Cursor position="2364" topLine="44" />
 	</File>
-	<File name="MilkdropPresetFactory\MilkdropPreset.cpp" open="1" top="0" tabpos="27">
+	<File name="MilkdropPresetFactory/MilkdropPreset.cpp" open="1" top="0" tabpos="27">
 		<Cursor position="11508" topLine="421" />
 	</File>
-	<File name="MilkdropPresetFactory\MilkdropPreset.hpp" open="1" top="0" tabpos="29">
+	<File name="MilkdropPresetFactory/MilkdropPreset.hpp" open="1" top="0" tabpos="29">
 		<Cursor position="3821" topLine="107" />
 	</File>
-	<File name="MilkdropPresetFactory\MilkdropPresetFactory.cpp" open="0" top="0" tabpos="31">
+	<File name="MilkdropPresetFactory/MilkdropPresetFactory.cpp" open="0" top="0" tabpos="31">
 		<Cursor position="5712" topLine="197" />
 	</File>
-	<File name="MilkdropPresetFactory\MilkdropPresetFactory.hpp" open="0" top="0" tabpos="0">
+	<File name="MilkdropPresetFactory/MilkdropPresetFactory.hpp" open="0" top="0" tabpos="0">
 		<Cursor position="564" topLine="18" />
 	</File>
-	<File name="MilkdropPresetFactory\Param.cpp" open="0" top="0" tabpos="48">
+	<File name="MilkdropPresetFactory/Param.cpp" open="0" top="0" tabpos="48">
 		<Cursor position="4856" topLine="164" />
 	</File>
-	<File name="MilkdropPresetFactory\Param.hpp" open="0" top="0" tabpos="49">
+	<File name="MilkdropPresetFactory/Param.hpp" open="0" top="0" tabpos="49">
 		<Cursor position="1044" topLine="26" />
 	</File>
-	<File name="MilkdropPresetFactory\ParamUtils.hpp" open="0" top="0" tabpos="56">
+	<File name="MilkdropPresetFactory/ParamUtils.hpp" open="0" top="0" tabpos="56">
 		<Cursor position="2040" topLine="63" />
 	</File>
-	<File name="MilkdropPresetFactory\Parser.cpp" open="1" top="0" tabpos="22">
+	<File name="MilkdropPresetFactory/Parser.cpp" open="1" top="0" tabpos="22">
 		<Cursor position="9002" topLine="355" />
 	</File>
-	<File name="MilkdropPresetFactory\Parser.hpp" open="0" top="0" tabpos="42">
+	<File name="MilkdropPresetFactory/Parser.hpp" open="0" top="0" tabpos="42">
 		<Cursor position="1028" topLine="35" />
 	</File>
-	<File name="MilkdropPresetFactory\PerFrameEqn.cpp" open="0" top="0" tabpos="37">
+	<File name="MilkdropPresetFactory/PerFrameEqn.cpp" open="0" top="0" tabpos="37">
 		<Cursor position="1424" topLine="32" />
 	</File>
-	<File name="MilkdropPresetFactory\PerPixelEqn.cpp" open="0" top="0" tabpos="0">
+	<File name="MilkdropPresetFactory/PerPixelEqn.cpp" open="0" top="0" tabpos="0">
 		<Cursor position="2062" topLine="51" />
 	</File>
-	<File name="MilkdropPresetFactory\PerPointEqn.cpp" open="0" top="0" tabpos="0">
+	<File name="MilkdropPresetFactory/PerPointEqn.cpp" open="0" top="0" tabpos="0">
 		<Cursor position="1501" topLine="43" />
 	</File>
-	<File name="MilkdropPresetFactory\PresetFrameIO.cpp" open="1" top="0" tabpos="15">
+	<File name="MilkdropPresetFactory/PresetFrameIO.cpp" open="1" top="0" tabpos="15">
 		<Cursor position="4587" topLine="199" />
 	</File>
-	<File name="MilkdropPresetFactory\PresetFrameIO.hpp" open="1" top="0" tabpos="17">
+	<File name="MilkdropPresetFactory/PresetFrameIO.hpp" open="1" top="0" tabpos="17">
 		<Cursor position="2047" topLine="66" />
 	</File>
-	<File name="NativePresetFactory\NativePreset.hpp" open="1" top="0" tabpos="31">
-		<Cursor position="427" topLine="10" />
+	<File name="NativePresetFactory/NativePreset.hpp" open="1" top="0" tabpos="31">
+		<Cursor position="427" topLine="0" />
 	</File>
-	<File name="NativePresetFactory\NativePresetFactory.hpp" open="1" top="0" tabpos="32">
-		<Cursor position="655" topLine="5" />
+	<File name="NativePresetFactory/NativePresetFactory.hpp" open="1" top="0" tabpos="32">
+		<Cursor position="655" topLine="0" />
 	</File>
-	<File name="PCM.cpp" open="1" top="1" tabpos="24">
+	<File name="PCM.cpp" open="1" top="0" tabpos="24">
 		<Cursor position="4077" topLine="47" />
 	</File>
 	<File name="PCM.hpp" open="1" top="0" tabpos="36">
-		<Cursor position="1533" topLine="47" />
+		<Cursor position="1533" topLine="29" />
 	</File>
 	<File name="PipelineMerger.hpp" open="0" top="0" tabpos="1">
 		<Cursor position="0" topLine="0" />
@@ -131,10 +131,10 @@
 		<Cursor position="4640" topLine="124" />
 	</File>
 	<File name="PresetFactory.cpp" open="1" top="0" tabpos="20">
-		<Cursor position="636" topLine="1" />
+		<Cursor position="636" topLine="0" />
 	</File>
 	<File name="PresetFactoryManager.cpp" open="1" top="0" tabpos="33">
-		<Cursor position="1015" topLine="63" />
+		<Cursor position="1015" topLine="40" />
 	</File>
 	<File name="PresetFactoryManager.hpp" open="0" top="0" tabpos="21">
 		<Cursor position="287" topLine="2" />
@@ -148,109 +148,109 @@
 	<File name="RandomNumberGenerators.hpp" open="0" top="0" tabpos="3">
 		<Cursor position="2455" topLine="95" />
 	</File>
-	<File name="Renderer\BeatDetect.cpp" open="1" top="0" tabpos="26">
+	<File name="Renderer/BeatDetect.cpp" open="1" top="0" tabpos="26">
 		<Cursor position="3666" topLine="127" />
 	</File>
-	<File name="Renderer\FBO.cpp" open="1" top="0" tabpos="11">
+	<File name="Renderer/FBO.cpp" open="1" top="0" tabpos="11">
 		<Cursor position="5361" topLine="217" />
 	</File>
-	<File name="Renderer\FBO.hpp" open="1" top="0" tabpos="12">
-		<Cursor position="1720" topLine="66" />
+	<File name="Renderer/FBO.hpp" open="1" top="0" tabpos="12">
+		<Cursor position="1720" topLine="56" />
 	</File>
-	<File name="Renderer\Filters.cpp" open="1" top="0" tabpos="9">
+	<File name="Renderer/Filters.cpp" open="1" top="0" tabpos="9">
 		<Cursor position="548" topLine="26" />
 	</File>
-	<File name="Renderer\Filters.hpp" open="0" top="0" tabpos="19">
+	<File name="Renderer/Filters.hpp" open="0" top="0" tabpos="19">
 		<Cursor position="300" topLine="0" />
 	</File>
-	<File name="Renderer\MilkdropWaveform.cpp" open="1" top="0" tabpos="7">
+	<File name="Renderer/MilkdropWaveform.cpp" open="1" top="0" tabpos="7">
 		<Cursor position="737" topLine="52" />
 	</File>
-	<File name="Renderer\MilkdropWaveform.hpp" open="0" top="0" tabpos="6">
+	<File name="Renderer/MilkdropWaveform.hpp" open="0" top="0" tabpos="6">
 		<Cursor position="808" topLine="30" />
 	</File>
-	<File name="Renderer\PerPixelMesh.cpp" open="1" top="0" tabpos="18">
-		<Cursor position="136" topLine="20" />
+	<File name="Renderer/PerPixelMesh.cpp" open="1" top="0" tabpos="18">
+		<Cursor position="136" topLine="7" />
 	</File>
-	<File name="Renderer\PerPixelMesh.hpp" open="1" top="0" tabpos="28">
-		<Cursor position="464" topLine="24" />
+	<File name="Renderer/PerPixelMesh.hpp" open="1" top="0" tabpos="28">
+		<Cursor position="464" topLine="4" />
 	</File>
-	<File name="Renderer\PerlinNoise.cpp" open="1" top="0" tabpos="23">
-		<Cursor position="1184" topLine="35" />
+	<File name="Renderer/PerlinNoise.cpp" open="1" top="0" tabpos="23">
+		<Cursor position="1184" topLine="12" />
 	</File>
-	<File name="Renderer\Pipeline.cpp" open="0" top="0" tabpos="11">
+	<File name="Renderer/Pipeline.cpp" open="0" top="0" tabpos="11">
 		<Cursor position="912" topLine="14" />
 	</File>
-	<File name="Renderer\PipelineContext.cpp" open="0" top="0" tabpos="12">
+	<File name="Renderer/PipelineContext.cpp" open="0" top="0" tabpos="12">
 		<Cursor position="0" topLine="0" />
 	</File>
-	<File name="Renderer\RenderItemDistanceMetric.cpp" open="0" top="0" tabpos="13">
+	<File name="Renderer/RenderItemDistanceMetric.cpp" open="0" top="0" tabpos="13">
 		<Cursor position="326" topLine="0" />
 	</File>
-	<File name="Renderer\RenderItemDistanceMetric.hpp" open="0" top="0" tabpos="45">
+	<File name="Renderer/RenderItemDistanceMetric.hpp" open="0" top="0" tabpos="45">
 		<Cursor position="2444" topLine="67" />
 	</File>
-	<File name="Renderer\RenderItemMatcher.cpp" open="0" top="0" tabpos="14">
+	<File name="Renderer/RenderItemMatcher.cpp" open="0" top="0" tabpos="14">
 		<Cursor position="277" topLine="0" />
 	</File>
-	<File name="Renderer\RenderItemMatcher.hpp" open="0" top="0" tabpos="42">
+	<File name="Renderer/RenderItemMatcher.hpp" open="0" top="0" tabpos="42">
 		<Cursor position="1385" topLine="41" />
 	</File>
-	<File name="Renderer\RenderItemMergeFunction.hpp" open="0" top="0" tabpos="62">
+	<File name="Renderer/RenderItemMergeFunction.hpp" open="0" top="0" tabpos="62">
 		<Cursor position="2280" topLine="213" />
 	</File>
-	<File name="Renderer\Renderable.cpp" open="1" top="0" tabpos="4">
+	<File name="Renderer/Renderable.cpp" open="1" top="0" tabpos="4">
 		<Cursor position="2354" topLine="97" />
 	</File>
-	<File name="Renderer\Renderable.hpp" open="1" top="0" tabpos="25">
+	<File name="Renderer/Renderable.hpp" open="1" top="0" tabpos="25">
 		<Cursor position="1619" topLine="81" />
 	</File>
-	<File name="Renderer\Renderer.cpp" open="1" top="0" tabpos="3">
+	<File name="Renderer/Renderer.cpp" open="1" top="0" tabpos="3">
 		<Cursor position="9321" topLine="506" />
 	</File>
-	<File name="Renderer\Renderer.hpp" open="0" top="0" tabpos="18">
+	<File name="Renderer/Renderer.hpp" open="0" top="0" tabpos="18">
 		<Cursor position="2931" topLine="128" />
 	</File>
-	<File name="Renderer\SOIL\SOIL.c" open="0" top="0" tabpos="27">
+	<File name="Renderer/SOIL/SOIL.c" open="0" top="0" tabpos="27">
 		<Cursor position="28001" topLine="1498" />
 	</File>
-	<File name="Renderer\SOIL\SOIL.h" open="0" top="0" tabpos="50">
+	<File name="Renderer/SOIL/SOIL.h" open="0" top="0" tabpos="50">
 		<Cursor position="8525" topLine="242" />
 	</File>
-	<File name="Renderer\SOIL\image_DXT.c" open="0" top="0" tabpos="28">
+	<File name="Renderer/SOIL/image_DXT.c" open="0" top="0" tabpos="28">
 		<Cursor position="0" topLine="15" />
 	</File>
-	<File name="Renderer\SOIL\image_helper.c" open="0" top="0" tabpos="52">
+	<File name="Renderer/SOIL/image_helper.c" open="0" top="0" tabpos="52">
 		<Cursor position="387" topLine="69" />
 	</File>
-	<File name="Renderer\SOIL\stb_image_aug.c" open="0" top="0" tabpos="53">
+	<File name="Renderer/SOIL/stb_image_aug.c" open="0" top="0" tabpos="53">
 		<Cursor position="98337" topLine="2952" />
 	</File>
-	<File name="Renderer\SOIL\stb_image_aug.h" open="0" top="0" tabpos="51">
+	<File name="Renderer/SOIL/stb_image_aug.h" open="0" top="0" tabpos="51">
 		<Cursor position="9015" topLine="186" />
 	</File>
-	<File name="Renderer\Shader.cpp" open="0" top="0" tabpos="22">
+	<File name="Renderer/Shader.cpp" open="0" top="0" tabpos="22">
 		<Cursor position="74" topLine="0" />
 	</File>
-	<File name="Renderer\ShaderEngine.cpp" open="1" top="0" tabpos="13">
+	<File name="Renderer/ShaderEngine.cpp" open="1" top="0" tabpos="13">
 		<Cursor position="612" topLine="23" />
 	</File>
-	<File name="Renderer\TextureManager.cpp" open="1" top="0" tabpos="19">
+	<File name="Renderer/TextureManager.cpp" open="1" top="0" tabpos="19">
 		<Cursor position="864" topLine="134" />
 	</File>
-	<File name="Renderer\TextureManager.hpp" open="0" top="0" tabpos="54">
+	<File name="Renderer/TextureManager.hpp" open="0" top="0" tabpos="54">
 		<Cursor position="220" topLine="0" />
 	</File>
-	<File name="Renderer\UserTexture.cpp" open="0" top="0" tabpos="56">
+	<File name="Renderer/UserTexture.cpp" open="0" top="0" tabpos="56">
 		<Cursor position="715" topLine="15" />
 	</File>
-	<File name="Renderer\VideoEcho.cpp" open="1" top="0" tabpos="1">
-		<Cursor position="2356" topLine="91" />
+	<File name="Renderer/VideoEcho.cpp" open="1" top="0" tabpos="1">
+		<Cursor position="2356" topLine="73" />
 	</File>
-	<File name="Renderer\VideoEcho.hpp" open="0" top="0" tabpos="29">
+	<File name="Renderer/VideoEcho.hpp" open="0" top="0" tabpos="29">
 		<Cursor position="312" topLine="0" />
 	</File>
-	<File name="Renderer\Waveform.cpp" open="1" top="0" tabpos="8">
+	<File name="Renderer/Waveform.cpp" open="1" top="0" tabpos="8">
 		<Cursor position="2157" topLine="16" />
 	</File>
 	<File name="TimeKeeper.cpp" open="0" top="0" tabpos="46">
@@ -272,13 +272,13 @@
 		<Cursor position="4401" topLine="180" />
 	</File>
 	<File name="global_gx.h" open="1" top="0" tabpos="6">
-		<Cursor position="867" topLine="25" />
+		<Cursor position="867" topLine="6" />
 	</File>
 	<File name="projectM.cpp" open="1" top="0" tabpos="5">
 		<Cursor position="7210" topLine="419" />
 	</File>
-	<File name="projectM.hpp" open="1" top="0" tabpos="14">
-		<Cursor position="7805" topLine="275" />
+	<File name="projectM.hpp" open="1" top="1" tabpos="14">
+		<Cursor position="1399" topLine="32" />
 	</File>
 	<File name="timer.cpp" open="0" top="0" tabpos="20">
 		<Cursor position="1407" topLine="25" />

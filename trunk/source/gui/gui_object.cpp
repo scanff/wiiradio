@@ -2,6 +2,7 @@
 #include "../textures.h"
 #include "../fonts.h"
 #include "../application.h"
+#include "../gui.h"
 #include "gui_object.h"
 #include "../script.h"
 
@@ -44,7 +45,7 @@ gui_object::gui_object() :
 
 
     bind_screen = -1;
-
+    visible = 1;
     memset(show_on_var,0,SMALL_MEM);
     memset(fun_arg,0,SMALL_MEM);
     memset(click_script,0,MED_MEM);
@@ -55,6 +56,30 @@ gui_object::~gui_object()
     delete [] text;
 
     //object_images free'd in texture cache
+}
+
+void gui_object::SetTopMost()
+{
+    gui_object* tm = theapp->ui->topmost_wnd;
+
+    if(tm && tm != this)
+    {
+        tm->z_order = (TOPMOST_WND - 5000) + tm->z_order_start;
+        loopi(tm->children.size())
+        {
+            tm->children[i]->z_order = tm->z_order + tm->children[i]->z_order_start;
+        }
+    }
+
+    z_order = TOPMOST_WND;
+    theapp->ui->topmost_wnd = this;
+
+    loopi(children.size())
+        children[i]->z_order = z_order + children[i]->z_order_start;
+
+    theapp->ui->reorder();
+
+
 }
 
 void gui_object::set_binds(char* instr)
@@ -269,18 +294,11 @@ bool gui_object::IsVisible()
     if (!parent)
     {
         return visible;
-
     }else{
-        const int ss = theapp->GetSystemStatus();//theapp->GetScreenStatus();
-
-        if((GetType() == GUI_POPUP) &&  (show_on_status != ss))
-            return false;
-
-        return parent->visible;
+        return (visible & parent->visible);
     }
 
     return false;
-
 }
 
 // -- draw to screen
@@ -289,22 +307,84 @@ int gui_object::draw()
     if(!IsVisible())
         return 0;
 
+    gui_object* inherit = parent;
+    int xoffset = 0;
+    int yoffset = 0;
 
-    const int xoffset = parent ? parent->s_x + s_x: s_x;
-    const int yoffset = parent ? parent->s_y + s_y: s_y;
+    while(inherit && (inherit != inherit->parent))
+    {
+        xoffset += inherit->s_x;
+        yoffset += inherit->s_y;
+        inherit = inherit->parent;
+    }
+    xoffset += s_x;
+    yoffset += s_y;
 
 
-    if(object_images[GUI_IMG_OUT] && obj_state == B_OUT){
-        if ((obj_sub_state == B_ON) && object_images[GUI_IMG_OFF])
+
+
+    switch(obj_state)
+    {
+        case  B_OUT:
         {
-            SDL_Rect ds = {xoffset,yoffset,object_images[GUI_IMG_OFF]->w,object_images[GUI_IMG_OFF]->h};
-            SDL_BlitSurface( object_images[GUI_IMG_OFF],0, guibuffer,&ds );
-        }else{
-            SDL_Rect ds = {xoffset,yoffset, object_images[GUI_IMG_OUT]->w,object_images[GUI_IMG_OUT]->h};
-            SDL_BlitSurface( object_images[GUI_IMG_OUT],0, guibuffer,&ds );
+            if(object_images[GUI_IMG_OUT])
+            {
+                if ((obj_sub_state == B_ON) && object_images[GUI_IMG_OFF])
+                {
+                    SDL_Rect ds = {xoffset,yoffset,object_images[GUI_IMG_OFF]->w,object_images[GUI_IMG_OFF]->h};
+                    SDL_BlitSurface( object_images[GUI_IMG_OFF],0, guibuffer,&ds );
+                }else{
+                    SDL_Rect ds = {xoffset,yoffset, object_images[GUI_IMG_OUT]->w,object_images[GUI_IMG_OUT]->h};
+                    SDL_BlitSurface( object_images[GUI_IMG_OUT],0, guibuffer,&ds );
+                }
+            }
+            else
+            {
+                SDL_Rect ds = {xoffset,yoffset,s_w,s_h};
+                draw_rect_rgb(guibuffer,ds.x,ds.y,ds.w,ds.h,
+                              (bgcolor.cbyte.r),
+                              (bgcolor.cbyte.g),
+                              (bgcolor.cbyte.b));
+            }
+
+            fnts->change_color((text_color >> 16), ((text_color >> 8) & 0xff),(text_color & 0xff));
+
         }
-        fnts->change_color((text_color >> 16), ((text_color >> 8) & 0xff),(text_color & 0xff));
-    }else if (object_images[GUI_IMG_OVER] && obj_state == B_OVER){
+        break;
+
+        case B_OVER:
+        {
+
+            if (object_images[GUI_IMG_OVER])
+            {
+
+                if ((obj_sub_state == B_ON) && object_images[GUI_IMG_ON])
+                {
+                    SDL_Rect ds = {xoffset,yoffset,object_images[GUI_IMG_ON]->w,object_images[GUI_IMG_ON]->h};
+                    SDL_BlitSurface( object_images[GUI_IMG_ON],0, guibuffer,&ds );
+                }else{
+                    SDL_Rect ds = {xoffset,yoffset,object_images[GUI_IMG_OVER]->w,object_images[GUI_IMG_OVER]->h};
+                    SDL_BlitSurface( object_images[GUI_IMG_OVER],0, guibuffer,&ds );
+                }
+            }
+            else
+            {
+                SDL_Rect ds = {xoffset,yoffset,s_w,s_h};
+                draw_rect_rgb(guibuffer,ds.x,ds.y,ds.w,ds.h,
+                              (bgcolor_over.cbyte.r),
+                              (bgcolor_over.cbyte.g),
+                              (bgcolor_over.cbyte.b));
+            }
+            fnts->change_color((text_color_over >> 16), ((text_color_over >> 8) & 0xff),(text_color_over & 0xff));
+
+
+        }
+        break;
+
+    }
+
+/*
+    if (object_images[GUI_IMG_OVER] && obj_state == B_OVER){
 
         if ((obj_sub_state == B_ON) && object_images[GUI_IMG_ON])
         {
@@ -316,7 +396,7 @@ int gui_object::draw()
         }
         fnts->change_color((text_color_over >> 16), ((text_color_over >> 8) & 0xff),(text_color_over & 0xff));
 
-    }else if (object_images[GUI_IMG_DOWN] && obj_state == B_CLICK){
+    }else*/ if (object_images[GUI_IMG_DOWN] && obj_state == B_CLICK){
 
         SDL_Rect ds = {xoffset,yoffset,object_images[GUI_IMG_DOWN]->w,object_images[GUI_IMG_DOWN]->h};
         SDL_BlitSurface( object_images[GUI_IMG_DOWN],0, guibuffer,&ds );
@@ -349,6 +429,9 @@ bool  gui_object::point_in_rect(const int x, const int y)
 //-- hit test
 int gui_object::hit_test(const SDL_Event *event)
 {
+    if(!IsVisible())
+        return 0;
+
     int x;
     int y;
 

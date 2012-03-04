@@ -35,13 +35,13 @@ void gui_screen::set_image_img(char* theimg)
 // -- draw to screen
 int gui_screen::draw()
 {
-    if(!visible) return 0;
-
-    if (!gui_object::draw())
+    if(bind_screen != theapp->GetScreenStatus())
     {
         visible = false;
         return 0;
     }
+
+    visible = true;
 
     if (bgcolor.color && !object_images[GUI_IMG_BG]) // has a bgcolor
     {

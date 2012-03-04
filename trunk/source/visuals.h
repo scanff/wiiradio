@@ -201,7 +201,7 @@ public:
 
     void draw_visuals(SDL_Surface* s, const int number, const s16* samps);
     void FORCEINLINE borders(SDL_Surface*s,const int size, const u32 color);
-
+const  void EQ_pp(int& x, int& y);
 };
 
 

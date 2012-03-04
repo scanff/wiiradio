@@ -117,7 +117,7 @@ static int finder_thread(void* arg)
 
                     SDL_mutexV(listviews_mutex);
 
-                    usleep(20);
+                    usleep( 1 );
                 }
 
                 if( lf->halt)

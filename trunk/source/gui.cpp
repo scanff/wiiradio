@@ -37,6 +37,7 @@ gui::gui(app_wiiradio* _theapp) :
     vis_on_screen(0),
     options_screen( NULL )
 {
+    topmost_wnd = 0;
 
     theapp->ui = this; // As we've not constructed this yet the address is bad
     texture_cache*  tx = theapp->GetTextures();
@@ -103,20 +104,7 @@ gui::gui(app_wiiradio* _theapp) :
 
 
     //reorder on zorder
-    loopi(gui_ents.size())
-    {
-        loopj(gui_ents.size())
-        {
-            if (gui_ents[i]->z_order < gui_ents[j]->z_order)
-            {
-                gui_object* first = gui_ents[i];
-                gui_object* second = gui_ents[j];
-                gui_ents[i] = second;
-                gui_ents[j] = first;
-            }
-
-        }
-    }
+    reorder();
 
     // options .. not skinnable
     options_screen = new gui_options(theapp);
@@ -192,7 +180,24 @@ gui::~gui()
     if(visbuffer) SDL_FreeSurface(visbuffer);
 
 }
+void gui::reorder()
+{
+    //reorder on zorder
+    loopi(gui_ents.size())
+    {
+        loopj(gui_ents.size())
+        {
+            if (gui_ents[i]->z_order < gui_ents[j]->z_order)
+            {
+                gui_object* first = gui_ents[i];
+                gui_object* second = gui_ents[j];
+                gui_ents[i] = second;
+                gui_ents[j] = first;
+            }
 
+        }
+    }
+}
 void* gui::new_object(const int type, void* o)
 {
     if (type == GUI_UNKNOWN)
@@ -266,10 +271,11 @@ void gui::handle_events(const SDL_Event* events)
             bloopj(gui_ents.size())
             {
                 gui_object* cur_ent = gui_ents[j];
-
+if(j==57)
+j=57;
                 if(
-                   ((cur_ent->IsVisible()) && (cur_ent->hit_test(events))) ||
-                   ((cur_ent->IsModal()) && (cur_ent->IsVisible()))
+                    cur_ent->hit_test(events) ||
+                   ((cur_ent->IsModal() && cur_ent->IsVisible()))
                    ) // If this is a popup return, only want hit test for it's children
                     return;
             }

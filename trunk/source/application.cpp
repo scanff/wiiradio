@@ -638,25 +638,36 @@ return the data from the buffer or a default zero stream if we are having proble
 */
 s32 reader_callback(void *usr_data,void *cb,s32 len,app_wiiradio* theapp)
 {
+    SDL_mutexP(connect_mutex);
+
     const int st = theapp->GetSystemStatus();
+    int res = 0;
 
     if ((st != PLAYING) && (st != LOCALFILE_BUFFERING) )//&& (st != BUFFERING))
-        return 0;
-
-    switch(playback_type)
     {
-        case AS_LOCAL:
-            return theapp->GetLocFile()->read((u8*)cb,len);
-        break;
-
-        case AS_NETWORK:
-            return theapp->icy_info->get_buffer(cb,len);
-        break;
-		case AS_NULL:
-		return 0;
-
+        res = 0;
     }
-    return 0;
+    else
+    {
+        switch(playback_type)
+        {
+            case AS_LOCAL:
+                res = theapp->GetLocFile()->read((u8*)cb,len);
+            break;
+
+            case AS_NETWORK:
+                res = theapp->icy_info->get_buffer(cb,len);
+            break;
+            case AS_NULL:
+                res = 0;
+            break;
+
+        }
+    }
+
+    SDL_mutexV(connect_mutex);
+
+    return res;
 }
 
 
@@ -1285,6 +1296,11 @@ void app_wiiradio::toggle_fullscreen()
         printf("SDL_GetVideoSurface() failed\n");
         exit(1);
     }
+
+
+    // hide/show the cursor in fullscreen -- Reversed !!!
+    //fullscreen ? SDL_ShowCursor(0) : SDL_ShowCursor(1);
+
 }
 #endif
 
@@ -1856,7 +1872,7 @@ _reload:
         {
             if(GetSystemStatus() == PLAYING)
             {
-                fourier->setAudioData((short*)audio_data,8192/2);
+                fourier->setAudioData((short*)audio_data,4096);
                 fourier->getFFT(visuals->fft_results);
 
             }else{
@@ -1882,6 +1898,7 @@ _reload:
 
         SDL_Flip(screen);
 #else
+
 
         if ((GetScreenStatus() != S_VISUALS) || GetSettings()->ovisual_mode)
         {
@@ -1918,7 +1935,7 @@ _reload:
 #ifdef _WII_
     usleep(500);
 #else
-    Sleep(10);
+    Sleep(1);
 #endif
     }
 

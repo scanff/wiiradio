@@ -132,3 +132,16 @@ function onkey(ikey)
 	end
 
 end
+
+amp = 16.2
+period = 200
+function visual_pp(x,y)
+
+    lx = x
+	ly = y
+	
+    x = x + (amp * math.sin(ly * 6.4 / period))
+    y = y + (amp * math.cos(lx * 6.4 / period))
+
+end
+

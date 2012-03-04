@@ -24,6 +24,7 @@
 #include "skins.h"
 #include "functions.h"
 
+vector<gui_object*>   obj_stack;
 
 skins::skins(app_wiiradio* _theapp) :  theapp(_theapp), total_skins(0), current_skin(0), current_objectid(0)
 {
@@ -244,6 +245,40 @@ void skins::object_add_var(char* name, char* value)
             {
                 static_cast<gui_list*>(obj)->listid = atoi(value);
             }
+            // list containers could be moveable
+            if(strcmp(name,"moveable") == 0)
+            {
+                static_cast<gui_list*>(obj)->moveable = atoi(value);
+            }
+
+             if(strcmp(name,"item_w") == 0)
+            {
+                static_cast<gui_list*>(obj)->item_w = atoi(value);
+            }
+
+            if(strcmp(name,"item_h") == 0)
+            {
+                static_cast<gui_list*>(obj)->item_h = atoi(value);
+            }
+
+            if(strcmp(name,"item_ox") == 0)
+            {
+                static_cast<gui_list*>(obj)->item_ox = atoi(value);
+            }
+
+            if(strcmp(name,"item_oy") == 0)
+            {
+                static_cast<gui_list*>(obj)->item_oy = atoi(value);
+            }
+            if(strcmp(name,"item_bgcolor") == 0)
+            {
+                static_cast<gui_list*>(obj)->item_bgcolor = make_color(value);
+            }
+            if(strcmp(name,"item_bgcolor_over") == 0)
+            {
+                static_cast<gui_list*>(obj)->item_bgcolor_over = make_color(value);
+            }
+
         }
         // fall through
     case GUI_SLIDER:
@@ -495,6 +530,58 @@ void skins::object_add_var(char* name, char* value)
     }
 
 
+    if(strcmp(name,"name") == 0)
+        obj->set_name(value,get_hash(value));
+
+
+    if(strcmp(name,"screen") == 0)
+           obj->set_binds(value);
+
+
+    if(strcmp(name,"x") == 0)
+        obj->s_x = atoi(value);
+
+
+    if(strcmp(name,"y") == 0)
+        obj->s_y = atoi(value);
+
+
+    if(strcmp(name,"w") == 0)
+    {
+
+        if (obj->isvariable)
+        {
+            obj->s_w = theapp->GetVariables()->search_var_int(value);
+        }else
+            obj->s_w = atoi(value);
+    }
+
+    if(strcmp(name,"h") == 0)
+    {
+
+       if (obj->isvariable)
+        {
+            obj->s_h = theapp->GetVariables()->search_var_int(value);
+        }else
+            obj->s_h = atoi(value);
+    }
+
+    if(strcmp(name,"z_order") == 0)
+    {
+        int z = atoi(value);
+        obj->z_order = z;
+        obj->z_order_start = z;
+
+    }
+
+    if(strcmp(name,"visible") == 0)
+        obj->visible = atoi(value);
+
+
+
+
+
+/*
     switch(hash)
     {
         case HASH_name:
@@ -534,12 +621,8 @@ void skins::object_add_var(char* name, char* value)
         case HASH_z_order:
         {
             int z = atoi(value);
-            if(obj->parent)
-            {
-                z += obj->parent->z_order;
-            }
-
             obj->z_order = z;
+            obj->z_order_start = z;
 
         }break;
 
@@ -548,15 +631,17 @@ void skins::object_add_var(char* name, char* value)
         break;
 
     }
-
+*/
 }
 
 void skins::set_oject_id(char* name)
 {
 //TODO HASH THE strings to remove the ugly slow strcmp's .. we can also uses a switch then
     last_obj = current_obj;
+    obj_stack.push_back((gui_object*)current_obj);
 
-    if(HASH_gui_button == get_hash(name))
+    //if(HASH_gui_button == get_hash(name))
+    if(strcmp(name,"gui_button") == 0)
     {
         current_objectid = GUI_BUTTON;
         gui_button* x = new gui_button(this->theapp);
@@ -648,6 +733,7 @@ void skins::set_oject_id(char* name)
         gui_popup* x = new gui_popup(this->theapp);
         current_obj = x;
         theapp->ui->new_object(current_objectid,current_obj);
+
     }
 
     if(strcmp(name,"gui_visual") == 0)
@@ -658,12 +744,20 @@ void skins::set_oject_id(char* name)
         theapp->ui->new_object(current_objectid,current_obj);
     }
 
+
+
     // Set parent
     if (current_obj)
     {
         gui_object* c = (gui_object*)current_obj;
-        c->parent = (gui_object*)last_obj;
+        gui_object* p = (gui_object*)last_obj;
+        c->parent = p;
+        if(p)
+        {
+            p->children.push_back(c);
+        }
     }
+
 
 }
 
@@ -702,6 +796,15 @@ void inline skins::release_object_id()
 
     current_objectid = GUI_UNKNOWN;
     current_obj = last_obj;
+
+    if(!obj_stack.empty())
+    {
+        int s = obj_stack.size();
+        current_obj = (gui_object*)obj_stack[s-1];
+        obj_stack.pop_back();
+    }
+
+
 
 }
 

@@ -29,7 +29,7 @@ class script
     void CallVoidVoidFunction(const char* name); // call a void (void) script function
 
     void OnKey(const char* key); // calls the lua onkey if defined
-
+    void Visualizer_PP(int x, int y);
     private:
 
 

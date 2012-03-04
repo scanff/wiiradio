@@ -4,9 +4,13 @@
 #include "../globals.h"
 #include "../application.h"
 
+#ifdef _WII_
 #define DRAW_WIDTH      (320)
 #define DRAW_HEIGHT     (320)
-
+#else
+#define DRAW_WIDTH      (480)
+#define DRAW_HEIGHT     (480)
+#endif
 class visual_object {
     public:
 

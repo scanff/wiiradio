@@ -47,6 +47,7 @@ int gui_img::draw()
 
 int gui_img::draw(int x, int y)
 {
+
     SDL_Rect ds = {x,y,object_images[GUI_IMG_BG]->w,object_images[GUI_IMG_BG]->h};
     SDL_BlitSurface( object_images[GUI_IMG_BG],0, guibuffer,&ds );
 

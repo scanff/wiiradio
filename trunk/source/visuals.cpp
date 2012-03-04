@@ -1,6 +1,7 @@
 #include "globals.h"
 #include "application.h"
 #include "visuals.h"
+#include "script.h"
 
 #include "visuals/visual_water.h"
 #include "visuals/visual_tunnel.h"
@@ -21,6 +22,10 @@
 #include "visuals/visual_waves.h"
 #include "visuals/visual_object.h"
 
+float amp = 16.2;
+float period = 200.0;
+double sin_lut[1000];
+double cos_lut[1000];
 
 visualizer::visualizer(app_wiiradio* _theapp) : mode(1), theapp(_theapp)
 {
@@ -82,6 +87,12 @@ visualizer::visualizer(app_wiiradio* _theapp) : mode(1), theapp(_theapp)
         ypath[i] = (int)(cos(rad) * hh + hh);
     }
 
+    loopi(1000)
+    {
+        sin_lut[i] = sin(i);
+        cos_lut[i] = cos(i);
+    }
+
 
 }
 
@@ -100,6 +111,25 @@ visualizer::~visualizer()
     }
 }
 
+
+const void visualizer::EQ_pp(int &x,  int &y)
+{/*
+    script* sc = theapp->GetScript();
+
+    SDL_mutexP(script_mutex);
+    sc->Visualizer_PP(x,y);
+    SDL_mutexV(script_mutex);
+    */
+    int lx = x;
+    int ly = y;
+    float d = (float)(ly * 6.4 / period) ;
+    float dd = (float)(lx * 6.4 / period) ;
+    //int d = x;
+    //int dd =y;
+    x +=  (amp * sin(d) );
+    y +=  (amp * sin(dd) );
+
+}
 
 const FORCEINLINE float visualizer::EQ(int R, float A,int x, int y)
 {
@@ -134,55 +164,42 @@ void FORCEINLINE visualizer::rotate_surface(SDL_Surface* s, SDL_Surface* d,
                                        float z,
                                        int preset)
 {
-    const int num = 8;
-
     const int h = s->h;
     const int w = s->w;
 
-    const int w_4 = (w / (num >> 1));
-    const int h_4 = (h / (num >> 1));
-
-    int col = 0;
-    int row = 0;
     int sourcex = 0;
     int sourcey = 0;
 
     unsigned char* pixels_in = (unsigned char*)s->pixels;
     unsigned char* pixels_out = (unsigned char*)d->pixels;
 
-    for(row = 0 ; row < num >> 1; row ++)
+    for(int y = 0 ; y < h ; y ++)
     {
 
-        for(col = 0 ; col < num >> 1; col ++)
+        for(int x = 0 ; x < w; x ++)
         {
 
-            for( int y = row * h_4; y < (row * h_4) + h_4; y++ )
-            {
-                for( int x = col * w_4; x < (col * w_4) + w_4; x++ )
-                {
+            sourcex = (x + x_origin) * zoom;
+            sourcey = (y + y_origin)* zoom;
+            EQ_pp(sourcex,sourcey);
 
-                    sourcex =  x_origin+(int)((x-x_origin)*thecos + (y-y_origin)*thesin);
-                    sourcey =  y_origin+(int)((y-y_origin)*thecos - (x-x_origin)*thesin);
 
-                    const int xpoint =  x * 3;
-                    const int ypoint = (y * s->w) * 3;
+//                    sourcex =  x_origin+(int)((x-x_origin)*thecos + (y-y_origin)*thesin);
+//                    sourcey =  y_origin+(int)((y-y_origin)*thecos - (x-x_origin)*thesin);
 
-                    sourcex = abs(sourcex % s->w-1);
-                    sourcey = abs(sourcey % s->h-1);
-/*
-                    PX_MERGE(pixels_out[xpoint+ypoint],pixels_in[((sourcey*s->h*3)+(sourcex*3))] );
-                    PX_MERGE(pixels_out[xpoint+ypoint+1],pixels_in[(sourcey*s->h*3)+(sourcex*3)+1]);
-                    PX_MERGE(pixels_out[xpoint+ypoint+2],pixels_in[(sourcey*s->h*3)+(sourcex*3)+2]);
-*/
+            const int npoint =  (x * 3) + (y * s->w) * 3;
+
+            sourcex = abs(sourcex % s->w-1);
+            sourcey = abs(sourcey % s->h-1);
 
                     const int source_pos = ((sourcey*s->h*3)+(sourcex*3));
 
-                    PX_REPLACE(pixels_out[xpoint+ypoint],pixels_in[source_pos] );
-                    PX_REPLACE(pixels_out[xpoint+ypoint+1],pixels_in[source_pos+1]);
-                    PX_REPLACE(pixels_out[xpoint+ypoint+2],pixels_in[source_pos+2]);
+                    PX_REPLACE(pixels_out[npoint],pixels_in[source_pos] );
+                    PX_REPLACE(pixels_out[npoint+1],pixels_in[source_pos+1]);
+                    PX_REPLACE(pixels_out[npoint+2],pixels_in[source_pos+2]);
 
-                }
-            }
+       //         }
+       //     }
 
         }
     }
@@ -245,13 +262,14 @@ void visualizer::draw_visuals(SDL_Surface* s,const int number, const s16* samps)
     {
         if(mode == 2)
         {
-            fade(vis_surface[1],20);
-            SDL_BlitSurface(vis_surface[1],0,vis_surface[0],0);
+            fade(vis_surface[1],5);
+            SDL_BlitSurface(vis_surface[1],0,vis_surface[0],0); //FB
         }
 
         num_of_visuals = 2;
         if ((theapp->app_timer - vt) > 15000)
         {
+            amp = 6.2;
             zoom = 1.0f;
             rads = 0.0;
             eq = rand() % 8;
@@ -294,7 +312,7 @@ void visualizer::draw_visuals(SDL_Surface* s,const int number, const s16* samps)
 
         SDL_Surface* vs = vis_surface[0];
 
-        if (mode == 2)
+       // if (mode == 2)
         {
 
             if (look_pos < 511) look_pos++;
@@ -302,6 +320,7 @@ void visualizer::draw_visuals(SDL_Surface* s,const int number, const s16* samps)
 
 
             rads += 0.1;
+
             if (c_max > 100)
             {
                 rads += ((float)c_max / 100.0);//0.5;
@@ -309,12 +328,11 @@ void visualizer::draw_visuals(SDL_Surface* s,const int number, const s16* samps)
 
             if (c_max > 115) dir = dir - (dir*1.5);
 
-            zoom += dir;
+           // zoom += dir;
 
-
-            thecos = (float)cos(rads);
-            thesin = EQ(eq,rads,zoom,thecos) * zoom;
-            rotate_surface(vis_surface[0],vis_surface[1],rads,xpath[look_pos],ypath[look_pos],1.0,1);
+            //thecos = (float)cos(rads);
+            //thesin = EQ(eq,rads,zoom,thecos) * zoom;
+            rotate_surface(vis_surface[0],vis_surface[1],rads,0,0,/*xpath[look_pos],ypath[look_pos]*/1.0,1);
             vs= vis_surface[1];
            // if (c_max > 100) borders(vis_surface[0],rand()%4,hsl_rgba(c_max,210,c_max));
 
@@ -322,7 +340,7 @@ void visualizer::draw_visuals(SDL_Surface* s,const int number, const s16* samps)
         SDL_Rect sr = {0,0,DRAW_WIDTH,DRAW_HEIGHT};
         SDL_Rect dr = {0,0,s->w,s->h};
 
-        fade(vis_surface[0],14);
+        fade(vis_surface[0],2);
 
         SDL_SoftStretch(vs,&sr,s,&dr);
     }
